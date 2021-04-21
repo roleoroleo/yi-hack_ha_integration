@@ -52,21 +52,6 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_LOCAL_POLL
 
-    def __init__(self):
-        """Initialize the yi-hack flow."""
-        self._name = None
-
-        self._host = None
-        self._port = None
-        self._user = None
-        self._password = None
-        self._extra_arguments = None
-
-        self._mac = None
-        self._serial_number = None
-        self._conf = None
-        self._mqtt = None
-
     async def async_step_user(self, user_input=None):
         """Handle a flow initiated by the user."""
         errors = {}
