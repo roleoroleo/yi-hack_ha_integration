@@ -179,16 +179,6 @@ class YiMQTTBabyCryingSensor(BinarySensorEntity):
     def device_info(self):
         """Return device specific attributes."""
         return {
-            "name": self._name,
-            "identifiers": {(DOMAIN, self._serial_number)},
-            "manufacturer": DEFAULT_BRAND,
-            "model": DOMAIN,
-        }
-
-    @property
-    def device_info(self):
-        """Return device specific attributes."""
-        return {
             "name": self._device_name,
             "identifiers": {(DOMAIN, self._serial_number)},
             "manufacturer": DEFAULT_BRAND,
