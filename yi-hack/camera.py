@@ -69,7 +69,7 @@ class YiCamera(Camera):
             self._stream_source = "rtsp://" + self._host + "/ch0_0.h264"
         else:
             self._stream_source = "rtsp://" + self._host + ":" + self._rtsp_port + "/ch0_0.h264"
-        if self._rtsp_port == 80:
+        if self._port == 80:
             self._still_image_url = "http://" + self._host + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
         else:
             self._still_image_url = "http://" + self._host + ":" + self._port + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
