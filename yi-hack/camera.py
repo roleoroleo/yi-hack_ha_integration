@@ -58,7 +58,7 @@ class YiCamera(Camera):
         self._manager = hass.data[DATA_FFMPEG]
         self._device_name = config.data[CONF_NAME]
         self._name = self._device_name + "_cam"
-        self._unique_id = self._device_name + "ca__"
+        self._unique_id = self._device_name + "_caca"
         self._mac = config.data[CONF_MAC]
         self._serial_number = config.data[CONF_SERIAL]
         self._is_on = True
