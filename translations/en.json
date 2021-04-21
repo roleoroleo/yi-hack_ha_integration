@@ -1,0 +1,28 @@
+{
+  "title": "Yi Cam with yi-hack",
+  "config": {
+    "step": {
+      "user": {
+        "title": "yi-hack configuration",
+        "description": "Fill in yi-hack information",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "username": "Username",
+          "password": "Password",
+          "extra_arguments": "FFMPEG extra arguments"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect",
+      "cannot_get_mac_or_serial": "Cannot get mac address or serial number",
+      "cannot_get_conf": "Cannot get configuration",
+      "cannot_get_mqtt_conf": "Cannot get mqtt configuration",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  }
+}

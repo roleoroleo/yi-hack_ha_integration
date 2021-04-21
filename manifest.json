@@ -1,0 +1,10 @@
+{
+  "domain": "yi-hack",
+  "name": "Yi Home Cameras with yi-hack",
+  "documentation": "https://www.home-assistant.io/integrations/yi-hack",
+  "dependencies": ["ffmpeg", "mqtt"],
+  "codeowners": ["@roleoroleo"],
+  "iot_class": "local_polling",
+  "config_flow": true,
+  "version": "0.1.50"
+}
