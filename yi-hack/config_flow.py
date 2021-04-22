@@ -57,41 +57,41 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         errors = {}
 
         if user_input is not None:
-            self._host = user_input[CONF_HOST]
-            self._port = user_input[CONF_PORT]
-            self._user = user_input[CONF_USERNAME]
-            self._password = user_input[CONF_PASSWORD]
-            self._extra_arguments = user_input[CONF_EXTRA_ARGUMENTS]
+            host = user_input[CONF_HOST]
+            port = user_input[CONF_PORT]
+            user = user_input[CONF_USERNAME]
+            password = user_input[CONF_PASSWORD]
+            extra_arguments = user_input[CONF_EXTRA_ARGUMENTS]
 
             auth = None
-            if self._user or self._password:
-                auth = HTTPBasicAuth(self._user, self._password)
+            if user or password:
+                auth = HTTPBasicAuth(user, password)
 
             try:
-                response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/status.json", timeout=5, auth=auth)
+                response = requests.get("http://" + host + ":" + port + "/cgi-bin/status.json", timeout=5, auth=auth)
                 if response.status_code >= 300:
-                    _LOGGER.error("Failed to connect to device %s", self._host)
+                    _LOGGER.error("Failed to connect to device %s", host)
                     errors["base"] = "cannot_connect"
             except requests.exceptions.RequestException as error:
-                _LOGGER.error("Failed to connect to device %s: error %s", self._host, error)
+                _LOGGER.error("Failed to connect to device %s: error %s", host, error)
                 errors["base"] = "cannot_connect"
 
             if not errors and response is not None:
                 try:
-                    self._serial_number = response.json()["serial_number"]
+                    serial_number = response.json()["serial_number"]
                 except KeyError:
-                    self._serial_number = None
+                    serial_number = None
 
                 try:
-                    self._mac = response.json()["mac_addr"]
+                    mac = response.json()["mac_addr"]
                 except KeyError:
-                    self._mac = None
+                    mac = None
 
-                if self._serial_number is not None and self._mac is not None:
-                    user_input[CONF_SERIAL] = self._serial_number
-                    user_input[CONF_MAC] = format_mac(self._mac)
+                if serial_number is not None and mac is not None:
+                    user_input[CONF_SERIAL] = serial_number
+                    user_input[CONF_MAC] = format_mac(mac)
                 else:
-                    _LOGGER.error("Unable to get mac address or serial number from device %s", self._host)
+                    _LOGGER.error("Unable to get mac address or serial number from device %s", host)
                     errors["base"] = "cannot_get_mac_or serial"
 
                 if not errors:
@@ -100,49 +100,49 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
                     for entry in self._async_current_entries():
                         if entry.data[CONF_MAC] == user_input[CONF_MAC]:
-                            _LOGGER.error("Device already configured: %s", self._host)
+                            _LOGGER.error("Device already configured: %s", host)
                             return self.async_abort(reason="already_configured")
                     try:
-                        self._name = response.json()["name"]
+                        name = response.json()["name"]
                     except KeyError:
-                        self._name = None
+                        name = None
 
-                    if self._name is not None:
-                        user_input[CONF_NAME] = self._name
+                    if name is not None:
+                        user_input[CONF_NAME] = name
                     else:
                         user_input[CONF_NAME] = DEFAULT_BRAND
                     user_input[CONF_NAME] = user_input[CONF_NAME] + "-" + user_input[CONF_MAC].replace(':', '')
 
                     try:
-                        response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/get_configs.sh?conf=system", timeout=5, auth=auth)
+                        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=system", timeout=5, auth=auth)
                         if response.status_code >= 300:
-                            _LOGGER.error("Failed to get configuration from device %s", self._host)
+                            _LOGGER.error("Failed to get configuration from device %s", host)
                             errors["base"] = "cannot_get_conf"
                     except requests.exceptions.RequestException as error:
-                        _LOGGER.error("Failed to get configuration from device %s: error %s", self._host, error)
+                        _LOGGER.error("Failed to get configuration from device %s: error %s", host, error)
                         errors["base"] = "cannot_get_conf"
 
                     if not errors and response is not None:
-                        self._conf = response.json()
+                        conf = response.json()
 
                         try:
-                            response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=5, auth=auth)
+                            response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=5, auth=auth)
                             if response.status_code >= 300:
-                                _LOGGER.error("Failed to get mqtt configuration from device %s", self._host)
+                                _LOGGER.error("Failed to get mqtt configuration from device %s", host)
                                 errors["base"] = "cannot_get_mqtt_conf"
                         except requests.exceptions.RequestException as error:
-                            _LOGGER.error("Failed to get mqtt configuration from device %s: error %s", self._host, error)
+                            _LOGGER.error("Failed to get mqtt configuration from device %s: error %s", host, error)
                             errors["base"] = "cannot_get_mqtt_conf"
 
                         if not errors and response is not None:
-                            self._mqtt = response.json()
+                            mqtt = response.json()
 
-                            user_input[CONF_RTSP_PORT] = self._conf[CONF_RTSP_PORT]
-                            user_input[CONF_MQTT_PREFIX] = self._mqtt[CONF_MQTT_PREFIX]
-                            user_input[CONF_TOPIC_STATUS] = self._mqtt[CONF_TOPIC_STATUS]
-                            user_input[CONF_TOPIC_MOTION_DETECTION] = self._mqtt[CONF_TOPIC_MOTION_DETECTION]
-                            user_input[CONF_TOPIC_BABY_CRYING] = self._mqtt[CONF_TOPIC_BABY_CRYING]
-                            user_input[CONF_TOPIC_MOTION_DETECTION_IMAGE] = self._mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]
+                            user_input[CONF_RTSP_PORT] = conf[CONF_RTSP_PORT]
+                            user_input[CONF_MQTT_PREFIX] = mqtt[CONF_MQTT_PREFIX]
+                            user_input[CONF_TOPIC_STATUS] = mqtt[CONF_TOPIC_STATUS]
+                            user_input[CONF_TOPIC_MOTION_DETECTION] = mqtt[CONF_TOPIC_MOTION_DETECTION]
+                            user_input[CONF_TOPIC_BABY_CRYING] = mqtt[CONF_TOPIC_BABY_CRYING]
+                            user_input[CONF_TOPIC_MOTION_DETECTION_IMAGE] = mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]
 
                             return self.async_create_entry(
                                 title=user_input[CONF_NAME],
