@@ -52,7 +52,6 @@ class YiMQTTMotionDetectionSensor(BinarySensorEntity):
         @callback
         def message_received(msg):
             """Handle new MQTT messages."""
-            _LOGGER.error("Message md received")
             data = msg.payload
 
             self._state = data
