@@ -19,6 +19,7 @@
       "cannot_get_mac_or_serial": "Cannot get mac address or serial number",
       "cannot_get_conf": "Cannot get configuration",
       "cannot_get_mqtt_conf": "Cannot get mqtt configuration",
+      "cannot_send_ptz": "Cannot send ptz command",
       "unknown": "[%key:common::config_flow::error::unknown%]"
     },
     "abort": {

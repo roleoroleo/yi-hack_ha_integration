@@ -29,6 +29,7 @@ from .const import (
     DEFAULT_EXTRA_ARGUMENTS,
     CONF_HACK_NAME,
     CONF_SERIAL,
+    CONF_PTZ,
     CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
     CONF_TOPIC_STATUS,
@@ -90,9 +91,15 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 except KeyError:
                     mac = None
 
+                try:
+                    ptz = response.json()["ptz"]
+                except KeyError:
+                    ptz = "no"
+
                 if serial_number is not None and mac is not None:
                     user_input[CONF_SERIAL] = serial_number
                     user_input[CONF_MAC] = format_mac(mac)
+                    user_input[CONF_PTZ] = ptz
                 else:
                     _LOGGER.error("Unable to get mac address or serial number from device %s", host)
                     errors["base"] = "cannot_get_mac_or serial"

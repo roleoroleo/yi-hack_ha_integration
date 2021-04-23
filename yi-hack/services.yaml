@@ -1,0 +1,34 @@
+ptz:
+  name: ptz
+  description: Pan/Tilt service for yi-hack camera.
+  fields:
+    entity_id:
+      description: Name of entities to move.
+      required: true
+      example: "camera.living_room_camera"
+      selector:
+        entity:
+          integration: yi-hack
+          domain: camera
+    movement:
+      description: "Direction of the movement. Allowed values: up, down, left and right."
+      required: true
+      example: "left"
+      selector:
+        select:
+          options:
+            - "up"
+            - "down"
+            - "left"
+            - "right"
+    travel_time:
+      description: "(Optional) Travel time in seconds. Allowed values: float from 0 to 5. Default: 0.3"
+      required: false
+      example: 0.3
+      selector:
+        number:
+          min: 0
+          max: 5
+          step: 0.1
+          unit_of_measurement: "s"
+          mode: box

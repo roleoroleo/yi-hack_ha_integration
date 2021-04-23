@@ -19,6 +19,7 @@
       "cannot_get_mac_or_serial": "Impossibile ottenere l'indirizzo mac o il numero di serie",
       "cannot_get_conf": "Impossibile ottenere la configurazione",
       "cannot_get_mqtt_conf": "Impossibile ottenere la configurazione mqtt",
+      "cannot_send_ptz": "Impossibile inviare il comando ptz",
       "unknown": "Errore imprevisto"
     },
     "abort": {

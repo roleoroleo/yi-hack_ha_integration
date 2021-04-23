@@ -7,6 +7,7 @@ from haffmpeg.camera import CameraMjpeg
 from haffmpeg.tools import IMAGE_JPEG, ImageFrame
 import requests
 from requests.auth import HTTPBasicAuth
+import voluptuous as vol
 
 from homeassistant.components import mqtt
 from homeassistant.components.camera import Camera
@@ -21,13 +22,17 @@ from homeassistant.const import (
     CONF_USERNAME,
     CONF_MAC,
 )
+import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.core import callback
 
 from .const import (
     DOMAIN,
     DEFAULT_BRAND,
+    SERVICE_PTZ,
     CONF_SERIAL,
+    CONF_PTZ,
     CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
     CONF_TOPIC_MOTION_DETECTION_IMAGE
@@ -35,10 +40,34 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
+DIR_UP = "up"
+DIR_DOWN = "down"
+DIR_LEFT = "left"
+DIR_RIGHT = "right"
+ATTR_MOVEMENT = "movement"
+ATTR_TRAVELTIME = "travel_time"
+DEFAULT_TRAVELTIME = 0.3
+
 ICON = "mdi:camera"
 
 async def async_setup_entry(hass, config, async_add_entities):
     """Set up a Yi Camera."""
+    platform = entity_platform.current_platform.get()
+    platform.async_register_entity_service(
+        SERVICE_PTZ,
+        {
+            vol.Required(ATTR_MOVEMENT): vol.In(
+                [
+                    DIR_UP,
+                    DIR_DOWN,
+                    DIR_LEFT,
+                    DIR_RIGHT,
+                ]
+            ),
+            vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
+        },
+        "async_perform_ptz",
+    )
     async_add_entities(
         [
             YiCamera(hass, config),
@@ -75,6 +104,7 @@ class YiCamera(Camera):
             self._still_image_url = "http://" + self._host + ":" + self._port + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
+        self._ptz = config.data[CONF_PTZ]
 
     async def stream_source(self):
         """Return the stream source."""
@@ -138,6 +168,30 @@ class YiCamera(Camera):
             )
         finally:
             await stream.close()
+
+    async def async_perform_ptz(self, movement, travel_time):
+        """Perform a PTZ action on the camera."""
+        _LOGGER.debug("PTZ action '%s' on %s", movement, self._name)
+
+        if (self._ptz == "no"):
+            _LOGGER.error("PTZ is not available on %s", self._name)
+            return
+
+        try:
+            travel_time_str = str(travel_time)
+        except ValueError:
+            travel_time_str = str(DEFAULT_TRAVELTIME)
+
+        auth = None
+        if self._user or self._password:
+            auth = HTTPBasicAuth(user, password)
+
+        try:
+            response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=5, auth=auth)
+            if response.status_code >= 300:
+                _LOGGER.error("Failed to send ptz command to device %s", self._host)
+        except requests.exceptions.RequestException as error:
+            _LOGGER.error("Failed to get send ptz command to device %s: error %s", self._host, error)
 
     @property
     def brand(self):
