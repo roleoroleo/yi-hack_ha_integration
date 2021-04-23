@@ -77,10 +77,17 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 except KeyError:
                     ptz = "no"
 
+                try:
+                    hackname = response["name"]
+                except KeyError:
+                    hackname = DEFAULT_BRAND
+
                 if serial_number is not None and mac is not None:
                     user_input[CONF_SERIAL] = serial_number
                     user_input[CONF_MAC] = format_mac(mac)
                     user_input[CONF_PTZ] = ptz
+                    user_input[CONF_HACK_NAME] = hackname
+                    user_input[CONF_NAME] = user_input[CONF_HACK_NAME] + "-" + user_input[CONF_MAC].replace(':', '')
                 else:
                     _LOGGER.error("Unable to get mac address or serial number from device %s", host)
                     errors["base"] = "cannot_get_mac_or serial"
@@ -93,17 +100,6 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         if entry.data[CONF_MAC] == user_input[CONF_MAC]:
                             _LOGGER.error("Device already configured: %s", host)
                             return self.async_abort(reason="already_configured")
-                    try:
-                        hackname = response.json()["name"]
-                    except KeyError:
-                        hackname = None
-
-                    if hackname is not None:
-                        user_input[CONF_HACK_NAME] = hackname
-                    else:
-                        user_input[CONF_HACK_NAME] = DEFAULT_BRAND
-                    user_input[CONF_NAME] = user_input[CONF_HACK_NAME] + "-" + user_input[CONF_MAC].replace(':', '')
-                    user_input[CONF_DONE] = False
 
                     return self.async_create_entry(
                         title=user_input[CONF_NAME],
