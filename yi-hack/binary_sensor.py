@@ -67,6 +67,14 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._name = self._device_name + "_motion_detection"
             self._unique_id = self._device_name + "_bsmd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
+        elif (sensor_type == CONF_TOPIC_AI_HUMAN_DETECTION):
+            self._name = self._device_name + "_ai_human_detection"
+            self._unique_id = self._device_name + "_bsah"
+            self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_AI_HUMAN_DETECTION]
+        elif (sensor_type == CONF_TOPIC_SOUND_DETECTION):
+            self._name = self._device_name + "_sound_detection"
+            self._unique_id = self._device_name + "_bssd"
+            self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_SOUND_DETECTION]
         elif (sensor_type == CONF_TOPIC_BABY_CRYING):
             self._name = self._device_name + "_baby_crying"
             self._unique_id = self._device_name + "_bsbc"
