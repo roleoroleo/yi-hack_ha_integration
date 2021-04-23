@@ -11,7 +11,10 @@ This integration is available from the Lovelace frontend without the need to con
 The wizard will connect to your cam and will install the following entities:
 - ffmpeg cam with stream and snapshot capabilities
 - mqtt cam with the last frame saved during a motion detection event
+- mqtt binary sensor for status
 - mqtt binary sensor for motion detection
+- mqtt binary sensor for ai human detection (there are known issues when enabling ai human detection)
+- mqtt binary sensor for sound detection
 - mqtt binary sensor for baby crying detection
 
 ## Installation
@@ -25,9 +28,11 @@ It should look similar to this:
 |       |-- __init__.py
 |       |-- binary_sensor.py
 |       |-- camera.py
+|       |-- config.py
 |       |-- config_flow.py
 |       |-- const.py
 |       |-- manifest.json
+|       |-- services.yaml
 |       |-- strings.json
 ```
 **(2)** Restart Home Assistant
