@@ -27,11 +27,14 @@ from .const import (
     DEFAULT_USERNAME,
     DEFAULT_PASSWORD,
     DEFAULT_EXTRA_ARGUMENTS,
+    CONF_HACK_NAME,
     CONF_SERIAL,
     CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
     CONF_TOPIC_STATUS,
     CONF_TOPIC_MOTION_DETECTION,
+    CONF_TOPIC_AI_HUMAN_DETECTION,
+    CONF_TOPIC_SOUND_DETECTION,
     CONF_TOPIC_BABY_CRYING,
     CONF_TOPIC_MOTION_DETECTION_IMAGE,
 )
@@ -103,15 +106,15 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             _LOGGER.error("Device already configured: %s", host)
                             return self.async_abort(reason="already_configured")
                     try:
-                        name = response.json()["name"]
+                        hackname = response.json()["name"]
                     except KeyError:
-                        name = None
+                        hackname = None
 
-                    if name is not None:
-                        user_input[CONF_NAME] = name
+                    if hackname is not None:
+                        user_input[CONF_HACK_NAME] = hackname
                     else:
-                        user_input[CONF_NAME] = DEFAULT_BRAND
-                    user_input[CONF_NAME] = user_input[CONF_NAME] + "-" + user_input[CONF_MAC].replace(':', '')
+                        user_input[CONF_HACK_NAME] = DEFAULT_BRAND
+                    user_input[CONF_NAME] = user_input[CONF_HACK_NAME] + "-" + user_input[CONF_MAC].replace(':', '')
 
                     try:
                         response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=system", timeout=5, auth=auth)
@@ -141,6 +144,8 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                             user_input[CONF_MQTT_PREFIX] = mqtt[CONF_MQTT_PREFIX]
                             user_input[CONF_TOPIC_STATUS] = mqtt[CONF_TOPIC_STATUS]
                             user_input[CONF_TOPIC_MOTION_DETECTION] = mqtt[CONF_TOPIC_MOTION_DETECTION]
+                            user_input[CONF_TOPIC_AI_HUMAN_DETECTION] = mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]
+                            user_input[CONF_TOPIC_SOUND_DETECTION] = mqtt[CONF_TOPIC_SOUND_DETECTION]
                             user_input[CONF_TOPIC_BABY_CRYING] = mqtt[CONF_TOPIC_BABY_CRYING]
                             user_input[CONF_TOPIC_MOTION_DETECTION_IMAGE] = mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]
 
