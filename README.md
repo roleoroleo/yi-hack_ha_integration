@@ -20,6 +20,7 @@ The wizard will connect to your cam and will install the following entities:
 
 ## Installation
 **(1)** Create the `custom_components` folder in your configuration directory.
+
 **(2)** Copy the  `yi_hack`folder in your  `custom_components` directory.
 It should look similar to this:
 ```
