@@ -8,7 +8,7 @@ ptz:
       example: "camera.living_room_camera"
       selector:
         entity:
-          integration: yi-hack
+          integration: yi_hack
           domain: camera
     movement:
       description: "Direction of the movement. Allowed values: up, down, left and right."

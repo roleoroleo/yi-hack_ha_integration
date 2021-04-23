@@ -1,4 +1,4 @@
-DOMAIN = "yi-hack"
+DOMAIN = "yi_hack"
 
 DEFAULT_BRAND = "yi-hack"
 
