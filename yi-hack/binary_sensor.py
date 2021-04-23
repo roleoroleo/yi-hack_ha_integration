@@ -5,6 +5,9 @@ import logging
 from homeassistant.components import mqtt
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
+
+from .config import async_get_conf
+
 from homeassistant.const import (
     CONF_NAME,
 )
@@ -23,6 +26,7 @@ from .const import (
     CONF_TOPIC_AI_HUMAN_DETECTION,
     CONF_TOPIC_SOUND_DETECTION,
     CONF_TOPIC_BABY_CRYING,
+    CONF_DONE,
 )
 
 ICON = "mdi:update"
@@ -31,6 +35,10 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config, async_add_entities):
     """Set up MQTT motion detection sensor."""
+
+    if not config.data[CONF_DONE]:
+        await async_get_conf(hass, config)
+
     if (config.data[CONF_HACK_NAME] == MSTAR):
         async_add_entities(
             [

@@ -17,8 +17,6 @@ from homeassistant.components.ffmpeg import CONF_EXTRA_ARGUMENTS
 
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
-from functools import partial
-
 from .const import (
     DOMAIN,
     DEFAULT_BRAND,
@@ -30,14 +28,7 @@ from .const import (
     CONF_HACK_NAME,
     CONF_SERIAL,
     CONF_PTZ,
-    CONF_RTSP_PORT,
-    CONF_MQTT_PREFIX,
-    CONF_TOPIC_STATUS,
-    CONF_TOPIC_MOTION_DETECTION,
-    CONF_TOPIC_AI_HUMAN_DETECTION,
-    CONF_TOPIC_SOUND_DETECTION,
-    CONF_TOPIC_BABY_CRYING,
-    CONF_TOPIC_MOTION_DETECTION_IMAGE,
+    CONF_DONE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -122,44 +113,12 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     else:
                         user_input[CONF_HACK_NAME] = DEFAULT_BRAND
                     user_input[CONF_NAME] = user_input[CONF_HACK_NAME] + "-" + user_input[CONF_MAC].replace(':', '')
+                    user_input[CONF_DONE] = False
 
-                    try:
-                        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=system", timeout=5, auth=auth)
-                        if response.status_code >= 300:
-                            _LOGGER.error("Failed to get configuration from device %s", host)
-                            errors["base"] = "cannot_get_conf"
-                    except requests.exceptions.RequestException as error:
-                        _LOGGER.error("Failed to get configuration from device %s: error %s", host, error)
-                        errors["base"] = "cannot_get_conf"
-
-                    if not errors and response is not None:
-                        conf = response.json()
-
-                        try:
-                            response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=5, auth=auth)
-                            if response.status_code >= 300:
-                                _LOGGER.error("Failed to get mqtt configuration from device %s", host)
-                                errors["base"] = "cannot_get_mqtt_conf"
-                        except requests.exceptions.RequestException as error:
-                            _LOGGER.error("Failed to get mqtt configuration from device %s: error %s", host, error)
-                            errors["base"] = "cannot_get_mqtt_conf"
-
-                        if not errors and response is not None:
-                            mqtt = response.json()
-
-                            user_input[CONF_RTSP_PORT] = conf[CONF_RTSP_PORT]
-                            user_input[CONF_MQTT_PREFIX] = mqtt[CONF_MQTT_PREFIX]
-                            user_input[CONF_TOPIC_STATUS] = mqtt[CONF_TOPIC_STATUS]
-                            user_input[CONF_TOPIC_MOTION_DETECTION] = mqtt[CONF_TOPIC_MOTION_DETECTION]
-                            user_input[CONF_TOPIC_AI_HUMAN_DETECTION] = mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]
-                            user_input[CONF_TOPIC_SOUND_DETECTION] = mqtt[CONF_TOPIC_SOUND_DETECTION]
-                            user_input[CONF_TOPIC_BABY_CRYING] = mqtt[CONF_TOPIC_BABY_CRYING]
-                            user_input[CONF_TOPIC_MOTION_DETECTION_IMAGE] = mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]
-
-                            return self.async_create_entry(
-                                title=user_input[CONF_NAME],
-                                data=user_input
-                            )
+                    return self.async_create_entry(
+                        title=user_input[CONF_NAME],
+                        data=user_input
+                    )
 
         return self.async_show_form(
             step_id="user",

@@ -12,8 +12,16 @@ import voluptuous as vol
 from homeassistant.components import mqtt
 from homeassistant.components.camera import Camera
 from homeassistant.components.ffmpeg import DATA_FFMPEG, CONF_EXTRA_ARGUMENTS
-from homeassistant.const import HTTP_BASIC_AUTHENTICATION
+
+import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers import entity_platform
+from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
+from homeassistant.core import callback
+
+from .config import async_get_conf
+
 from homeassistant.const import (
+    HTTP_BASIC_AUTHENTICATION,
     CONF_NAME,
     CONF_HOST,
     CONF_PORT,
@@ -22,10 +30,6 @@ from homeassistant.const import (
     CONF_USERNAME,
     CONF_MAC,
 )
-import homeassistant.helpers.config_validation as cv
-from homeassistant.helpers import entity_platform
-from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
-from homeassistant.core import callback
 
 from .const import (
     DOMAIN,
@@ -35,7 +39,8 @@ from .const import (
     CONF_PTZ,
     CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
-    CONF_TOPIC_MOTION_DETECTION_IMAGE
+    CONF_TOPIC_MOTION_DETECTION_IMAGE,
+    CONF_DONE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -52,6 +57,10 @@ ICON = "mdi:camera"
 
 async def async_setup_entry(hass, config, async_add_entities):
     """Set up a Yi Camera."""
+
+    if not config.data[CONF_DONE]:
+        await async_get_conf(hass, config)
+
     platform = entity_platform.current_platform.get()
     platform.async_register_entity_service(
         SERVICE_PTZ,
