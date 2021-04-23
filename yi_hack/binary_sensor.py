@@ -6,8 +6,6 @@ from homeassistant.components import mqtt
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.core import callback
 
-from .config import get_system_conf, get_mqtt_conf
-
 from homeassistant.const import (
     CONF_NAME,
 )
@@ -20,15 +18,12 @@ from .const import (
     ALLWINNERV2,
     CONF_HACK_NAME,
     CONF_SERIAL,
-    CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
     CONF_TOPIC_STATUS,
     CONF_TOPIC_MOTION_DETECTION,
     CONF_TOPIC_AI_HUMAN_DETECTION,
     CONF_TOPIC_SOUND_DETECTION,
     CONF_TOPIC_BABY_CRYING,
-    CONF_TOPIC_MOTION_DETECTION_IMAGE,
-    CONF_DONE,
 )
 
 ICON = "mdi:update"
@@ -38,39 +33,24 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config, async_add_entities):
     """Set up MQTT motion detection sensor."""
 
-    if not config.data[CONF_DONE]:
-        conf = await hass.async_add_executor_job(get_system_conf, config)
-        mqtt = await hass.async_add_executor_job(get_mqtt_conf, config)
-
-        if conf is not None and mqtt is not None:
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_RTSP_PORT: conf[CONF_RTSP_PORT]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_MQTT_PREFIX: mqtt[CONF_MQTT_PREFIX]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_STATUS: mqtt[CONF_TOPIC_STATUS]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION: mqtt[CONF_TOPIC_MOTION_DETECTION]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_AI_HUMAN_DETECTION: mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION_IMAGE: mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_DONE: True})
-
-        if (config.data[CONF_HACK_NAME] == MSTAR):
-            async_add_entities(
-                [
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_STATUS),
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_MOTION_DETECTION),
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_BABY_CRYING)
-                ]
-            )
-        elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
-            async_add_entities(
-                [
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_STATUS),
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_MOTION_DETECTION),
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_AI_HUMAN_DETECTION),
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_SOUND_DETECTION),
-                    YiMQTTBinarySensor(hass, config, CONF_TOPIC_BABY_CRYING)
-                ]
-            )
+    if (config.data[CONF_HACK_NAME] == MSTAR):
+        async_add_entities(
+            [
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_STATUS),
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_MOTION_DETECTION),
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_BABY_CRYING)
+            ]
+        )
+    elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
+        async_add_entities(
+            [
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_STATUS),
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_MOTION_DETECTION),
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_AI_HUMAN_DETECTION),
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_SOUND_DETECTION),
+                YiMQTTBinarySensor(hass, config, CONF_TOPIC_BABY_CRYING)
+            ]
+        )
 
 class YiMQTTBinarySensor(BinarySensorEntity):
     """Representation of a motion detection sensor that is updated via MQTT."""

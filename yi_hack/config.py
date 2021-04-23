@@ -10,18 +10,6 @@ from homeassistant.const import (
     CONF_PASSWORD,
 )
 
-from .const import (
-    CONF_RTSP_PORT,
-    CONF_MQTT_PREFIX,
-    CONF_TOPIC_STATUS,
-    CONF_TOPIC_MOTION_DETECTION,
-    CONF_TOPIC_AI_HUMAN_DETECTION,
-    CONF_TOPIC_SOUND_DETECTION,
-    CONF_TOPIC_BABY_CRYING,
-    CONF_TOPIC_MOTION_DETECTION_IMAGE,
-    CONF_DONE,
-)
-
 _LOGGER = logging.getLogger(__name__)
 
 def get_status(config):
@@ -48,7 +36,7 @@ def get_status(config):
     if error:
         response = None
 
-    return response
+    return response.json()
 
 def get_system_conf(config):
     """Get system configuration from camera."""
@@ -101,29 +89,3 @@ def get_mqtt_conf(config):
         response = None
 
     return response.json()
-
-#async def async_get_conf(hass, config):
-#    """Get configuration from camera."""
-#
-#    _LOGGER.error("gh0")
-#    response = await hass.async_add_executor_job(_fetch_system_conf, config)
-#    _LOGGER.error("gh1")
-#
-#    if response is not None:
-#        conf = response.json()
-#        _LOGGER.error("gh2")
-#
-#        response = await hass.async_add_executor_job(_fetch_mqtt_conf, config)
-#        if response is not None:
-#            mqtt = response.json()
-#            _LOGGER.error("gh3")
-#
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_RTSP_PORT: conf[CONF_RTSP_PORT]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_MQTT_PREFIX: mqtt[CONF_MQTT_PREFIX]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_STATUS: mqtt[CONF_TOPIC_STATUS]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION: mqtt[CONF_TOPIC_MOTION_DETECTION]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_AI_HUMAN_DETECTION: mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION_IMAGE: mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]})
-#            hass.config_entries.async_update_entry(config, data={**config.data, CONF_DONE: True})

@@ -1,5 +1,4 @@
 import logging
-import requests
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -15,8 +14,6 @@ from homeassistant.const import (
 from homeassistant.helpers.device_registry import format_mac
 from homeassistant.components.ffmpeg import CONF_EXTRA_ARGUMENTS
 
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
-
 from .config import get_status
 
 from .const import (
@@ -30,7 +27,6 @@ from .const import (
     CONF_HACK_NAME,
     CONF_SERIAL,
     CONF_PTZ,
-    CONF_DONE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -67,17 +63,17 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             response = await self.hass.async_add_executor_job(get_status, user_input)
             if response is not None:
                 try:
-                    serial_number = response.json()["serial_number"]
+                    serial_number = response["serial_number"]
                 except KeyError:
                     serial_number = None
 
                 try:
-                    mac = response.json()["mac_addr"]
+                    mac = response["mac_addr"]
                 except KeyError:
                     mac = None
 
                 try:
-                    ptz = response.json()["ptz"]
+                    ptz = response["ptz"]
                 except KeyError:
                     ptz = "no"
 

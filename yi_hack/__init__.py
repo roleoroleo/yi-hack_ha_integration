@@ -6,7 +6,20 @@ import asyncio
 from homeassistant.core import HomeAssistant
 from homeassistant.config_entries import ConfigEntry
 
-from .const import DOMAIN, CONF_SERIAL
+from .config import get_system_conf, get_mqtt_conf
+
+from .const import (
+    DOMAIN,
+    CONF_SERIAL,
+    CONF_RTSP_PORT,
+    CONF_MQTT_PREFIX,
+    CONF_TOPIC_STATUS,
+    CONF_TOPIC_MOTION_DETECTION,
+    CONF_TOPIC_AI_HUMAN_DETECTION,
+    CONF_TOPIC_SOUND_DETECTION,
+    CONF_TOPIC_BABY_CRYING,
+    CONF_TOPIC_MOTION_DETECTION_IMAGE,
+)
 
 PLATFORMS = ["camera", "binary_sensor"]
 
@@ -24,12 +37,27 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = entry.data[CONF_SERIAL]
 
-    for component in PLATFORMS:
-        hass.async_create_task(
-            hass.config_entries.async_forward_entry_setup(entry, component)
-        )
+    conf = await hass.async_add_executor_job(get_system_conf, entry)
+    mqtt = await hass.async_add_executor_job(get_mqtt_conf, entry)
 
-    return True
+    if conf is not None and mqtt is not None:
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_RTSP_PORT: conf[CONF_RTSP_PORT]})
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_MQTT_PREFIX: mqtt[CONF_MQTT_PREFIX]})
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_STATUS: mqtt[CONF_TOPIC_STATUS]})
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_MOTION_DETECTION: mqtt[CONF_TOPIC_MOTION_DETECTION]})
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_AI_HUMAN_DETECTION: mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]})
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION]})
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING]})
+        hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_MOTION_DETECTION_IMAGE: mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]})
+
+        for component in PLATFORMS:
+            hass.async_create_task(
+                hass.config_entries.async_forward_entry_setup(entry, component)
+            )
+
+        return True
+    else:
+        return False
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""

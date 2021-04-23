@@ -1,7 +1,6 @@
 """Support for Xiaomi Cameras: yi-hack-MStar, yi-hack-Allwinner and yi-hack-Allwinner-v2."""
 import asyncio
 import logging
-import functools
 
 from haffmpeg.camera import CameraMjpeg
 from haffmpeg.tools import IMAGE_JPEG, ImageFrame
@@ -18,10 +17,7 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.core import callback
 
-from .config import get_system_conf, get_mqtt_conf
-
 from homeassistant.const import (
-    HTTP_BASIC_AUTHENTICATION,
     CONF_NAME,
     CONF_HOST,
     CONF_PORT,
@@ -39,13 +35,7 @@ from .const import (
     CONF_PTZ,
     CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
-    CONF_TOPIC_STATUS,
-    CONF_TOPIC_MOTION_DETECTION,
-    CONF_TOPIC_AI_HUMAN_DETECTION,
-    CONF_TOPIC_SOUND_DETECTION,
-    CONF_TOPIC_BABY_CRYING,
     CONF_TOPIC_MOTION_DETECTION_IMAGE,
-    CONF_DONE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -63,46 +53,29 @@ ICON = "mdi:camera"
 async def async_setup_entry(hass, config, async_add_entities):
     """Set up a Yi Camera."""
 
-    if not config.data[CONF_DONE]:
-        conf = await hass.async_add_executor_job(get_system_conf, config)
-        mqtt = await hass.async_add_executor_job(get_mqtt_conf, config)
-
-        if conf is not None and mqtt is not None:
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_RTSP_PORT: conf[CONF_RTSP_PORT]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_MQTT_PREFIX: mqtt[CONF_MQTT_PREFIX]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_STATUS: mqtt[CONF_TOPIC_STATUS]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION: mqtt[CONF_TOPIC_MOTION_DETECTION]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_AI_HUMAN_DETECTION: mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION_IMAGE: mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]})
-            hass.config_entries.async_update_entry(config, data={**config.data, CONF_DONE: True})
-
-#        response = async_get_conf(hass, config)
-
-        platform = entity_platform.current_platform.get()
-        platform.async_register_entity_service(
-            SERVICE_PTZ,
-            {
-                vol.Required(ATTR_MOVEMENT): vol.In(
-                    [
-                        DIR_UP,
-                        DIR_DOWN,
-                        DIR_LEFT,
-                        DIR_RIGHT,
-                    ]
-                    ),
-                vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
-            },
-            "async_perform_ptz",
-        )
-        async_add_entities(
-            [
-                YiCamera(hass, config),
-                YiMqttCamera(hass, config)
-            ],
-            True
-        )
+    platform = entity_platform.current_platform.get()
+    platform.async_register_entity_service(
+        SERVICE_PTZ,
+        {
+            vol.Required(ATTR_MOVEMENT): vol.In(
+                [
+                    DIR_UP,
+                    DIR_DOWN,
+                    DIR_LEFT,
+                    DIR_RIGHT,
+                ]
+                ),
+            vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
+        },
+        "async_perform_ptz",
+    )
+    async_add_entities(
+        [
+            YiCamera(hass, config),
+            YiMqttCamera(hass, config)
+        ],
+        True
+    )
 
 class YiCamera(Camera):
     """Define an implementation of a Yi Camera."""
