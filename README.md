@@ -12,29 +12,36 @@ The wizard will connect to your cam and will install the following entities:
 - ffmpeg cam with stream and snapshot capabilities
 - mqtt cam with the last frame saved during a motion detection event
 - mqtt binary sensor for motion detection
+- mqtt binary sensor for ai human detection (there are known issues when enabling ai human detection)
+- mqtt binary sensor for sound detection
 - mqtt binary sensor for baby crying detection
+- ptz service (if your cam supports it)
 
 ## Installation
-**(1)** Place the `custom_components` folder in your configuration directory.
+**(1)** Create the `custom_components` folder in your configuration directory.
+**(2)** Copy the  `yi_hack`folder in your  `custom_components` directory.
 It should look similar to this:
 ```
 <config directory>/
 |-- custom_components/
-|   |-- yi-hack/
+|   |-- yi_hack/
 |       |-- translations/
 |       |-- __init__.py
 |       |-- binary_sensor.py
 |       |-- camera.py
+|       |-- config.py
 |       |-- config_flow.py
 |       |-- const.py
 |       |-- manifest.json
+|       |-- services.yaml
 |       |-- strings.json
 ```
-**(2)** Restart Home Assistant
+**(3)** Restart Home Assistant
 
-**(3)** Configure device and entities:
+**(4)** Configure device and entities:
 - Go to Settings -> Integrations
 - Click "Add Integration" in the lower-right corner
+- Select "Yi Cam with yi-hack" integration
 - Enter the settings for your cam: host, port, username, password and ffmpeg parameters
 - Confirm and wait for the wizard completion
 - Set the "Area" if you need it
