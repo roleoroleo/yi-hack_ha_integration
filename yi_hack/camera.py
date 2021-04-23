@@ -18,7 +18,7 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.core import callback
 
-from .config import async_get_conf
+from .config import get_system_conf, get_mqtt_conf
 
 from homeassistant.const import (
     HTTP_BASIC_AUTHENTICATION,
@@ -39,6 +39,11 @@ from .const import (
     CONF_PTZ,
     CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
+    CONF_TOPIC_STATUS,
+    CONF_TOPIC_MOTION_DETECTION,
+    CONF_TOPIC_AI_HUMAN_DETECTION,
+    CONF_TOPIC_SOUND_DETECTION,
+    CONF_TOPIC_BABY_CRYING,
     CONF_TOPIC_MOTION_DETECTION_IMAGE,
     CONF_DONE,
 )
@@ -59,31 +64,45 @@ async def async_setup_entry(hass, config, async_add_entities):
     """Set up a Yi Camera."""
 
     if not config.data[CONF_DONE]:
-        await async_get_conf(hass, config)
+        conf = await hass.async_add_executor_job(get_system_conf, config)
+        mqtt = await hass.async_add_executor_job(get_mqtt_conf, config)
 
-    platform = entity_platform.current_platform.get()
-    platform.async_register_entity_service(
-        SERVICE_PTZ,
-        {
-            vol.Required(ATTR_MOVEMENT): vol.In(
-                [
-                    DIR_UP,
-                    DIR_DOWN,
-                    DIR_LEFT,
-                    DIR_RIGHT,
-                ]
-            ),
-            vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
-        },
-        "async_perform_ptz",
-    )
-    async_add_entities(
-        [
-            YiCamera(hass, config),
-            YiMqttCamera(hass, config)
-        ],
-        True
-    )
+        if conf is not None and mqtt is not None:
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_RTSP_PORT: conf[CONF_RTSP_PORT]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_MQTT_PREFIX: mqtt[CONF_MQTT_PREFIX]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_STATUS: mqtt[CONF_TOPIC_STATUS]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION: mqtt[CONF_TOPIC_MOTION_DETECTION]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_AI_HUMAN_DETECTION: mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_TOPIC_MOTION_DETECTION_IMAGE: mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE]})
+            hass.config_entries.async_update_entry(config, data={**config.data, CONF_DONE: True})
+
+#        response = async_get_conf(hass, config)
+
+        platform = entity_platform.current_platform.get()
+        platform.async_register_entity_service(
+            SERVICE_PTZ,
+            {
+                vol.Required(ATTR_MOVEMENT): vol.In(
+                    [
+                        DIR_UP,
+                        DIR_DOWN,
+                        DIR_LEFT,
+                        DIR_RIGHT,
+                    ]
+                    ),
+                vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
+            },
+            "async_perform_ptz",
+        )
+        async_add_entities(
+            [
+                YiCamera(hass, config),
+                YiMqttCamera(hass, config)
+            ],
+            True
+        )
 
 class YiCamera(Camera):
     """Define an implementation of a Yi Camera."""
@@ -178,6 +197,18 @@ class YiCamera(Camera):
         finally:
             await stream.close()
 
+    def _perform_ptz(self, movement, travel_time_str):
+        auth = None
+        if self._user or self._password:
+            auth = HTTPBasicAuth(user, password)
+
+        try:
+            response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=5, auth=auth)
+            if response.status_code >= 300:
+                _LOGGER.error("Failed to send ptz command to device %s", self._host)
+        except requests.exceptions.RequestException as error:
+            _LOGGER.error("Failed to get send ptz command to device %s: error %s", self._host, error)
+
     async def async_perform_ptz(self, movement, travel_time):
         """Perform a PTZ action on the camera."""
         _LOGGER.debug("PTZ action '%s' on %s", movement, self._name)
@@ -191,16 +222,7 @@ class YiCamera(Camera):
         except ValueError:
             travel_time_str = str(DEFAULT_TRAVELTIME)
 
-        auth = None
-        if self._user or self._password:
-            auth = HTTPBasicAuth(user, password)
-
-        try:
-            response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=5, auth=auth)
-            if response.status_code >= 300:
-                _LOGGER.error("Failed to send ptz command to device %s", self._host)
-        except requests.exceptions.RequestException as error:
-            _LOGGER.error("Failed to get send ptz command to device %s: error %s", self._host, error)
+        await self.hass.async_add_executor_job(self._perform_ptz, movement, travel_time_str)
 
     @property
     def brand(self):

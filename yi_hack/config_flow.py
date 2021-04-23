@@ -17,6 +17,8 @@ from homeassistant.components.ffmpeg import CONF_EXTRA_ARGUMENTS
 
 from requests.auth import HTTPBasicAuth, HTTPDigestAuth
 
+from .config import get_status
+
 from .const import (
     DOMAIN,
     DEFAULT_BRAND,
@@ -62,16 +64,8 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             if user or password:
                 auth = HTTPBasicAuth(user, password)
 
-            try:
-                response = requests.get("http://" + host + ":" + port + "/cgi-bin/status.json", timeout=5, auth=auth)
-                if response.status_code >= 300:
-                    _LOGGER.error("Failed to connect to device %s", host)
-                    errors["base"] = "cannot_connect"
-            except requests.exceptions.RequestException as error:
-                _LOGGER.error("Failed to connect to device %s: error %s", host, error)
-                errors["base"] = "cannot_connect"
-
-            if not errors and response is not None:
+            response = await self.hass.async_add_executor_job(get_status, user_input)
+            if response is not None:
                 try:
                     serial_number = response.json()["serial_number"]
                 except KeyError:
