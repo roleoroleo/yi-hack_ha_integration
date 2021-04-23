@@ -16,6 +16,7 @@ The wizard will connect to your cam and will install the following entities:
 - mqtt binary sensor for ai human detection (there are known issues when enabling ai human detection)
 - mqtt binary sensor for sound detection
 - mqtt binary sensor for baby crying detection
+- ptz service (if your cam supports it)
 
 ## Installation
 **(1)** Place the `custom_components` folder in your configuration directory.
