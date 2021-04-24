@@ -31,6 +31,7 @@ from .const import (
     DOMAIN,
     DEFAULT_BRAND,
     SERVICE_PTZ,
+    SERVICE_SPEAK,
     CONF_SERIAL,
     CONF_PTZ,
     CONF_RTSP_PORT,
@@ -47,6 +48,17 @@ DIR_RIGHT = "right"
 ATTR_MOVEMENT = "movement"
 ATTR_TRAVELTIME = "travel_time"
 DEFAULT_TRAVELTIME = 0.3
+
+LANG_DE = "de-DE"
+LANG_GB = "en-GB"
+LANG_US = "en-US"
+LANG_ES = "es-ES"
+LANG_FR = "fr-FR"
+LANG_IT = "it-IT"
+ATTR_LANGUAGE = "language"
+ATTR_SENTENCE = "sentence"
+DEFAULT_LANGUAGE = "en-US"
+DEFAULT_SENTENCE = ""
 
 ICON = "mdi:camera"
 
@@ -68,6 +80,23 @@ async def async_setup_entry(hass, config, async_add_entities):
             vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
         },
         "async_perform_ptz",
+    )
+    platform.async_register_entity_service(
+        SERVICE_SPEAK,
+        {
+            vol.Required(ATTR_LANGUAGE, default=DEFAULT_LANGUAGE): vol.In(
+                [
+                    LANG_DE,
+                    LANG_GB,
+                    LANG_US,
+                    LANG_ES,
+                    LANG_FR,
+                    LANG_IT,
+                ]
+            ),
+            vol.Required(ATTR_SENTENCE, default=DEFAULT_SENTENCE): str,
+        },
+        "async_perform_speak",
     )
     async_add_entities(
         [
@@ -196,6 +225,30 @@ class YiCamera(Camera):
             travel_time_str = str(DEFAULT_TRAVELTIME)
 
         await self.hass.async_add_executor_job(self._perform_ptz, movement, travel_time_str)
+
+    def _perform_speak(self, language, sentence):
+        auth = None
+        if self._user or self._password:
+            auth = HTTPBasicAuth(user, password)
+
+        try:
+            response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speak.sh?lang=" + language, data=sentence, timeout=5, auth=auth)
+            if response.status_code >= 300:
+                _LOGGER.error("Failed to send speak command to device %s", self._host)
+        except requests.exceptions.RequestException as error:
+            _LOGGER.error("Failed to send speak command to device %s: error %s", self._host, error)
+
+        if response is not None:
+            if response.json()["error"] == "true":
+                _LOGGER.error("Failed to send speak command to device %s: error %s", self._host, response.json()["description"])
+        else:
+            _LOGGER.error("Failed to send speak command to device %s: error unknown", self._host)
+
+    async def async_perform_speak(self, language, sentence):
+        """Perform a SPEAK action on the camera."""
+        _LOGGER.debug("SPEAK action on %s", self._name)
+
+        await self.hass.async_add_executor_job(self._perform_speak, language, sentence)
 
     @property
     def brand(self):

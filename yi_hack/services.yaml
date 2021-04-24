@@ -32,3 +32,35 @@ ptz:
           step: 0.1
           unit_of_measurement: "s"
           mode: box
+
+speak:
+  name: speak
+  description: TTS service for yi-hack camera.
+  fields:
+    entity_id:
+      description: Name of entity to use.
+      required: true
+      example: "camera.living_room_camera"
+      selector:
+        entity:
+          integration: yi_hack
+          domain: camera
+    language:
+      description: "Language of the TTS engine. Allowed values: de-DE, en-GB, en-US, es-ES, fr-FR, it-IT. Default: en-US"
+      required: true
+      example: "en-US"
+      selector:
+        select:
+          options:
+            - "de-DE"
+            - "en-GB"
+            - "en-US"
+            - "es-ES"
+            - "fr-FR"
+            - "it-IT"
+    sentence:
+      description: "Sentence to pronounce."
+      required: true
+      example: "Hello world!"
+      selector:
+        text:
