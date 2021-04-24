@@ -27,6 +27,14 @@ from .const import (
     CONF_HACK_NAME,
     CONF_SERIAL,
     CONF_PTZ,
+    CONF_RTSP_PORT,
+    CONF_MQTT_PREFIX,
+    CONF_TOPIC_STATUS,
+    CONF_TOPIC_MOTION_DETECTION,
+    CONF_TOPIC_AI_HUMAN_DETECTION,
+    CONF_TOPIC_SOUND_DETECTION,
+    CONF_TOPIC_BABY_CRYING,
+    CONF_TOPIC_MOTION_DETECTION_IMAGE,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -100,6 +108,15 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         if entry.data[CONF_MAC] == user_input[CONF_MAC]:
                             _LOGGER.error("Device already configured: %s", host)
                             return self.async_abort(reason="already_configured")
+
+                    user_input[CONF_RTSP_PORT] = None
+                    user_input[CONF_MQTT_PREFIX] = None
+                    user_input[CONF_TOPIC_STATUS] = None
+                    user_input[CONF_TOPIC_MOTION_DETECTION] = None
+                    user_input[CONF_TOPIC_AI_HUMAN_DETECTION] = None
+                    user_input[CONF_TOPIC_SOUND_DETECTION] = None
+                    user_input[CONF_TOPIC_BABY_CRYING] = None
+                    user_input[CONF_TOPIC_MOTION_DETECTION_IMAGE] = None
 
                     return self.async_create_entry(
                         title=user_input[CONF_NAME],
