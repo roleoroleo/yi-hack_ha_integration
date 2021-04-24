@@ -33,7 +33,7 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass, config, async_add_entities):
     """Set up MQTT motion detection sensor."""
 
-    if (config.data[CONF_HACK_NAME] == MSTAR):
+    if (config.data[CONF_HACK_NAME] == DEFAULT_BRAND) or (config.data[CONF_HACK_NAME] == MSTAR):
         async_add_entities(
             [
                 YiMQTTBinarySensor(hass, config, CONF_TOPIC_STATUS),
