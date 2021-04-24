@@ -3,7 +3,7 @@ ptz:
   description: Pan/Tilt service for yi-hack camera.
   fields:
     entity_id:
-      description: Name of entities to move.
+      description: Name of entity to move.
       required: true
       example: "camera.living_room_camera"
       selector:

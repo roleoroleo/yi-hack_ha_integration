@@ -64,7 +64,7 @@ async def async_setup_entry(hass, config, async_add_entities):
                     DIR_LEFT,
                     DIR_RIGHT,
                 ]
-                ),
+            ),
             vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
         },
         "async_perform_ptz",
@@ -180,7 +180,7 @@ class YiCamera(Camera):
             if response.status_code >= 300:
                 _LOGGER.error("Failed to send ptz command to device %s", self._host)
         except requests.exceptions.RequestException as error:
-            _LOGGER.error("Failed to get send ptz command to device %s: error %s", self._host, error)
+            _LOGGER.error("Failed to send ptz command to device %s: error %s", self._host, error)
 
     async def async_perform_ptz(self, movement, travel_time):
         """Perform a PTZ action on the camera."""

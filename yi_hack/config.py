@@ -35,6 +35,7 @@ def get_status(config):
 
     if error:
         response = None
+        return None
 
     return response.json()
 
@@ -61,6 +62,7 @@ def get_system_conf(config):
 
     if error:
         response = None
+        return None
 
     return response.json()
 
@@ -87,5 +89,6 @@ def get_mqtt_conf(config):
 
     if error:
         response = None
+        return None
 
     return response.json()
