@@ -64,10 +64,6 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             password = user_input[CONF_PASSWORD]
             extra_arguments = user_input[CONF_EXTRA_ARGUMENTS]
 
-            auth = None
-            if user or password:
-                auth = HTTPBasicAuth(user, password)
-
             response = await self.hass.async_add_executor_job(get_status, user_input)
             if response is not None:
                 try:
