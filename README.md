@@ -17,6 +17,7 @@ The wizard will connect to your cam and will install the following entities:
 - mqtt binary sensor for sound detection
 - mqtt binary sensor for baby crying detection
 - ptz service (if your cam supports it)
+- speak service (only available if you install tts engine from here https://github.com/roleoroleo/yi-hack-utils)
 
 ## Installation
 **(1)** Create the `custom_components` folder in your configuration directory.
