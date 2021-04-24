@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
+from requests.auth import HTTPBasicAuth
 
 from homeassistant.const import (
     CONF_HOST,
