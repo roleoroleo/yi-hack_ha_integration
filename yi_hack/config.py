@@ -29,8 +29,8 @@ def get_status(config):
         if response.status_code >= 300:
             _LOGGER.error("Failed to get status from device %s", host)
             error = True
-    except requests.exceptions.RequestException as error:
-        _LOGGER.error("Failed to get status from device %s: error %s", host, error)
+    except requests.exceptions.RequestException as e:
+        _LOGGER.error("Failed to get status from device %s: error %s", host, e)
         error = True
 
     if error:
@@ -55,8 +55,8 @@ def get_system_conf(config):
         if response.status_code >= 300:
             _LOGGER.error("Failed to get system configuration from device %s", host)
             error = True
-    except requests.exceptions.RequestException as error:
-        _LOGGER.error("Failed to get system configuration from device %s: error %s", host, error)
+    except requests.exceptions.RequestException as e:
+        _LOGGER.error("Failed to get system configuration from device %s: error %s", host, e)
         error = True
 
     if error:
@@ -81,8 +81,8 @@ def get_mqtt_conf(config):
         if response.status_code >= 300:
             _LOGGER.error("Failed to get mqtt configuration from device %s", host)
             error = True
-    except requests.exceptions.RequestException as error:
-        _LOGGER.error("Failed to get mqtt configuration from device %s: error %s", host, error)
+    except requests.exceptions.RequestException as e:
+        _LOGGER.error("Failed to get mqtt configuration from device %s: error %s", host, e)
         error = True
 
     if error:
