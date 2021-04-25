@@ -1,7 +1,7 @@
 # yi-hack Home Assistant integration
 
 ## Overview
-yi-hack Home assistant is a custom integration for Yi cameras with one of the following custom firmwares:
+yi-hack Home Assistant is a custom integration for Yi cameras with one of the following custom firmwares:
 - yi-hack-MStar - https://github.com/roleoroleo/yi-hack-MStar
 - yi-hack-Allwinner - https://github.com/roleoroleo/yi-hack-Allwinner
 - yi-hack-Allwinner-v2 - https://github.com/roleoroleo/yi-hack-Allwinner-v2
