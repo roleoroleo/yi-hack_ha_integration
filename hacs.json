@@ -1,0 +1,11 @@
+{
+    "name": "yi-hack Home Assistant integration",
+    "render_readme": true,
+    "domains": [
+        "camera",
+        "binary_sensor"
+    ],
+    "iot_class": [
+        "Local Push"
+    ]
+}

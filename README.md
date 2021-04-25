@@ -20,9 +20,7 @@ The wizard will connect to your cam and will install the following entities:
 - speak service (only available if you install tts engine from here https://github.com/roleoroleo/yi-hack-utils)
 
 ## Installation
-**(1)** Create the `custom_components` folder in your configuration directory.
-
-**(2)** Copy the  `yi_hack`folder in your  `custom_components` directory.
+**(1)** Copy the  `custom_components` folder your configuration directory.
 It should look similar to this:
 ```
 <config directory>/
@@ -39,9 +37,9 @@ It should look similar to this:
 |       |-- services.yaml
 |       |-- strings.json
 ```
-**(3)** Restart Home Assistant
+**(2)** Restart Home Assistant
 
-**(4)** Configure device and entities:
+**(3)** Configure device and entities:
 - Go to Settings -> Integrations
 - Click "Add Integration" in the lower-right corner
 - Select "Yi Cam with yi-hack" integration
