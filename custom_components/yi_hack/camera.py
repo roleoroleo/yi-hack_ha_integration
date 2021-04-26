@@ -135,6 +135,10 @@ class YiCamera(Camera):
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
         self._ptz = config.data[CONF_PTZ]
+        if self._user or self._password:
+            self._stream_source = self._stream_source.replace(
+                "rtsp://", f"rtsp://{self._user}:{self._password}@", 1
+            )
 
     async def stream_source(self):
         """Return the stream source."""
