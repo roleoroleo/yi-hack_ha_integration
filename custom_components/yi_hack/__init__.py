@@ -10,6 +10,9 @@ from .config import get_system_conf, get_mqtt_conf
 
 from .const import (
     DOMAIN,
+    ALLWINNER,
+    ALLWINNERV2,
+    CONF_HACK_NAME,
     CONF_SERIAL,
     CONF_RTSP_PORT,
     CONF_MQTT_PREFIX,
@@ -45,7 +48,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_MQTT_PREFIX: mqtt[CONF_MQTT_PREFIX]})
         hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_STATUS: mqtt[CONF_TOPIC_STATUS]})
         hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_MOTION_DETECTION: mqtt[CONF_TOPIC_MOTION_DETECTION]})
-        if (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
+        if (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == ALLWINNERV2):
             hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_AI_HUMAN_DETECTION: mqtt[CONF_TOPIC_AI_HUMAN_DETECTION]})
             hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION]})
         hass.config_entries.async_update_entry(entry, data={**entry.data, CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING]})
