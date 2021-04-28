@@ -24,6 +24,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 import homeassistant.helpers.config_validation as cv
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .const import (
     CONF_MQTT_PREFIX,
@@ -60,6 +61,7 @@ DEFAULT_LANGUAGE = "en-US"
 DEFAULT_SENTENCE = ""
 
 ICON = "mdi:camera"
+
 
 async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities):
     """Set up a Yi Camera."""
@@ -99,13 +101,14 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     )
     async_add_entities(
         [
-            YiCamera(hass, config),
-            YiMqttCamera(hass, config)
+            YiHackCamera(hass, config),
+            YiHackMqttCamera(hass, config)
         ],
         True
     )
 
-class YiCamera(Camera):
+
+class YiHackCamera(Camera):
     """Define an implementation of a Yi Camera."""
 
     def __init__(self, hass, config):
@@ -124,9 +127,9 @@ class YiCamera(Camera):
         self._port = config.data[CONF_PORT]
         self._rtsp_port = config.data[CONF_RTSP_PORT]
         if self._rtsp_port == 554:
-            self._stream_source = "rtsp://" + self._host + "/ch0_0.h264"
+            self._stream_source = "rtsp://" + self._host + "/ch0_1.h264"
         else:
-            self._stream_source = "rtsp://" + self._host + ":" + self._rtsp_port + "/ch0_0.h264"
+            self._stream_source = "rtsp://" + self._host + ":" + self._rtsp_port + "/ch0_1.h264"
         if self._port == 80:
             self._still_image_url = "http://" + self._host + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
         else:
@@ -283,12 +286,14 @@ class YiCamera(Camera):
         """Return device specific attributes."""
         return {
             "name": self._device_name,
+            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
             "identifiers": {(DOMAIN, self._serial_number)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
         }
 
-class YiMqttCamera(Camera):
+
+class YiHackMqttCamera(Camera):
     """representation of a MQTT camera."""
 
     def __init__(self, hass: HomeAssistant, config):
@@ -304,6 +309,7 @@ class YiMqttCamera(Camera):
         self._is_on = True
         self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION_IMAGE]
         self._last_image = None
+        self._mqtt_subscription = None
 
     async def async_added_to_hass(self):
         """Subscribe to MQTT events."""
@@ -315,16 +321,14 @@ class YiMqttCamera(Camera):
 
             self._last_image = data
 
-        return await mqtt.async_subscribe(
+        self._mqtt_subscription = await mqtt.async_subscribe(
             self.hass, self._state_topic, message_received, 1, None
         )
 
     async def async_will_remove_from_hass(self):
         """Unsubscribe from MQTT events."""
-
-        return await mqtt.async_unsubscribe(
-            self.hass, self._state_topic
-        )
+        if self._mqtt_subscription:
+            self._mqtt_subscription()
 
     async def async_camera_image(self):
         """Return image response."""
@@ -360,6 +364,7 @@ class YiMqttCamera(Camera):
         """Return device specific attributes."""
         return {
             "name": self._device_name,
+            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
             "identifiers": {(DOMAIN, self._serial_number)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
