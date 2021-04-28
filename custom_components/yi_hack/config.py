@@ -1,14 +1,9 @@
 import logging
-import requests
 
+import requests
 from requests.auth import HTTPBasicAuth
 
-from homeassistant.const import (
-    CONF_HOST,
-    CONF_PORT,
-    CONF_USERNAME,
-    CONF_PASSWORD,
-)
+from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
 
 _LOGGER = logging.getLogger(__name__)
 
