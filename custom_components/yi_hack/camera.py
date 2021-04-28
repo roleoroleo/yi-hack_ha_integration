@@ -277,8 +277,11 @@ class YiHackCamera(Camera):
             _LOGGER.error("Failed to send speak command to device %s: error %s", self._host, error)
 
         if response is not None:
-            if response.json()["error"] == "true":
-                _LOGGER.error("Failed to send speak command to device %s: error %s", self._host, response.json()["description"])
+            try:
+                if response.json()["error"] == "true":
+                    _LOGGER.error("Failed to send speak command to device %s: error %s", self._host, response.json()["description"])
+            except KeyError:
+                _LOGGER.error("Failed to send speak command to device %s: error unknown", self._host)
         else:
             _LOGGER.error("Failed to send speak command to device %s: error unknown", self._host)
 
