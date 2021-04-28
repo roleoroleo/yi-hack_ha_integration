@@ -4,26 +4,23 @@ import logging
 
 from homeassistant.components import mqtt
 from homeassistant.components.binary_sensor import BinarySensorEntity
+from homeassistant.const import CONF_NAME
 from homeassistant.core import callback
 
-from homeassistant.const import (
-    CONF_NAME,
-)
-
 from .const import (
-    DOMAIN,
-    DEFAULT_BRAND,
-    MSTAR,
     ALLWINNER,
     ALLWINNERV2,
     CONF_HACK_NAME,
-    CONF_SERIAL,
     CONF_MQTT_PREFIX,
-    CONF_TOPIC_STATUS,
-    CONF_TOPIC_MOTION_DETECTION,
+    CONF_SERIAL,
     CONF_TOPIC_AI_HUMAN_DETECTION,
-    CONF_TOPIC_SOUND_DETECTION,
     CONF_TOPIC_BABY_CRYING,
+    CONF_TOPIC_MOTION_DETECTION,
+    CONF_TOPIC_SOUND_DETECTION,
+    CONF_TOPIC_STATUS,
+    DEFAULT_BRAND,
+    DOMAIN,
+    MSTAR,
 )
 
 ICON = "mdi:update"

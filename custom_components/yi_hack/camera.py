@@ -10,33 +10,31 @@ import voluptuous as vol
 
 from homeassistant.components import mqtt
 from homeassistant.components.camera import Camera
-from homeassistant.components.ffmpeg import DATA_FFMPEG, CONF_EXTRA_ARGUMENTS
-
-import homeassistant.helpers.config_validation as cv
+from homeassistant.components.ffmpeg import CONF_EXTRA_ARGUMENTS, DATA_FFMPEG
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_MAC,
+    CONF_NAME,
+    CONF_PASSWORD,
+    CONF_PORT,
+    CONF_USERNAME,
+)
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
-from homeassistant.core import callback
-
-from homeassistant.const import (
-    CONF_NAME,
-    CONF_HOST,
-    CONF_PORT,
-    CONF_PASSWORD,
-    CONF_PATH,
-    CONF_USERNAME,
-    CONF_MAC,
-)
+import homeassistant.helpers.config_validation as cv
 
 from .const import (
-    DOMAIN,
-    DEFAULT_BRAND,
-    SERVICE_PTZ,
-    SERVICE_SPEAK,
-    CONF_SERIAL,
+    CONF_MQTT_PREFIX,
     CONF_PTZ,
     CONF_RTSP_PORT,
-    CONF_MQTT_PREFIX,
+    CONF_SERIAL,
     CONF_TOPIC_MOTION_DETECTION_IMAGE,
+    DEFAULT_BRAND,
+    DOMAIN,
+    SERVICE_PTZ,
+    SERVICE_SPEAK,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -56,13 +54,14 @@ LANG_ES = "es-ES"
 LANG_FR = "fr-FR"
 LANG_IT = "it-IT"
 ATTR_LANGUAGE = "language"
+ATTR_GENDER = "gender"
 ATTR_SENTENCE = "sentence"
 DEFAULT_LANGUAGE = "en-US"
 DEFAULT_SENTENCE = ""
 
 ICON = "mdi:camera"
 
-async def async_setup_entry(hass, config, async_add_entities):
+async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities):
     """Set up a Yi Camera."""
 
     platform = entity_platform.current_platform.get()
@@ -206,7 +205,7 @@ class YiCamera(Camera):
     def _perform_ptz(self, movement, travel_time_str):
         auth = None
         if self._user or self._password:
-            auth = HTTPBasicAuth(user, password)
+            auth = HTTPBasicAuth(self._user, self._password)
 
         try:
             response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=5, auth=auth)
@@ -233,7 +232,7 @@ class YiCamera(Camera):
     def _perform_speak(self, language, sentence):
         auth = None
         if self._user or self._password:
-            auth = HTTPBasicAuth(user, password)
+            auth = HTTPBasicAuth(self._user, self._password)
 
         try:
             response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speak.sh?lang=" + language, data=sentence, timeout=5, auth=auth)
@@ -292,7 +291,7 @@ class YiCamera(Camera):
 class YiMqttCamera(Camera):
     """representation of a MQTT camera."""
 
-    def __init__(self, hass, config):
+    def __init__(self, hass: HomeAssistant, config):
         """Initialize the MQTT Camera."""
         super().__init__()
 
