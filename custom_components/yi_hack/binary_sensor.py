@@ -35,6 +35,7 @@ from .const import (
     CONF_WILL_MSG,
     DEFAULT_BRAND,
     DOMAIN,
+    MSTAR,
 )
 
 ICON = "mdi:update"
@@ -44,19 +45,20 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(_hass: HomeAssistant, config: ConfigEntry, async_add_entities):
     """Set up MQTT motion detection sensor."""
-    entities = [
-        YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
-        YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),
-        YiMQTTBinarySensor(config, CONF_TOPIC_BABY_CRYING)
-    ]
-
-    if (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
-        entities.append(
-            [
-                YiMQTTBinarySensor(config, CONF_TOPIC_AI_HUMAN_DETECTION),
-                YiMQTTBinarySensor(config, CONF_TOPIC_SOUND_DETECTION),
-            ]
-        )
+    if (config.data[CONF_HACK_NAME] == DEFAULT_BRAND) or (config.data[CONF_HACK_NAME] == MSTAR):
+        entities = [
+            YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
+            YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),
+            YiMQTTBinarySensor(config, CONF_TOPIC_BABY_CRYING),
+        ]
+    elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
+        entities = [
+            YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
+            YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),
+            YiMQTTBinarySensor(config, CONF_TOPIC_BABY_CRYING),
+            YiMQTTBinarySensor(config, CONF_TOPIC_AI_HUMAN_DETECTION),
+            YiMQTTBinarySensor(config, CONF_TOPIC_SOUND_DETECTION),
+        ]
 
     async_add_entities(entities)
 
