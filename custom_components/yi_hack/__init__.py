@@ -27,11 +27,6 @@ PLATFORMS = ["camera", "binary_sensor"]
 
 _LOGGER = logging.getLogger(__name__)
 
-async def async_setup(hass: HomeAssistant, config):
-    """Set up the yi-hack component."""
-    hass.data.setdefault(DOMAIN, {})
-
-    return True
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up yi-hack from a config entry."""
@@ -61,6 +56,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         return True
     else:
         return False
+
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""

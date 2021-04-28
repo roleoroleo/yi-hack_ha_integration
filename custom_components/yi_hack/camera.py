@@ -9,7 +9,7 @@ from requests.auth import HTTPBasicAuth
 import voluptuous as vol
 
 from homeassistant.components import mqtt
-from homeassistant.components.camera import Camera
+from homeassistant.components.camera import SUPPORT_STREAM, Camera
 from homeassistant.components.ffmpeg import CONF_EXTRA_ARGUMENTS, DATA_FFMPEG
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
@@ -29,11 +29,12 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from .const import (
     CONF_MQTT_PREFIX,
     CONF_PTZ,
-    CONF_RTSP_PORT,
     CONF_SERIAL,
     CONF_TOPIC_MOTION_DETECTION_IMAGE,
     DEFAULT_BRAND,
     DOMAIN,
+    LINK_HIGH_RES_STREAM,
+    LINK_LOW_RES_STREAM,
     SERVICE_PTZ,
     SERVICE_SPEAK,
 )
@@ -125,26 +126,51 @@ class YiHackCamera(Camera):
         self._is_on = True
         self._host = config.data[CONF_HOST]
         self._port = config.data[CONF_PORT]
-        self._rtsp_port = config.data[CONF_RTSP_PORT]
-        if self._rtsp_port == 554:
-            self._stream_source = "rtsp://" + self._host + "/ch0_1.h264"
-        else:
-            self._stream_source = "rtsp://" + self._host + ":" + self._rtsp_port + "/ch0_1.h264"
-        if self._port == 80:
-            self._still_image_url = "http://" + self._host + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
-        else:
-            self._still_image_url = "http://" + self._host + ":" + self._port + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
         self._ptz = config.data[CONF_PTZ]
-        if self._user or self._password:
-            self._stream_source = self._stream_source.replace(
-                "rtsp://", f"rtsp://{self._user}:{self._password}@", 1
-            )
 
-    async def stream_source(self):
+        self._http_base_url = "http://" + self._host
+        if self._port != 80:
+            self._http_base_url += ":" + self._port
+        self._still_image_url = self._http_base_url + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
+
+    @property
+    def supported_features(self) -> int:
+        """Return supported features."""
+        return SUPPORT_STREAM
+
+    async def stream_source(self) -> str:
         """Return the stream source."""
-        return self._stream_source
+        def fetch_link():
+            """Get URL from camera available links."""
+            auth = None
+            if self._user or self._password:
+                auth = HTTPBasicAuth(self._user, self._password)
+
+            try:
+                response = requests.get(self._http_base_url + "/cgi-bin/links.sh",
+                                        timeout=5, auth=auth)
+                if response.status_code < 300:
+                    links: dict = response.json()
+                    stream_source: str = links.get(LINK_HIGH_RES_STREAM) or links.get(LINK_LOW_RES_STREAM)
+                    if self._user or self._password:
+                        stream_source = stream_source.replace(
+                            "rtsp://", f"rtsp://{self._user}:{self._password}@", 1
+                        )
+
+                    return stream_source
+
+            except requests.exceptions.RequestException as error:
+                _LOGGER.error(
+                    "Error getting stream link from %s: %s",
+                    self._name,
+                    error,
+                )
+
+            return None
+
+        return await self.hass.async_add_executor_job(fetch_link)
 
     async def async_camera_image(self):
         """Return a still image response from the camera."""
@@ -173,14 +199,16 @@ class YiHackCamera(Camera):
             image = await self.hass.async_add_executor_job(fetch)
 
         if image is None:
-            ffmpeg = ImageFrame(self.hass.data[DATA_FFMPEG].binary)
-            image = await asyncio.shield(
-                ffmpeg.get_image(
-                    self._stream_source,
-                    output_format=IMAGE_JPEG,
-                    extra_cmd=self._extra_arguments
+            stream_source = await self.stream_source()
+            if stream_source:
+                ffmpeg = ImageFrame(self.hass.data[DATA_FFMPEG].binary)
+                image = await asyncio.shield(
+                    ffmpeg.get_image(
+                        stream_source,
+                        output_format=IMAGE_JPEG,
+                        extra_cmd=self._extra_arguments
+                    )
                 )
-            )
 
         return image
 
@@ -188,9 +216,13 @@ class YiHackCamera(Camera):
         """Generate an HTTP MJPEG stream from the camera."""
         _LOGGER.debug("Handling mjpeg stream from camera '%s'", self._name)
 
+        stream_source = await self.stream_source()
+        if not stream_source:
+            return super().handle_async_mjpeg_stream(request)
+
         stream = CameraMjpeg(self._manager.binary)
         await stream.open_camera(
-            self._stream_source,
+            stream_source,
             extra_cmd=self._extra_arguments
         )
 
@@ -221,7 +253,7 @@ class YiHackCamera(Camera):
         """Perform a PTZ action on the camera."""
         _LOGGER.debug("PTZ action '%s' on %s", movement, self._name)
 
-        if (self._ptz == "no"):
+        if self._ptz == "no":
             _LOGGER.error("PTZ is not available on %s", self._name)
             return
 
