@@ -76,6 +76,7 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         self._delay_listener = None
         self._payload_off = None
         self._off_delay = None
+        self._ignore_first_event = False
 
         if sensor_type == CONF_TOPIC_STATUS:
             self._name = self._device_name + "_status"
@@ -112,6 +113,7 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._payload_on = config.data[CONF_BABY_CRYING_MSG]
             self._off_delay = 60
             self._device_class = DEVICE_CLASS_SOUND
+            self._ignore_first_event = True
         else:
             raise RuntimeError("Unknown sensor type")
 
@@ -130,7 +132,12 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             """Handle new MQTT messages."""
             payload = msg.payload
 
-            if payload == self._payload_on:
+            if self._ignore_first_event:
+                # for baby crying event
+                # the first subscribed value is always 'crying'
+                # we should consider the next event instead
+                self._state = False
+            elif payload == self._payload_on:
                 self._state = True
             elif payload == self._payload_off:
                 self._state = False
