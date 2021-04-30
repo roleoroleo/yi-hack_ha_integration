@@ -31,7 +31,7 @@ from .const import (
     DOMAIN,
 )
 
-PLATFORMS = ["camera", "binary_sensor"]
+PLATFORMS = ["camera", "binary_sensor", "media_player"]
 
 _LOGGER = logging.getLogger(__name__)
 
