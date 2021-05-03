@@ -18,9 +18,11 @@ from homeassistant.const import (
     CONF_PASSWORD,
     CONF_PORT,
     CONF_USERNAME,
+    STATE_ON,
 )
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
+from .config import get_status
 from .const import (
     CONF_SERIAL,
     DEFAULT_BRAND,
@@ -55,6 +57,24 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         # Assume that the media player is not in Play mode
         self._playing = False
         self._state = None
+
+    async def async_update(self):
+        """Update state of device."""
+        conf = dict([
+            (CONF_HOST, self._host),
+            (CONF_PORT, self._port),
+            (CONF_USERNAME, self._user),
+            (CONF_PASSWORD, self._password),
+        ])
+        response = await self.hass.async_add_executor_job(get_status, conf)
+        if response is None:
+            self._state = STATE_OFF
+        else:
+            try:
+                response_name = response["name"]
+                self._state = STATE_ON
+            except KeyError:
+                self._state = STATE_OFF
 
     @property
     def brand(self):
