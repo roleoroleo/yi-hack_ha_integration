@@ -6,7 +6,6 @@ import subprocess
 import requests
 from requests.auth import HTTPBasicAuth
 
-from homeassistant.components.ffmpeg import CONF_EXTRA_ARGUMENTS, DATA_FFMPEG
 from homeassistant.components.media_player import DEVICE_CLASS_SPEAKER, MediaPlayerEntity
 from homeassistant.components.media_player.const import (
     SUPPORT_PLAY_MEDIA,
@@ -18,7 +17,6 @@ from homeassistant.const import (
     CONF_NAME,
     CONF_PASSWORD,
     CONF_PORT,
-    CONF_TOKEN,
     CONF_USERNAME,
 )
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
