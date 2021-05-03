@@ -8,6 +8,7 @@ yi-hack Home Assistant is a custom integration for Yi cameras with one of the fo
 - yi-hack-MStar - https://github.com/roleoroleo/yi-hack-MStar
 - yi-hack-Allwinner - https://github.com/roleoroleo/yi-hack-Allwinner
 - yi-hack-Allwinner-v2 - https://github.com/roleoroleo/yi-hack-Allwinner-v2
+- sonoff-hack - https://github.com/roleoroleo/sonoff-hack
 <br>
 
 This integration is available from the Lovelace frontend without the need to configure the devices in the file configuration.yaml
@@ -16,11 +17,14 @@ The wizard will connect to your cam and will install the following entities:
 - mqtt cam with the last frame saved during a motion detection event
 - mqtt binary sensor for status
 - mqtt binary sensor for motion detection
-- mqtt binary sensor for ai human detection (there are known issues when enabling ai human detection)
-- mqtt binary sensor for sound detection
-- mqtt binary sensor for baby crying detection
+- mqtt binary sensor for ai human detection (there are known issues when enabling ai human detection) (*)
+- mqtt binary sensor for sound detection (*)
+- mqtt binary sensor for baby crying detection (*)
+- media player entity useful to play Home Assistant standard tts service
 - ptz service (if your cam supports it)
-- speak service (only available if you install tts engine from here https://github.com/roleoroleo/yi-hack-utils)
+- speak service (only available if you install the internal tts engine from here https://github.com/roleoroleo/yi-hack-utils)
+
+(*) Binary sensor is available only if your cam support it.
 
 ## Installation
 **(1)** Copy the  `custom_components` folder your configuration directory.
@@ -37,6 +41,7 @@ It should look similar to this:
 |       |-- config_flow.py
 |       |-- const.py
 |       |-- manifest.json
+|       |-- media_player.py
 |       |-- services.yaml
 |       |-- strings.json
 ```
