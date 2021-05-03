@@ -19,6 +19,9 @@ from homeassistant.const import (
     CONF_PORT,
     CONF_USERNAME,
     STATE_ON,
+    STATE_OFF,
+    STATE_IDLE,
+    STATE_PLAYING,
 )
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
@@ -71,7 +74,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             self._state = STATE_OFF
         else:
             try:
-                response_name = response["name"]
+                response_name = response["hostname"]
                 self._state = STATE_ON
             except KeyError:
                 self._state = STATE_OFF
@@ -94,6 +97,12 @@ class YiHackMediaPlayer(MediaPlayerEntity):
     @property
     def state(self):
         """Return the state of the camera."""
+        if self._state == STATE_ON:
+            if self._playing:
+                return STATE_PLAYING
+            else:
+                return STATE_IDLE
+
         return self._state
 
     @property
@@ -130,6 +139,8 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             if self._user or self._password:
                 auth = HTTPBasicAuth(self._user, self._password)
 
+            self._playing = True
+
             try:
                 response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speaker.sh", data=data, timeout=10, headers={'Content-Type': 'application/octet-stream'}, auth=auth)
                 if response.status_code >= 300:
@@ -139,6 +150,8 @@ class YiHackMediaPlayer(MediaPlayerEntity):
 
             if response is None:
                 _LOGGER.error("Failed to send speak command to device %s: error unknown", self._host)
+
+            self._playing = False
 
         def _perform_cmd(cmd):
             return subprocess.run(cmd, check=False, shell=False, stdout=subprocess.PIPE).stdout
@@ -155,12 +168,8 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             _LOGGER.error("Failed to send speaker command, device %s is busy", self._host)
             return
 
-        self._playing = True
-
         cmd = ["ffmpeg",  "-i",  media_id, "-f", "s16le", "-acodec",  "pcm_s16le", "-ar", "16000", "-"]
         data = await self.hass.async_add_executor_job(_perform_cmd, cmd)
 
         if data is not None and len(data) > 0:
             await self.hass.async_add_executor_job(_perform_speaker, data)
-
-        self._playing = False
