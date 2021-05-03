@@ -28,10 +28,14 @@ from .const import (
     CONF_TOPIC_SOUND_DETECTION,
     CONF_TOPIC_STATUS,
     CONF_WILL_MSG,
+    DEFAULT_BRAND,
     DOMAIN,
+    MSTAR,
+    SONOFF,
 )
 
-PLATFORMS = ["camera", "binary_sensor", "media_player"]
+PLATFORMS_YI = ["camera", "binary_sensor", "media_player"]
+PLATFORMS_SONOFF = ["camera", "binary_sensor"]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -48,33 +52,49 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if conf is not None and mqtt is not None:
         updated_data = {
             **entry.data,
-            CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
             CONF_MQTT_PREFIX: mqtt[CONF_MQTT_PREFIX],
             CONF_TOPIC_STATUS: mqtt[CONF_TOPIC_STATUS],
             CONF_TOPIC_MOTION_DETECTION: mqtt[CONF_TOPIC_MOTION_DETECTION],
-            CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING],
             CONF_MOTION_START_MSG: mqtt[CONF_MOTION_START_MSG],
             CONF_MOTION_STOP_MSG: mqtt[CONF_MOTION_STOP_MSG],
-            CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
             CONF_BIRTH_MSG: mqtt[CONF_BIRTH_MSG],
             CONF_WILL_MSG: mqtt[CONF_WILL_MSG],
             CONF_TOPIC_MOTION_DETECTION_IMAGE: mqtt[CONF_TOPIC_MOTION_DETECTION_IMAGE],
         }
-        if (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == ALLWINNERV2):
+        if (entry.data[CONF_HACK_NAME] == DEFAULT_BRAND) or (entry.data[CONF_HACK_NAME] == MSTAR):
             updated_data.update(**{
+                CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
+                CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING],
+                CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
+            })
+        elif (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == ALLWINNERV2):
+            updated_data.update(**{
+                CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
+                CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING],
                 CONF_TOPIC_AI_HUMAN_DETECTION: mqtt[CONF_TOPIC_AI_HUMAN_DETECTION],
                 CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION],
+                CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
                 CONF_AI_HUMAN_DETECTION_START_MSG: mqtt[CONF_AI_HUMAN_DETECTION_START_MSG],
                 CONF_AI_HUMAN_DETECTION_STOP_MSG: mqtt[CONF_AI_HUMAN_DETECTION_STOP_MSG],
                 CONF_SOUND_DETECTION_MSG: mqtt[CONF_SOUND_DETECTION_MSG],
             })
+        elif entry.data[CONF_HACK_NAME] == SONOFF:
+            updated_data.update(**{
+                CONF_RTSP_PORT: "554",
+            })
 
         hass.config_entries.async_update_entry(entry, data=updated_data)
 
-        for component in PLATFORMS:
-            hass.async_create_task(
-                hass.config_entries.async_forward_entry_setup(entry, component)
-            )
+        if entry.data[CONF_HACK_NAME] == SONOFF:
+            for component in PLATFORMS_SONOFF:
+                hass.async_create_task(
+                    hass.config_entries.async_forward_entry_setup(entry, component)
+                )
+        else:
+            for component in PLATFORMS_YI:
+                hass.async_create_task(
+                    hass.config_entries.async_forward_entry_setup(entry, component)
+                )
 
         return True
     else:
@@ -83,14 +103,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
-    unload_ok = all(
-        await asyncio.gather(
-            *[
-                hass.config_entries.async_forward_entry_unload(entry, component)
-                for component in PLATFORMS
-            ]
+    if entry.data[CONF_HACK_NAME] == SONOFF:
+        unload_ok = all(
+            await asyncio.gather(
+                *[
+                    hass.config_entries.async_forward_entry_unload(entry, component)
+                    for component in PLATFORMS_SONOFF
+                ]
+            )
         )
-    )
+    else:
+        unload_ok = all(
+            await asyncio.gather(
+                *[
+                    hass.config_entries.async_forward_entry_unload(entry, component)
+                    for component in PLATFORMS_YI
+                ]
+            )
+        )
+
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
 

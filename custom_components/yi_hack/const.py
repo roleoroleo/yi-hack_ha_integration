@@ -5,6 +5,7 @@ DEFAULT_BRAND = "yi-hack"
 MSTAR = "yi-hack-mstar"
 ALLWINNER = "yi-hack-allwinner"
 ALLWINNERV2 = "yi-hack-allwinner-v2"
+SONOFF = "sonoff-hack"
 
 DEFAULT_HOST = ""
 DEFAULT_PORT = 8080

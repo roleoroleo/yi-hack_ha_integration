@@ -27,6 +27,7 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .const import (
+    CONF_HACK_NAME,
     CONF_MQTT_PREFIX,
     CONF_PTZ,
     CONF_SERIAL,
@@ -37,6 +38,7 @@ from .const import (
     LINK_LOW_RES_STREAM,
     SERVICE_PTZ,
     SERVICE_SPEAK,
+    SONOFF,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -83,23 +85,26 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         },
         "async_perform_ptz",
     )
-    platform.async_register_entity_service(
-        SERVICE_SPEAK,
-        {
-            vol.Required(ATTR_LANGUAGE, default=DEFAULT_LANGUAGE): vol.In(
-                [
-                    LANG_DE,
-                    LANG_GB,
-                    LANG_US,
-                    LANG_ES,
-                    LANG_FR,
-                    LANG_IT,
-                ]
-            ),
-            vol.Required(ATTR_SENTENCE, default=DEFAULT_SENTENCE): str,
-        },
-        "async_perform_speak",
-    )
+
+    if config.data[CONF_HACK_NAME] != SONOFF:
+        platform.async_register_entity_service(
+            SERVICE_SPEAK,
+            {
+                vol.Required(ATTR_LANGUAGE, default=DEFAULT_LANGUAGE): vol.In(
+                    [
+                        LANG_DE,
+                        LANG_GB,
+                        LANG_US,
+                        LANG_ES,
+                        LANG_FR,
+                        LANG_IT,
+                    ]
+                ),
+                vol.Required(ATTR_SENTENCE, default=DEFAULT_SENTENCE): str,
+            },
+            "async_perform_speak",
+        )
+
     async_add_entities(
         [
             YiHackCamera(hass, config),
