@@ -37,6 +37,7 @@ from .const import (
     DOMAIN,
     MSTAR,
     SONOFF,
+    V5,
 )
 
 ICON = "mdi:update"
@@ -52,7 +53,7 @@ async def async_setup_entry(_hass: HomeAssistant, config: ConfigEntry, async_add
             YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),
             YiMQTTBinarySensor(config, CONF_TOPIC_BABY_CRYING),
         ]
-    elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
+    elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2) or (config.data[CONF_HACK_NAME] == V5):
         entities = [
             YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
             YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),

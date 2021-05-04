@@ -5,6 +5,7 @@ DEFAULT_BRAND = "yi-hack"
 MSTAR = "yi-hack-mstar"
 ALLWINNER = "yi-hack-allwinner"
 ALLWINNERV2 = "yi-hack-allwinner-v2"
+V5 = "yi-hack-v5"
 SONOFF = "sonoff-hack"
 
 DEFAULT_HOST = ""

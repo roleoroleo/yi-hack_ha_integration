@@ -27,6 +27,8 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .const import (
+    ALLWINNER,
+    ALLWINNERV2,
     CONF_HACK_NAME,
     CONF_MQTT_PREFIX,
     CONF_PTZ,
@@ -36,9 +38,9 @@ from .const import (
     DOMAIN,
     LINK_HIGH_RES_STREAM,
     LINK_LOW_RES_STREAM,
+    MSTAR,
     SERVICE_PTZ,
     SERVICE_SPEAK,
-    SONOFF,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -86,7 +88,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         "async_perform_ptz",
     )
 
-    if config.data[CONF_HACK_NAME] != SONOFF:
+    if (config.data[CONF_HACK_NAME] == MSTAR) or (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
         platform.async_register_entity_service(
             SERVICE_SPEAK,
             {

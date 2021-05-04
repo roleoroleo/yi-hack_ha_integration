@@ -32,10 +32,11 @@ from .const import (
     DOMAIN,
     MSTAR,
     SONOFF,
+    V5,
 )
 
-PLATFORMS_YI = ["camera", "binary_sensor", "media_player"]
-PLATFORMS_SONOFF = ["camera", "binary_sensor"]
+PLATFORMS = ["camera", "binary_sensor", "media_player"]
+PLATFORMS_NOMEDIA = ["camera", "binary_sensor"]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING],
                 CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
             })
-        elif (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == ALLWINNERV2):
+        elif (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == ALLWINNERV2) or (entry.data[CONF_HACK_NAME] == V5):
             updated_data.update(**{
                 CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
                 CONF_TOPIC_BABY_CRYING: mqtt[CONF_TOPIC_BABY_CRYING],
@@ -85,13 +86,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         hass.config_entries.async_update_entry(entry, data=updated_data)
 
-        if entry.data[CONF_HACK_NAME] == SONOFF:
-            for component in PLATFORMS_SONOFF:
+        if (entry.data[CONF_HACK_NAME] == SONOFF) or (entry.data[CONF_HACK_NAME] == V5):
+            for component in PLATFORMS_NOMEDIA:
                 hass.async_create_task(
                     hass.config_entries.async_forward_entry_setup(entry, component)
                 )
         else:
-            for component in PLATFORMS_YI:
+            for component in PLATFORMS:
                 hass.async_create_task(
                     hass.config_entries.async_forward_entry_setup(entry, component)
                 )
@@ -103,12 +104,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
-    if entry.data[CONF_HACK_NAME] == SONOFF:
+    if (entry.data[CONF_HACK_NAME] == SONOFF) or (entry.data[CONF_HACK_NAME] == V5):
         unload_ok = all(
             await asyncio.gather(
                 *[
                     hass.config_entries.async_forward_entry_unload(entry, component)
-                    for component in PLATFORMS_SONOFF
+                    for component in PLATFORMS_NOMEDIA
                 ]
             )
         )
@@ -117,7 +118,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
             await asyncio.gather(
                 *[
                     hass.config_entries.async_forward_entry_unload(entry, component)
-                    for component in PLATFORMS_YI
+                    for component in PLATFORMS
                 ]
             )
         )
