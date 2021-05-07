@@ -30,6 +30,7 @@ from .const import (
     CONF_SERIAL,
     DEFAULT_BRAND,
     DOMAIN,
+    HTTP_TIMEOUT,
 )
 
 SUPPORT_YIHACK_MEDIA = (
@@ -142,7 +143,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             self._playing = True
 
             try:
-                response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speaker.sh", data=data, timeout=10, headers={'Content-Type': 'application/octet-stream'}, auth=auth)
+                response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speaker.sh", data=data, timeout=HTTP_TIMEOUT, headers={'Content-Type': 'application/octet-stream'}, auth=auth)
                 if response.status_code >= 300:
                     _LOGGER.error("Failed to send speaker command to device %s", self._host)
             except requests.exceptions.RequestException as error:

@@ -36,6 +36,7 @@ from .const import (
     CONF_TOPIC_MOTION_DETECTION_IMAGE,
     DEFAULT_BRAND,
     DOMAIN,
+    HTTP_TIMEOUT,
     LINK_HIGH_RES_STREAM,
     LINK_LOW_RES_STREAM,
     MSTAR,
@@ -157,7 +158,7 @@ class YiHackCamera(Camera):
 
             try:
                 response = requests.get(self._http_base_url + "/cgi-bin/links.sh",
-                                        timeout=5, auth=auth)
+                                        timeout=HTTP_TIMEOUT, auth=auth)
                 if response.status_code < 300:
                     links: dict = response.json()
                     stream_source: str = links.get(LINK_HIGH_RES_STREAM) or links.get(LINK_LOW_RES_STREAM)
@@ -191,7 +192,7 @@ class YiHackCamera(Camera):
             def fetch():
                 """Read image from a URL."""
                 try:
-                    response = requests.get(self._still_image_url, timeout=5, auth=auth)
+                    response = requests.get(self._still_image_url, timeout=HTTP_TIMEOUT, auth=auth)
                     if response.status_code < 300:
                         return response.content
                 except requests.exceptions.RequestException as error:
@@ -250,7 +251,7 @@ class YiHackCamera(Camera):
             auth = HTTPBasicAuth(self._user, self._password)
 
         try:
-            response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=5, auth=auth)
+            response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=HTTP_TIMEOUT, auth=auth)
             if response.status_code >= 300:
                 _LOGGER.error("Failed to send ptz command to device %s", self._host)
         except requests.exceptions.RequestException as error:
@@ -277,7 +278,7 @@ class YiHackCamera(Camera):
             auth = HTTPBasicAuth(self._user, self._password)
 
         try:
-            response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speak.sh?lang=" + language, data=sentence, timeout=5, auth=auth)
+            response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speak.sh?lang=" + language, data=sentence, timeout=HTTP_TIMEOUT, auth=auth)
             if response.status_code >= 300:
                 _LOGGER.error("Failed to send speak command to device %s", self._host)
         except requests.exceptions.RequestException as error:

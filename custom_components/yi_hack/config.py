@@ -5,6 +5,8 @@ from requests.auth import HTTPBasicAuth
 
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
 
+from .const import HTTP_TIMEOUT
+
 _LOGGER = logging.getLogger(__name__)
 
 def get_status(config):
@@ -20,7 +22,7 @@ def get_status(config):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/status.json", timeout=5, auth=auth)
+        response = requests.get("http://" + host + ":" + port + "/cgi-bin/status.json", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get status from device %s", host)
             error = True
@@ -47,7 +49,7 @@ def get_system_conf(config):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=system", timeout=5, auth=auth)
+        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=system", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get system configuration from device %s", host)
             error = True
@@ -74,7 +76,7 @@ def get_mqtt_conf(config):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=5, auth=auth)
+        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get mqtt configuration from device %s", host)
             error = True
