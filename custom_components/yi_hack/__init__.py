@@ -1,4 +1,4 @@
-"""The yi-hack component."""
+"""The yi_hack component."""
 
 import asyncio
 import logging
@@ -99,6 +99,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
         return True
     else:
+        _LOGGER.error("Unable to get configuration from the cam")
         return False
 
 

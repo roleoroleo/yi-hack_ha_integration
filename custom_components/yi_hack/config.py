@@ -1,3 +1,5 @@
+"""Config utils for yi-hack cams."""
+
 import logging
 
 import requests

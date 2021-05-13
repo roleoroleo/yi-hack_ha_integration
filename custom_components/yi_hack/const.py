@@ -1,3 +1,5 @@
+"""Constants for yi_hack integration."""
+
 DOMAIN = "yi_hack"
 
 DEFAULT_BRAND = "yi-hack"

@@ -1,3 +1,5 @@
+"""Config flow for yi_hack integration."""
+
 import logging
 
 import voluptuous as vol

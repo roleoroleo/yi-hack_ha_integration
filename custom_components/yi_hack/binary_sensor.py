@@ -1,4 +1,5 @@
-"""Support for collecting data from the yi-hack cam."""
+"""Support for collecting data from the yi-hack cams."""
+
 import logging
 
 from homeassistant.components import mqtt

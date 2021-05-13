@@ -1,4 +1,5 @@
 """Support for Xiaomi Cameras: yi-hack-MStar, yi-hack-Allwinner and yi-hack-Allwinner-v2."""
+
 import asyncio
 import logging
 
