@@ -52,11 +52,23 @@ It should look similar to this:
 - Go to Settings -> Integrations
 - Click "Add Integration" in the lower-right corner
 - Select "Yi Cam with yi-hack" integration
-- Enter the settings for your cam: host, port, username, password and ffmpeg parameters
+<p align="center">
+<img src="https://user-images.githubusercontent.com/39277388/118390725-eadd7700-b630-11eb-87f9-9b03b1e587f4.png" width="400">
+</p>
+
+- Enter the settings to connect to the web interface of your cam: host, port, username, password and ffmpeg parameters
+<p align="center">
+<img src="https://user-images.githubusercontent.com/39277388/118390634-67bc2100-b630-11eb-8f73-008cad6b2b3d.png" width="400">
+</p>
+
 - Confirm and wait for the wizard completion
 - Set the "Area" if you need it
 - Enjoy your cam
 <br><br>
+
+## Requirements
+This component requires MQTT integration to be installed.
+Please be sure you added MQTT to you Home Assistant configuration.
 
 ## Donation
 If you like this project, you can buy me a beer :) 
