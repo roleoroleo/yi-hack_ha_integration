@@ -3,6 +3,7 @@ ptz:
   description: Pan/Tilt service for yi-hack camera.
   fields:
     entity_id:
+      name: Entity id
       description: Name of entity to move.
       required: true
       example: "camera.living_room_camera"
@@ -11,6 +12,7 @@ ptz:
           integration: yi_hack
           domain: camera
     movement:
+      name: Direction of the movement
       description: "Direction of the movement. Allowed values: up, down, left and right."
       required: true
       example: "left"
@@ -22,13 +24,14 @@ ptz:
             - "left"
             - "right"
     travel_time:
-      description: "(Optional) Travel time in seconds. Allowed values: float from 0 to 5. Default: 0.3"
+      name: Travel time
+      description: "(Optional) Travel time in seconds. Allowed values: float from 0.1 to 5.0. Default: 0.3"
       required: false
       example: 0.3
       selector:
         number:
-          min: 0
-          max: 5
+          min: 0.1
+          max: 5.0
           step: 0.1
           unit_of_measurement: "s"
           mode: box
@@ -38,6 +41,7 @@ speak:
   description: TTS service for yi-hack camera.
   fields:
     entity_id:
+      name: Entity id
       description: Name of entity to use.
       required: true
       example: "camera.living_room_camera"
@@ -46,6 +50,7 @@ speak:
           integration: yi_hack
           domain: camera
     language:
+      name: Language
       description: "Language of the TTS engine. Allowed values: de-DE, en-GB, en-US, es-ES, fr-FR, it-IT. Default: en-US"
       required: true
       example: "en-US"
@@ -59,6 +64,7 @@ speak:
             - "fr-FR"
             - "it-IT"
     sentence:
+      name: Sentence to pronounce
       description: "Sentence to pronounce."
       required: true
       example: "Hello world!"

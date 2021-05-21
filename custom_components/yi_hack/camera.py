@@ -24,7 +24,6 @@ from homeassistant.const import (
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
-import homeassistant.helpers.config_validation as cv
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .const import (
@@ -85,7 +84,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
                     DIR_RIGHT,
                 ]
             ),
-            vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): cv.small_float,
+            vol.Optional(ATTR_TRAVELTIME, default=DEFAULT_TRAVELTIME): vol.Coerce(float),
         },
         "async_perform_ptz",
     )
