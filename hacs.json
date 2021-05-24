@@ -3,7 +3,8 @@
     "render_readme": true,
     "domains": [
         "camera",
-        "binary_sensor"
+        "binary_sensor",
+        "media_player"
     ],
     "iot_class": [
         "Local Push"
