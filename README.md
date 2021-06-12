@@ -66,6 +66,15 @@ It should look similar to this:
 - Enjoy your cam
 <br><br>
 
+## Add the stream to lovelace
+If you want to add your live stream to lovelace, use this custom components: https://github.com/AlexxIT/WebRTC/
+And add a simple configuration like this:
+```
+type: 'custom:webrtc-camera'
+entity: camera.yi_hack_mstar_XXXXXXXXXXXX_cam
+ui: true
+```
+
 ## Requirements
 This component requires MQTT integration to be installed.
 Please be sure you added MQTT to you Home Assistant configuration.
