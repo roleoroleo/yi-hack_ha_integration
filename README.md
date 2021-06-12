@@ -68,6 +68,7 @@ It should look similar to this:
 
 ## Add the stream to lovelace
 If you want to add your live stream to lovelace, use this custom components: https://github.com/AlexxIT/WebRTC/
+
 And add a simple configuration like this:
 ```
 type: 'custom:webrtc-camera'
