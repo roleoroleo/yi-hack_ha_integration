@@ -11,17 +11,20 @@ yi-hack Home Assistant is a custom integration for Yi cameras (or Sonoff camera)
 - yi-hack-v5 - https://github.com/alienatedsec/yi-hack-v5
 - sonoff-hack - https://github.com/roleoroleo/sonoff-hack
 <br>
+And make sure you have the latest version.
+<br>
 
 This integration is available from the Lovelace frontend without the need to configure the devices in the file configuration.yaml
 The wizard will connect to your cam and will install the following entities:
 - ffmpeg cam with stream and snapshot capabilities
 - mqtt cam with the last frame saved during a motion detection event
-- mqtt binary sensor for status
+- mqtt binary sensor for status (connection)
 - mqtt binary sensor for motion detection
 - mqtt binary sensor for ai human detection (there are known issues when enabling ai human detection) (*)
 - mqtt binary sensor for sound detection (*)
 - mqtt binary sensor for baby crying detection (*)
 - media player entity useful to play Home Assistant standard tts service (*)
+- switch to enable/disable privacy (this switch turn on or off the rtsp stream and the snapshot)
 - ptz service (*)
 - speak service (only available if you install the internal tts engine from here https://github.com/roleoroleo/yi-hack-utils)
 
@@ -45,6 +48,7 @@ It should look similar to this:
 |       |-- media_player.py
 |       |-- services.yaml
 |       |-- strings.json
+|       |-- switch.py
 ```
 **(2)** Restart Home Assistant
 
@@ -72,7 +76,7 @@ If you want to add your live stream to lovelace, use this custom components: htt
 And add a simple configuration like this:
 ```
 type: 'custom:webrtc-camera'
-entity: camera.yi_hack_mstar_XXXXXXXXXXXX_cam
+entity: camera.yi_hack_m_XXXXXX_cam
 ui: true
 ```
 
