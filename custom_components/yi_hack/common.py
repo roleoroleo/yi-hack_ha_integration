@@ -1,4 +1,4 @@
-"""Config utils for yi-hack cams."""
+"""Common utils for yi-hack cam."""
 
 from datetime import timedelta
 import logging
@@ -9,7 +9,12 @@ from requests.auth import HTTPBasicAuth
 from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
 from homeassistant.util import dt as dt_util
 
-from .const import HTTP_TIMEOUT
+from .const import (
+    DOMAIN,
+    END_OF_POWER_OFF,
+    END_OF_POWER_ON,
+    HTTP_TIMEOUT,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 #end_of_power_on = None
 
 def get_status(config):
-    """Get system configuration from camera."""
+    """Get system status from camera."""
     host = config[CONF_HOST]
     port = config[CONF_PORT]
     user = config[CONF_USERNAME]
@@ -46,10 +51,10 @@ def get_status(config):
 
 def get_system_conf(config):
     """Get system configuration from camera."""
-    host = config.data[CONF_HOST]
-    port = config.data[CONF_PORT]
-    user = config.data[CONF_USERNAME]
-    password = config.data[CONF_PASSWORD]
+    host = config[CONF_HOST]
+    port = config[CONF_PORT]
+    user = config[CONF_USERNAME]
+    password = config[CONF_PASSWORD]
     error = False
 
     auth = None
@@ -73,10 +78,10 @@ def get_system_conf(config):
 
 def get_mqtt_conf(config):
     """Get mqtt configuration from camera."""
-    host = config.data[CONF_HOST]
-    port = config.data[CONF_PORT]
-    user = config.data[CONF_USERNAME]
-    password = config.data[CONF_PASSWORD]
+    host = config[CONF_HOST]
+    port = config[CONF_PORT]
+    user = config[CONF_USERNAME]
+    password = config[CONF_PASSWORD]
     error = False
 
     auth = None

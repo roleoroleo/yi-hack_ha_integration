@@ -4,36 +4,21 @@ import asyncio
 import logging
 
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import CONF_NAME
 from homeassistant.core import HomeAssistant
 
-from .config import get_mqtt_conf, get_system_conf
-from .const import (
-    ALLWINNER,
-    ALLWINNERV2,
-    CONF_AI_HUMAN_DETECTION_START_MSG,
-    CONF_AI_HUMAN_DETECTION_STOP_MSG,
-    CONF_BABY_CRYING_MSG,
-    CONF_BIRTH_MSG,
-    CONF_HACK_NAME,
-    CONF_MOTION_START_MSG,
-    CONF_MOTION_STOP_MSG,
-    CONF_MQTT_PREFIX,
-    CONF_RTSP_PORT,
-    CONF_SERIAL,
-    CONF_SOUND_DETECTION_MSG,
-    CONF_TOPIC_AI_HUMAN_DETECTION,
-    CONF_TOPIC_BABY_CRYING,
-    CONF_TOPIC_MOTION_DETECTION,
-    CONF_TOPIC_MOTION_DETECTION_IMAGE,
-    CONF_TOPIC_SOUND_DETECTION,
-    CONF_TOPIC_STATUS,
-    CONF_WILL_MSG,
-    DEFAULT_BRAND,
-    DOMAIN,
-    MSTAR,
-    SONOFF,
-    V5,
-)
+from .common import get_mqtt_conf, get_system_conf
+from .const import (ALLWINNER, ALLWINNERV2, CONF_AI_HUMAN_DETECTION_START_MSG,
+                    CONF_AI_HUMAN_DETECTION_STOP_MSG, CONF_BABY_CRYING_MSG,
+                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
+                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX, CONF_RTSP_PORT,
+                    CONF_SERIAL, CONF_SOUND_DETECTION_MSG,
+                    CONF_TOPIC_AI_HUMAN_DETECTION, CONF_TOPIC_BABY_CRYING,
+                    CONF_TOPIC_MOTION_DETECTION,
+                    CONF_TOPIC_MOTION_DETECTION_IMAGE,
+                    CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
+                    CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, END_OF_POWER_OFF,
+                    END_OF_POWER_ON, MSTAR, SONOFF, V5)
 
 PLATFORMS = ["camera", "binary_sensor", "media_player", "switch"]
 PLATFORMS_NOMEDIA = ["camera", "binary_sensor", "switch"]
@@ -50,8 +35,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][entry.data[CONF_NAME] + END_OF_POWER_OFF] = None
     hass.data[DOMAIN][entry.data[CONF_NAME] + END_OF_POWER_ON] = None
 
-    conf = await hass.async_add_executor_job(get_system_conf, entry)
-    mqtt = await hass.async_add_executor_job(get_mqtt_conf, entry)
+    conf = await hass.async_add_executor_job(get_system_conf, entry.data)
+    mqtt = await hass.async_add_executor_job(get_mqtt_conf, entry.data)
 
     if conf is not None and mqtt is not None:
         updated_data = {

@@ -7,26 +7,15 @@ import subprocess
 import requests
 from requests.auth import HTTPBasicAuth
 
-from homeassistant.components.media_player import (
-    DEVICE_CLASS_SPEAKER,
-    MediaPlayerEntity,
-)
-from homeassistant.components.media_player.const import (
-    MEDIA_TYPE_MUSIC,
-    SUPPORT_PLAY_MEDIA,
-)
-from homeassistant.const import (
-    CONF_HOST,
-    CONF_MAC,
-    CONF_NAME,
-    CONF_PASSWORD,
-    CONF_PORT,
-    CONF_USERNAME,
-    STATE_IDLE,
-    STATE_OFF,
-    STATE_ON,
-    STATE_PLAYING,
-)
+from homeassistant.components.media_player import (DEVICE_CLASS_SPEAKER,
+                                                   MediaPlayerEntity)
+from homeassistant.components.media_player.const import (MEDIA_TYPE_MUSIC,
+                                                         SUPPORT_PLAY_MEDIA,
+                                                         SUPPORT_TURN_OFF,
+                                                         SUPPORT_TURN_ON)
+from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME, CONF_PASSWORD,
+                                 CONF_PORT, CONF_USERNAME, STATE_IDLE,
+                                 STATE_OFF, STATE_ON, STATE_PLAYING)
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .common import (get_privacy, set_power_off_in_progress,
@@ -43,7 +32,7 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Yi Camera media player from a config entry."""
-    async_add_entities([YiHackMediaPlayer(config_entry)])
+    async_add_entities([YiHackMediaPlayer(config_entry)], True)
 
 
 class YiHackMediaPlayer(MediaPlayerEntity):
@@ -75,17 +64,17 @@ class YiHackMediaPlayer(MediaPlayerEntity):
 
     @property
     def name(self):
-        """Return the name of the camera."""
+        """Return the name of the device."""
         return self._name
 
     @property
     def unique_id(self) -> str:
-        """Return the unique ID of the camera."""
+        """Return the unique ID of the device."""
         return self._unique_id
 
     @property
     def state(self):
-        """Return the state of the camera."""
+        """Return the state of the device."""
         if self._state:
             if self._playing:
                 return STATE_PLAYING

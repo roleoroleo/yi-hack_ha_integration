@@ -1,53 +1,35 @@
-"""Support for collecting data from the yi-hack cams."""
+"""Support for collecting sensors from the yi-hack cams."""
 
 import logging
 
 from homeassistant.components import mqtt
-from homeassistant.components.binary_sensor import (
-    DEVICE_CLASS_CONNECTIVITY,
-    DEVICE_CLASS_MOTION,
-    DEVICE_CLASS_SOUND,
-    BinarySensorEntity,
-)
+from homeassistant.components.binary_sensor import (DEVICE_CLASS_CONNECTIVITY,
+                                                    DEVICE_CLASS_MOTION,
+                                                    DEVICE_CLASS_SOUND,
+                                                    BinarySensorEntity)
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_MAC, CONF_NAME
+from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME, CONF_PASSWORD,
+                                 CONF_PORT, CONF_USERNAME)
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import event
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
-from .const import (
-    ALLWINNER,
-    ALLWINNERV2,
-    CONF_AI_HUMAN_DETECTION_START_MSG,
-    CONF_AI_HUMAN_DETECTION_STOP_MSG,
-    CONF_BABY_CRYING_MSG,
-    CONF_BIRTH_MSG,
-    CONF_HACK_NAME,
-    CONF_MOTION_START_MSG,
-    CONF_MOTION_STOP_MSG,
-    CONF_MQTT_PREFIX,
-    CONF_SERIAL,
-    CONF_SOUND_DETECTION_MSG,
-    CONF_TOPIC_AI_HUMAN_DETECTION,
-    CONF_TOPIC_BABY_CRYING,
-    CONF_TOPIC_MOTION_DETECTION,
-    CONF_TOPIC_SOUND_DETECTION,
-    CONF_TOPIC_STATUS,
-    CONF_WILL_MSG,
-    DEFAULT_BRAND,
-    DOMAIN,
-    MSTAR,
-    SONOFF,
-    V5,
-)
+from .const import (ALLWINNER, ALLWINNERV2, CONF_AI_HUMAN_DETECTION_START_MSG,
+                    CONF_AI_HUMAN_DETECTION_STOP_MSG, CONF_BABY_CRYING_MSG,
+                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
+                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX, CONF_SERIAL,
+                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_AI_HUMAN_DETECTION,
+                    CONF_TOPIC_BABY_CRYING, CONF_TOPIC_MOTION_DETECTION,
+                    CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
+                    CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, MSTAR, SONOFF, V5)
 
 ICON = "mdi:update"
 
 _LOGGER = logging.getLogger(__name__)
 
 
-async def async_setup_entry(_hass: HomeAssistant, config: ConfigEntry, async_add_entities):
-    """Set up MQTT motion detection sensor."""
+async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_entities):
+    """Set up MQTT motion sensors."""
     if (config.data[CONF_HACK_NAME] == DEFAULT_BRAND) or (config.data[CONF_HACK_NAME] == MSTAR):
         entities = [
             YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
