@@ -92,7 +92,18 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     user_input[CONF_MAC] = format_mac(mac)
                     user_input[CONF_PTZ] = ptz
                     user_input[CONF_HACK_NAME] = hackname
-                    user_input[CONF_NAME] = user_input[CONF_HACK_NAME] + "-" + user_input[CONF_MAC].replace(':', '')
+                    if hackname == MSTAR:
+                        user_input[CONF_NAME] = MSTAR_R + "_" + user_input[CONF_MAC].replace(':', '')[6:]
+                    elif hackname == ALLWINNER:
+                        user_input[CONF_NAME] = ALLWINNER_R + "_" + user_input[CONF_MAC].replace(':', '')[6:]
+                    elif hackname == ALLWINNERV2:
+                        user_input[CONF_NAME] = ALLWINNERV2_R + "_" + user_input[CONF_MAC].replace(':', '')[6:]
+                    elif hackname == V5:
+                        user_input[CONF_NAME] = V5_R + "_" + user_input[CONF_MAC].replace(':', '')[6:]
+                    elif hackname == SONOFF:
+                        user_input[CONF_NAME] = SONOFF_R + "_" + user_input[CONF_MAC].replace(':', '')[6:]
+                    else:
+                        user_input[CONF_NAME] = DEFAULT_BRAND_R + "_" + user_input[CONF_MAC].replace(':', '')[6:]
                 else:
                     _LOGGER.error("Unable to get mac address or serial number from device %s", host)
                     errors["base"] = "cannot_get_mac_or serial"

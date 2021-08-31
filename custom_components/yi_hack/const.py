@@ -3,12 +3,18 @@
 DOMAIN = "yi_hack"
 
 DEFAULT_BRAND = "yi-hack"
+DEFAULT_BRAND_R = "yi_hack"
 
 MSTAR = "yi-hack-mstar"
 ALLWINNER = "yi-hack-allwinner"
 ALLWINNERV2 = "yi-hack-allwinner-v2"
 V5 = "yi-hack-v5"
 SONOFF = "sonoff-hack"
+MSTAR_R = "yi_hack_m"
+ALLWINNER_R = "yi_hack_a"
+ALLWINNERV2_R = "yi_hack_a2"
+V5_R = "yi_hack_v5"
+SONOFF_R = "yi_hack_s"
 
 DEFAULT_HOST = ""
 DEFAULT_PORT = 8080
