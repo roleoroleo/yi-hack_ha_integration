@@ -4,7 +4,8 @@
     "domains": [
         "camera",
         "binary_sensor",
-        "media_player"
+        "media_player",
+        "switch"
     ],
     "iot_class": [
         "Local Push"

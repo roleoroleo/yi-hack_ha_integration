@@ -35,8 +35,8 @@ from .const import (
     V5,
 )
 
-PLATFORMS = ["camera", "binary_sensor", "media_player"]
-PLATFORMS_NOMEDIA = ["camera", "binary_sensor"]
+PLATFORMS = ["camera", "binary_sensor", "media_player", "switch"]
+PLATFORMS_NOMEDIA = ["camera", "binary_sensor", "switch"]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -46,6 +46,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = entry.data[CONF_SERIAL]
+    hass.data[DOMAIN][entry.data[CONF_NAME]] = None
+    hass.data[DOMAIN][entry.data[CONF_NAME] + END_OF_POWER_OFF] = None
+    hass.data[DOMAIN][entry.data[CONF_NAME] + END_OF_POWER_ON] = None
 
     conf = await hass.async_add_executor_job(get_system_conf, entry)
     mqtt = await hass.async_add_executor_job(get_mqtt_conf, entry)
