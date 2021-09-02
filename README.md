@@ -24,7 +24,7 @@ The wizard will connect to your cam and will install the following entities:
 - mqtt binary sensor for sound detection (*)
 - mqtt binary sensor for baby crying detection (*)
 - media player entity useful to play Home Assistant standard tts service (*)
-- switch to enable/disable privacy (this switch turn on or off the rtsp stream and the snapshot)
+- switch to enable/disable privacy (this switch turns on or off the rtsp stream and the snapshot)
 - ptz service (*)
 - speak service (only available if you install the internal tts engine from here https://github.com/roleoroleo/yi-hack-utils)
 
