@@ -1,4 +1,5 @@
 """Support for Xiaomi Cameras: yi-hack-MStar, yi-hack-Allwinner, yi-hack-Allwinner-v2, yi-hack-v5 and sonoff-hack."""
+from __future__ import annotations
 
 import asyncio
 import logging
@@ -192,8 +193,12 @@ class YiHackCamera(Camera):
 
         return await self.hass.async_add_executor_job(fetch_link)
 
-    async def async_camera_image(self):
+    async def async_camera_image(
+        self, width: int | None = None, height: int | None = None
+    ) -> bytes | None:
         """Return a still image response from the camera."""
+        """Ignore width and height when the image is fetched from url."""
+        """Camera component will resize it."""
         image = None
 
         if self._still_image_url:
@@ -226,7 +231,9 @@ class YiHackCamera(Camera):
                     ffmpeg.get_image(
                         stream_source,
                         output_format=IMAGE_JPEG,
-                        extra_cmd=self._extra_arguments
+                        extra_cmd=self._extra_arguments,
+                        width=width,
+                        height=height
                     )
                 )
 
@@ -387,8 +394,11 @@ class YiHackMqttCamera(Camera):
         if self._mqtt_subscription:
             self._mqtt_subscription()
 
-    async def async_camera_image(self):
+    async def async_camera_image(
+        self, width: int | None = None, height: int | None = None
+    ) -> bytes | None:
         """Return image response."""
+        """Ignore width and height: camera component will resize it."""
         return self._last_image
 
     @property
