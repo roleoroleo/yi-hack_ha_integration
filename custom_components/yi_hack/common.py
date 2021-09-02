@@ -181,6 +181,7 @@ def get_privacy(hass, device_name, config=None):
     if user or password:
         auth = HTTPBasicAuth(user, password)
 
+    response = None
     try:
         response = requests.get("http://" + host + ":" + port + "/cgi-bin/privacy.sh?value=status", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
