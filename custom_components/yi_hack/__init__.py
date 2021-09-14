@@ -69,7 +69,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             })
         elif entry.data[CONF_HACK_NAME] == SONOFF:
             updated_data.update(**{
-                CONF_RTSP_PORT: "554",
+                CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
             })
 
         hass.config_entries.async_update_entry(entry, data=updated_data)
