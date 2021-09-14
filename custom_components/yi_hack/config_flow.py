@@ -89,7 +89,7 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                         user_input[CONF_NAME] = DEFAULT_BRAND_R + "_" + user_input[CONF_MAC].replace(':', '')[6:]
                 else:
                     _LOGGER.error("Unable to get mac address or serial number from device %s", host)
-                    errors["base"] = "cannot_get_mac_or serial"
+                    errors["base"] = "cannot_get_mac_or_serial"
 
                 if not errors:
                     await self.async_set_unique_id(user_input[CONF_MAC])
