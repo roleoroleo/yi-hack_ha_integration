@@ -4,7 +4,7 @@ import asyncio
 import logging
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_NAME
+from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import HomeAssistant
 
 from .common import get_mqtt_conf, get_system_conf
@@ -12,9 +12,8 @@ from .const import (ALLWINNER, ALLWINNERV2, CONF_AI_HUMAN_DETECTION_START_MSG,
                     CONF_AI_HUMAN_DETECTION_STOP_MSG, CONF_BABY_CRYING_MSG,
                     CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
                     CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX, CONF_RTSP_PORT,
-                    CONF_SERIAL, CONF_SOUND_DETECTION_MSG,
-                    CONF_TOPIC_AI_HUMAN_DETECTION, CONF_TOPIC_BABY_CRYING,
-                    CONF_TOPIC_MOTION_DETECTION,
+                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_AI_HUMAN_DETECTION,
+                    CONF_TOPIC_BABY_CRYING, CONF_TOPIC_MOTION_DETECTION,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE,
                     CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
                     CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, END_OF_POWER_OFF,
@@ -30,7 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up yi-hack from a config entry."""
 
     hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN][entry.entry_id] = entry.data[CONF_SERIAL]
+    hass.data[DOMAIN][entry.entry_id] = entry.data[CONF_MAC]
     hass.data[DOMAIN][entry.data[CONF_NAME]] = None
     hass.data[DOMAIN][entry.data[CONF_NAME] + END_OF_POWER_OFF] = None
     hass.data[DOMAIN][entry.data[CONF_NAME] + END_OF_POWER_ON] = None
