@@ -4,11 +4,13 @@ import asyncio
 import logging
 
 from homeassistant.components.switch import SwitchEntity
-from homeassistant.const import (CONF_HOST, CONF_NAME, CONF_PASSWORD,
-                                 CONF_PORT, CONF_USERNAME)
+from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME,
+                                 CONF_PASSWORD, CONF_PORT, CONF_USERNAME)
+from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .common import (get_privacy, set_power_off_in_progress,
                      set_power_on_in_progress, set_privacy)
+from .const import CONF_SERIAL, DEFAULT_BRAND, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,6 +26,8 @@ class YiHackSwitch(SwitchEntity):
         self._device_name = config.data[CONF_NAME]
         self._name = self._device_name + "_privacy"
         self._unique_id = self._device_name + "_swpr"
+        self._mac = config.data[CONF_MAC]
+        self._serial_number = config.data[CONF_SERIAL]
         self._host = config.data[CONF_HOST]
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
@@ -86,6 +90,22 @@ class YiHackSwitch(SwitchEntity):
         return self._name
 
     @property
+    def brand(self):
+        """Camera brand."""
+        return DEFAULT_BRAND
+
+    @property
     def unique_id(self) -> str:
         """Return the unique ID of the device."""
         return self._unique_id
+
+    @property
+    def device_info(self):
+        """Return device specific attributes."""
+        return {
+            "name": self._device_name,
+            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
+            "identifiers": {(DOMAIN, self._serial_number)},
+            "manufacturer": DEFAULT_BRAND,
+            "model": DOMAIN,
+        }
