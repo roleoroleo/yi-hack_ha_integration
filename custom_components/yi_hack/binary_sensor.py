@@ -17,7 +17,7 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from .const import (ALLWINNER, ALLWINNERV2, CONF_AI_HUMAN_DETECTION_START_MSG,
                     CONF_AI_HUMAN_DETECTION_STOP_MSG, CONF_BABY_CRYING_MSG,
                     CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
-                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX, CONF_SERIAL,
+                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX,
                     CONF_SOUND_DETECTION_MSG, CONF_TOPIC_AI_HUMAN_DETECTION,
                     CONF_TOPIC_BABY_CRYING, CONF_TOPIC_MOTION_DETECTION,
                     CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
@@ -60,7 +60,6 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         """Initialize the sensor."""
         self._state = False
         self._device_name = config.data[CONF_NAME]
-        self._serial_number = config.data[CONF_SERIAL]
         self._mac = config.data[CONF_MAC]
         self._mqtt_subscription = None
         self._delay_listener = None
@@ -184,7 +183,7 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         return {
             "name": self._device_name,
             "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._serial_number)},
+            "identifiers": {(DOMAIN, self._mac)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
         }

@@ -20,7 +20,7 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .common import (get_privacy, set_power_off_in_progress,
                      set_power_on_in_progress, set_privacy)
-from .const import CONF_SERIAL, DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
+from .const import DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
 
 SUPPORT_YIHACK_MEDIA = (
     SUPPORT_PLAY_MEDIA
@@ -44,7 +44,6 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         self._name = self._device_name + "_media_player"
         self._unique_id = self._device_name + "_mpca"
         self._mac = config.data[CONF_MAC]
-        self._serial_number = config.data[CONF_SERIAL]
         self._host = config.data[CONF_HOST]
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
@@ -89,7 +88,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         return {
             "name": self._device_name,
             "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._serial_number)},
+            "identifiers": {(DOMAIN, self._mac)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
         }

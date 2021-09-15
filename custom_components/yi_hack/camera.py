@@ -25,8 +25,8 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from .common import (get_privacy, set_power_off_in_progress,
                      set_power_on_in_progress, set_privacy)
 from .const import (ALLWINNER, ALLWINNERV2, CONF_HACK_NAME, CONF_MQTT_PREFIX,
-                    CONF_PTZ, CONF_SERIAL, CONF_TOPIC_MOTION_DETECTION_IMAGE,
-                    DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT, LINK_HIGH_RES_STREAM,
+                    CONF_PTZ, CONF_TOPIC_MOTION_DETECTION_IMAGE, DEFAULT_BRAND,
+                    DOMAIN, HTTP_TIMEOUT, LINK_HIGH_RES_STREAM,
                     LINK_LOW_RES_STREAM, MSTAR, SERVICE_PTZ, SERVICE_SPEAK)
 
 _LOGGER = logging.getLogger(__name__)
@@ -113,7 +113,6 @@ class YiHackCamera(Camera):
         self._name = self._device_name + "_cam"
         self._unique_id = self._device_name + "_caca"
         self._mac = config.data[CONF_MAC]
-        self._serial_number = config.data[CONF_SERIAL]
         self._host = config.data[CONF_HOST]
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
@@ -349,7 +348,7 @@ class YiHackCamera(Camera):
         return {
             "name": self._device_name,
             "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._serial_number)},
+            "identifiers": {(DOMAIN, self._mac)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
         }
@@ -365,7 +364,6 @@ class YiHackMqttCamera(Camera):
         self._name = self._device_name  + "_motion_detection_cam"
         self._unique_id = self._device_name + "_camd"
         self._mac = config.data[CONF_MAC]
-        self._serial_number = config.data[CONF_SERIAL]
         self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION_IMAGE]
         self._last_image = None
         self._mqtt_subscription = None
@@ -432,7 +430,7 @@ class YiHackMqttCamera(Camera):
         return {
             "name": self._device_name,
             "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._serial_number)},
+            "identifiers": {(DOMAIN, self._mac)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
         }

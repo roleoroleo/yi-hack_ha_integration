@@ -10,7 +10,7 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .common import (get_privacy, set_power_off_in_progress,
                      set_power_on_in_progress, set_privacy)
-from .const import CONF_SERIAL, DEFAULT_BRAND, DOMAIN
+from .const import DEFAULT_BRAND, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,7 +27,6 @@ class YiHackSwitch(SwitchEntity):
         self._name = self._device_name + "_privacy"
         self._unique_id = self._device_name + "_swpr"
         self._mac = config.data[CONF_MAC]
-        self._serial_number = config.data[CONF_SERIAL]
         self._host = config.data[CONF_HOST]
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
@@ -105,7 +104,7 @@ class YiHackSwitch(SwitchEntity):
         return {
             "name": self._device_name,
             "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._serial_number)},
+            "identifiers": {(DOMAIN, self._mac)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
         }
