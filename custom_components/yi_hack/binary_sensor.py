@@ -14,14 +14,14 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import event
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
-from .const import (ALLWINNER, ALLWINNERV2, CONF_AI_HUMAN_DETECTION_START_MSG,
-                    CONF_AI_HUMAN_DETECTION_STOP_MSG, CONF_BABY_CRYING_MSG,
-                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
-                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX,
-                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_AI_HUMAN_DETECTION,
-                    CONF_TOPIC_BABY_CRYING, CONF_TOPIC_MOTION_DETECTION,
-                    CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
-                    CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, MSTAR, SONOFF, V5)
+from .const import (ALLWINNER, ALLWINNERV2, CONF_AI_HUMAN_DETECTION_MSG,
+                    CONF_BABY_CRYING_MSG, CONF_BIRTH_MSG, CONF_HACK_NAME,
+                    CONF_MOTION_START_MSG, CONF_MOTION_STOP_MSG,
+                    CONF_MQTT_PREFIX, CONF_SOUND_DETECTION_MSG,
+                    CONF_TOPIC_AI_HUMAN_DETECTION, CONF_TOPIC_BABY_CRYING,
+                    CONF_TOPIC_MOTION_DETECTION, CONF_TOPIC_SOUND_DETECTION,
+                    CONF_TOPIC_STATUS, CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN,
+                    MSTAR, SONOFF, V5)
 
 ICON = "mdi:update"
 
@@ -84,8 +84,8 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._name = self._device_name + "_ai_human_detection"
             self._unique_id = self._device_name + "_bsah"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_AI_HUMAN_DETECTION]
-            self._payload_on = config.data[CONF_AI_HUMAN_DETECTION_START_MSG]
-            self._payload_off = config.data[CONF_AI_HUMAN_DETECTION_STOP_MSG]
+            self._payload_on = config.data[CONF_AI_HUMAN_DETECTION_MSG]
+            self._off_delay = 60
             self._device_class = DEVICE_CLASS_MOTION
         elif sensor_type == CONF_TOPIC_SOUND_DETECTION:
             self._name = self._device_name + "_sound_detection"

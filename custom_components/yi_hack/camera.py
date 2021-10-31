@@ -1,4 +1,3 @@
-"""Support for Xiaomi Cameras: yi-hack-MStar, yi-hack-Allwinner, yi-hack-Allwinner-v2, yi-hack-v5 and sonoff-hack."""
 from __future__ import annotations
 
 import asyncio
