@@ -12,8 +12,8 @@ from homeassistant.helpers.device_registry import format_mac
 from .common import get_status
 from .const import (ALLWINNER, ALLWINNER_R, ALLWINNERV2, ALLWINNERV2_R,
                     CONF_HACK_NAME, CONF_MQTT_PREFIX, CONF_PTZ, CONF_RTSP_PORT,
-                    CONF_SERIAL, CONF_TOPIC_AI_HUMAN_DETECTION,
-                    CONF_TOPIC_BABY_CRYING, CONF_TOPIC_MOTION_DETECTION,
+                    CONF_SERIAL, CONF_TOPIC_BABY_CRYING,
+                    CONF_TOPIC_MOTION_DETECTION,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE,
                     CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
                     DEFAULT_BRAND, DEFAULT_BRAND_R, DEFAULT_EXTRA_ARGUMENTS,
@@ -104,7 +104,6 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     user_input[CONF_MQTT_PREFIX] = None
                     user_input[CONF_TOPIC_STATUS] = None
                     user_input[CONF_TOPIC_MOTION_DETECTION] = None
-                    user_input[CONF_TOPIC_AI_HUMAN_DETECTION] = None
                     user_input[CONF_TOPIC_SOUND_DETECTION] = None
                     user_input[CONF_TOPIC_BABY_CRYING] = None
                     user_input[CONF_TOPIC_MOTION_DETECTION_IMAGE] = None
