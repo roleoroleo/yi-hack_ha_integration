@@ -121,7 +121,7 @@ class YiHackCamera(Camera):
 
         self._http_base_url = "http://" + self._host
         if self._port != 80:
-            self._http_base_url += ":" + self._port
+            self._http_base_url += ":" + str(self._port)
         self._still_image_url = self._http_base_url + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
 
     @property
@@ -268,7 +268,7 @@ class YiHackCamera(Camera):
             auth = HTTPBasicAuth(self._user, self._password)
 
         try:
-            response = requests.get("http://" + self._host + ":" + self._port + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=HTTP_TIMEOUT, auth=auth)
+            response = requests.get("http://" + self._host + ":" + str(self._port) + "/cgi-bin/ptz.sh?dir=" + movement + "&time=" + travel_time_str, timeout=HTTP_TIMEOUT, auth=auth)
             if response.status_code >= 300:
                 _LOGGER.error("Failed to send ptz command to device %s", self._host)
         except requests.exceptions.RequestException as error:
@@ -295,7 +295,7 @@ class YiHackCamera(Camera):
             auth = HTTPBasicAuth(self._user, self._password)
 
         try:
-            response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speak.sh?lang=" + language, data=sentence, timeout=HTTP_TIMEOUT, auth=auth)
+            response = requests.post("http://" + self._host + ":" + str(self._port) + "/cgi-bin/speak.sh?lang=" + language, data=sentence, timeout=HTTP_TIMEOUT, auth=auth)
             if response.status_code >= 300:
                 _LOGGER.error("Failed to send speak command to device %s", self._host)
         except requests.exceptions.RequestException as error:

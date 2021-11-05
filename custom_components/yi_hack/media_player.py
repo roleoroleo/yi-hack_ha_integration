@@ -145,7 +145,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             self._playing = True
 
             try:
-                response = requests.post("http://" + self._host + ":" + self._port + "/cgi-bin/speaker.sh", data=data, timeout=HTTP_TIMEOUT, headers={'Content-Type': 'application/octet-stream'}, auth=auth)
+                response = requests.post("http://" + self._host + ":" + str(self._port) + "/cgi-bin/speaker.sh", data=data, timeout=HTTP_TIMEOUT, headers={'Content-Type': 'application/octet-stream'}, auth=auth)
                 if response.status_code >= 300:
                     _LOGGER.error("Failed to send speaker command to device %s", self._host)
             except requests.exceptions.RequestException as error:

@@ -35,7 +35,7 @@ def get_status(config):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/status.json", timeout=HTTP_TIMEOUT, auth=auth)
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/status.json", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get status from device %s", host)
             error = True
@@ -62,7 +62,7 @@ def get_system_conf(config):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=system", timeout=HTTP_TIMEOUT, auth=auth)
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/get_configs.sh?conf=system", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get system configuration from device %s", host)
             error = True
@@ -89,7 +89,7 @@ def get_mqtt_conf(config):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=HTTP_TIMEOUT, auth=auth)
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get mqtt configuration from device %s", host)
             error = True
@@ -116,7 +116,7 @@ def get_services(config):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/service.sh?name=all&action=status", timeout=HTTP_TIMEOUT, auth=auth)
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/service.sh?name=all&action=status", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get status of services from device %s", host)
             error = True
@@ -148,7 +148,7 @@ def set_services(hass, config, newstatus):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/service.sh?name=all&action=" + newstatus, timeout=HTTP_TIMEOUT, auth=auth)
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/service.sh?name=all&action=" + newstatus, timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to set status of services to device %s", host)
             error = True
@@ -183,7 +183,7 @@ def get_privacy(hass, device_name, config=None):
 
     response = None
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/privacy.sh?value=status", timeout=HTTP_TIMEOUT, auth=auth)
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/privacy.sh?value=status", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to get status of device %s", host)
             error = True
@@ -231,7 +231,7 @@ def set_privacy(hass, device_name, newstatus, config=None):
         auth = HTTPBasicAuth(user, password)
 
     try:
-        response = requests.get("http://" + host + ":" + port + "/cgi-bin/privacy.sh?value=" + newstatus_string, timeout=HTTP_TIMEOUT, auth=auth)
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/privacy.sh?value=" + newstatus_string, timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
             _LOGGER.error("Failed to switch on device %s", host)
             error = True

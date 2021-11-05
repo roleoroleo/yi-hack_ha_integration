@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger(__name__)
 
 DATA_SCHEMA = {
     vol.Required(CONF_HOST, default=DEFAULT_HOST): str,
-    vol.Required(CONF_PORT, default=DEFAULT_PORT): str,
+    vol.Required(CONF_PORT, default=DEFAULT_PORT): int,
     vol.Optional(CONF_USERNAME, default=DEFAULT_USERNAME): str,
     vol.Optional(CONF_PASSWORD, default=DEFAULT_PASSWORD): str,
     vol.Optional(CONF_EXTRA_ARGUMENTS, default=DEFAULT_EXTRA_ARGUMENTS): str,
