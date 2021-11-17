@@ -10,7 +10,8 @@
           "port": "Port",
           "username": "Usuario",
           "password": "Contraseña",
-          "extra_arguments": "Argumentos adicionales de FFMPEG"
+          "extra_arguments": "Argumentos adicionales de FFMPEG",
+          "boost_speaker": "Aumentar el volumen del altavoz"
         }
       }
     },

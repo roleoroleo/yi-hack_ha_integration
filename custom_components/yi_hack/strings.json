@@ -10,7 +10,8 @@
           "port": "[%key:common::config_flow::data::port%]",
           "username": "[%key:common::config_flow::data::username%]",
           "password": "[%key:common::config_flow::data::password%]",
-          "extra_arguments": "FFMPEG extra arguments"
+          "extra_arguments": "FFMPEG extra arguments",
+          "boost_speaker": "Boost the speaker volume"
         }
       }
     },

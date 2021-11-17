@@ -20,7 +20,7 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .common import (get_privacy, set_power_off_in_progress,
                      set_power_on_in_progress, set_privacy)
-from .const import DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
+from .const import CONF_BOOST_SPEAKER, DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
 
 SUPPORT_YIHACK_MEDIA = (
     SUPPORT_PLAY_MEDIA
@@ -51,6 +51,10 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         # Assume that the media player is not in Play mode
         self._state = None
         self._playing = False
+        try:
+            self._boost_speaker = config.data[CONF_BOOST_SPEAKER]
+        except KeyError:
+            self._boost_speaker = True
 
     def update(self):
         """Return the state of the media player (privacy off = state on)."""
@@ -171,7 +175,10 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             _LOGGER.error("Failed to send speaker command, device %s is busy", self._host)
             return
 
-        cmd = ["ffmpeg",  "-i",  media_id, "-f", "s16le", "-acodec",  "pcm_s16le", "-ar", "16000", "-"]
+        if self._boost_speaker:
+            cmd = ["ffmpeg",  "-i",  media_id, "-f", "s16le", "-acodec",  "pcm_s16le", "-ar", "16000", "-filter:a", "\"volume=25dB\"", "-"]
+        else:
+            cmd = ["ffmpeg",  "-i",  media_id, "-f", "s16le", "-acodec",  "pcm_s16le", "-ar", "16000", "-"]
         data = await self.hass.async_add_executor_job(_perform_cmd, cmd)
 
         if data is not None and len(data) > 0:

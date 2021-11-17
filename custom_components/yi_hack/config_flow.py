@@ -11,9 +11,9 @@ from homeassistant.helpers.device_registry import format_mac
 
 from .common import get_status
 from .const import (ALLWINNER, ALLWINNER_R, ALLWINNERV2, ALLWINNERV2_R,
-                    CONF_HACK_NAME, CONF_MQTT_PREFIX, CONF_PTZ, CONF_RTSP_PORT,
-                    CONF_SERIAL, CONF_TOPIC_BABY_CRYING,
-                    CONF_TOPIC_MOTION_DETECTION,
+                    CONF_BOOST_SPEAKER, CONF_HACK_NAME, CONF_MQTT_PREFIX,
+                    CONF_PTZ, CONF_RTSP_PORT, CONF_SERIAL,
+                    CONF_TOPIC_BABY_CRYING, CONF_TOPIC_MOTION_DETECTION,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE,
                     CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
                     DEFAULT_BRAND, DEFAULT_BRAND_R, DEFAULT_EXTRA_ARGUMENTS,
@@ -29,6 +29,7 @@ DATA_SCHEMA = {
     vol.Optional(CONF_USERNAME, default=DEFAULT_USERNAME): str,
     vol.Optional(CONF_PASSWORD, default=DEFAULT_PASSWORD): str,
     vol.Optional(CONF_EXTRA_ARGUMENTS, default=DEFAULT_EXTRA_ARGUMENTS): str,
+    vol.Optional(CONF_BOOST_SPEAKER, default=True): bool,
 }
 
 class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
@@ -47,6 +48,7 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             user = user_input[CONF_USERNAME]
             password = user_input[CONF_PASSWORD]
             extra_arguments = user_input[CONF_EXTRA_ARGUMENTS]
+            boost_speaker = user_input[CONF_BOOST_SPEAKER]
 
             response = await self.hass.async_add_executor_job(get_status, user_input)
             if response is not None:
