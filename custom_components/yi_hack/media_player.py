@@ -33,7 +33,8 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Yi Camera media player from a config entry."""
-    async_add_entities([YiHackMediaPlayer(config_entry)], True)
+    if (config_entry.data[CONF_HACK_NAME] == MSTAR) or (config_entry.data[CONF_HACK_NAME] == ALLWINNER) or (config_entry.data[CONF_HACK_NAME] == ALLWINNERV2):
+        async_add_entities([YiHackMediaPlayer(config_entry)], True)
 
 
 class YiHackMediaPlayer(MediaPlayerEntity):
