@@ -20,7 +20,8 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .common import (get_privacy, set_power_off_in_progress,
                      set_power_on_in_progress, set_privacy)
-from .const import CONF_BOOST_SPEAKER, DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
+from .const import (ALLWINNER, ALLWINNERV2, CONF_BOOST_SPEAKER, CONF_HACK_NAME,
+                    DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT, MSTAR)
 
 SUPPORT_YIHACK_MEDIA = (
     SUPPORT_PLAY_MEDIA
@@ -48,13 +49,14 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
+        self._hack_name = config.data[CONF_HACK_NAME]
         # Assume that the media player is not in Play mode
         self._state = None
         self._playing = False
         try:
             self._boost_speaker = config.data[CONF_BOOST_SPEAKER]
         except KeyError:
-            self._boost_speaker = True
+            self._boost_speaker = "auto"
 
     def update(self):
         """Return the state of the media player (privacy off = state on)."""
@@ -160,8 +162,8 @@ class YiHackMediaPlayer(MediaPlayerEntity):
 
             self._playing = False
 
-        def _perform_cmd(cmd):
-            return subprocess.run(cmd, check=False, shell=False, stdout=subprocess.PIPE).stdout
+        def _perform_cmd(p_cmd):
+            return subprocess.run(p_cmd, check=False, shell=False, stdout=subprocess.PIPE).stdout
 
         if media_type != MEDIA_TYPE_MUSIC:
             _LOGGER.error(
@@ -175,11 +177,17 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             _LOGGER.error("Failed to send speaker command, device %s is busy", self._host)
             return
 
-        if self._boost_speaker:
-            cmd = ["ffmpeg",  "-i",  media_id, "-f", "s16le", "-acodec",  "pcm_s16le", "-ar", "16000", "-filter:a", "\"volume=25dB\"", "-"]
-        else:
-            cmd = ["ffmpeg",  "-i",  media_id, "-f", "s16le", "-acodec",  "pcm_s16le", "-ar", "16000", "-"]
+        cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-"]
+        if self._boost_speaker == "auto":
+            if self._hack_name == MSTAR:
+                cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-filter:a", "volume=4", "-"]
+            elif self._hack_name == ALLWINNERV2:
+                cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-filter:a", "volume=3", "-"]
+        elif self._boost_speaker != "disabled":
+            cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-filter:a", "volume=" + str(self._boost_speaker[-1]), "-"]
         data = await self.hass.async_add_executor_job(_perform_cmd, cmd)
 
         if data is not None and len(data) > 0:
             await self.hass.async_add_executor_job(_perform_speaker, data)
+        else:
+            _LOGGER.error("Failed to send data to speaker %s, no data available", self._host)

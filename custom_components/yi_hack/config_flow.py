@@ -29,7 +29,10 @@ DATA_SCHEMA = {
     vol.Optional(CONF_USERNAME, default=DEFAULT_USERNAME): str,
     vol.Optional(CONF_PASSWORD, default=DEFAULT_PASSWORD): str,
     vol.Optional(CONF_EXTRA_ARGUMENTS, default=DEFAULT_EXTRA_ARGUMENTS): str,
-    vol.Optional(CONF_BOOST_SPEAKER, default=True): bool,
+    vol.Required(
+        CONF_BOOST_SPEAKER,
+        default="auto",
+    ): vol.In(["auto", "disabled", "x 2", "x 3", "x 4", "x 5"])
 }
 
 class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
