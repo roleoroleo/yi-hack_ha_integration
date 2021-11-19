@@ -4,12 +4,20 @@
     "step": {
       "user": {
         "title": "Configuracion yi-hack",
+<<<<<<< HEAD
+        "description": "Complete la informaci\u00f3n de yi-hack",
+=======
         "description": "Complete la información de yi-hack",
+>>>>>>> 5f56a9adcd069d62d764fec4398da5f6e1d6d109
         "data": {
           "host": "Host",
           "port": "Port",
           "username": "Usuario",
+<<<<<<< HEAD
+          "password": "Contrase\u00f1a",
+=======
           "password": "Contraseña",
+>>>>>>> 5f56a9adcd069d62d764fec4398da5f6e1d6d109
           "extra_arguments": "Argumentos adicionales de FFMPEG",
           "boost_speaker": "Aumentar el volumen del altavoz"
         }
@@ -17,14 +25,22 @@
     },
     "error": {
       "cannot_connect": "No se pudo conectar",
+<<<<<<< HEAD
+      "cannot_get_mac_or_serial": "No se puede obtener direccion mac o n\u00famero de serie",
+=======
       "cannot_get_mac_or_serial": "No se puede obtener direccion mac o número de serie",
+>>>>>>> 5f56a9adcd069d62d764fec4398da5f6e1d6d109
       "cannot_get_conf": "No se pudo obtener la configuracion",
       "cannot_get_mqtt_conf": "No se puede obtener la configuracion de mqtt",
       "cannot_send_ptz": "No se puede enviar el comando ptz",
       "unknown": "Error inesperado"
     },
     "abort": {
+<<<<<<< HEAD
+      "already_configured": "El dispositivo ya est\u00e1 configurado"
+=======
       "already_configured": "El dispositivo ya está configurado"
+>>>>>>> 5f56a9adcd069d62d764fec4398da5f6e1d6d109
     }
   }
 }
