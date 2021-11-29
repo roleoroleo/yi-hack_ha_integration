@@ -138,7 +138,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         ])
         if get_privacy(self.hass, self._device_name):
             _LOGGER.debug("Turn on Camera %s", self._name)
-            set_power_off_in_progress(self.hass)
+            set_power_off_in_progress(self.hass, self._device_name)
             set_privacy(self.hass, self._device_name, False, conf)
 
     async def async_play_media(self, media_type, media_id, **kwargs):
