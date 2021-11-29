@@ -229,9 +229,7 @@ class YiHackCamera(Camera):
                     ffmpeg.get_image(
                         stream_source,
                         output_format=IMAGE_JPEG,
-                        extra_cmd=self._extra_arguments,
-                        width=width,
-                        height=height
+                        extra_cmd=self._extra_arguments
                     )
                 )
 
