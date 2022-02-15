@@ -72,6 +72,14 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         "async_perform_ptz",
     )
 
+    platform.async_register_entity_service(
+        "move_to_preset",
+        {
+            vol.Required("preset_id"): vol.All(int, vol.Range(min=0, max=14)),
+        },
+        "async_perform_move_to_preset",
+    )
+
     if (config.data[CONF_HACK_NAME] == MSTAR) or (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2):
         platform.async_register_entity_service(
             SERVICE_SPEAK,
@@ -286,6 +294,24 @@ class YiHackCamera(Camera):
             travel_time_str = str(DEFAULT_TRAVELTIME)
 
         await self.hass.async_add_executor_job(self._perform_ptz, movement, travel_time_str)
+
+    def _perform_move_to_preset(self, preset_id):
+        auth = None
+        if self._user or self._password:
+            auth = HTTPBasicAuth(self._user, self._password)
+
+        try:
+            response = requests.get(f"http://{self._host}:{self._port}/cgi-bin/preset.sh?action=go_preset&num={preset_id}", timeout=HTTP_TIMEOUT, auth=auth)
+            if response.status_code >= 300:
+                _LOGGER.error(f"Failed to send go to preset command to device {self._host}")
+        except requests.exceptions.RequestException as error:
+            _LOGGER.error(f"Failed to send go to preset command to device {self._host}: error {error}")
+
+    async def async_perform_move_to_preset(self, preset_id):
+        """Aim the camera at the given preset."""
+        _LOGGER.debug(f"Move to preset {preset_id} on {self._name}")
+
+        await self.hass.async_add_executor_job(self._perform_move_to_preset, preset_id)
 
     def _perform_speak(self, language, sentence):
         auth = None

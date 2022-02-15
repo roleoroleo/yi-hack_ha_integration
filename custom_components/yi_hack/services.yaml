@@ -36,6 +36,30 @@ ptz:
           unit_of_measurement: "s"
           mode: box
 
+move_to_preset:
+  name: Move to a preset
+  description: Aim camera at the defined preset
+  fields:
+    entity_id:
+      name: Entity id
+      description: Name of entity to move.
+      required: true
+      example: "camera.living_room_camera"
+      selector:
+        entity:
+          integration: yi_hack
+          domain: camera
+    preset_id:
+      name: Preset id
+      description: "Id of the preset to go to"
+      required: true
+      example: 0
+      selector:
+        number:
+          min: 0
+          max: 14
+          mode: box
+
 speak:
   name: speak
   description: TTS service for yi-hack camera.
