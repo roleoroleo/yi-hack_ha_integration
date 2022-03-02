@@ -152,7 +152,16 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             self._playing = True
 
             try:
-                response = requests.post("http://" + self._host + ":" + str(self._port) + "/cgi-bin/speaker.sh", data=data, timeout=HTTP_TIMEOUT, headers={'Content-Type': 'application/octet-stream'}, auth=auth)
+                url_speaker = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speaker.sh"
+                if self._boost_speaker == "auto":
+                    if self._hack_name == MSTAR:
+                        url_speaker = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speaker.sh?vol=4";
+                    elif self._hack_name == ALLWINNERV2:
+                        url_speaker = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speaker.sh?vol=3";
+                elif self._boost_speaker != "disabled":
+                    url_speaker = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speaker.sh?vol=" + str(self._boost_speaker[-1]);
+
+                response = requests.post(url_speaker, data=data, timeout=HTTP_TIMEOUT, headers={'Content-Type': 'application/octet-stream'}, auth=auth)
                 if response.status_code >= 300:
                     _LOGGER.error("Failed to send speaker command to device %s", self._host)
             except requests.exceptions.RequestException as error:
@@ -179,13 +188,6 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             return
 
         cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-"]
-        if self._boost_speaker == "auto":
-            if self._hack_name == MSTAR:
-                cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-filter:a", "volume=4", "-"]
-            elif self._hack_name == ALLWINNERV2:
-                cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-filter:a", "volume=3", "-"]
-        elif self._boost_speaker != "disabled":
-            cmd = ["ffmpeg", "-i", media_id, "-f", "s16le", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", "-filter:a", "volume=" + str(self._boost_speaker[-1]), "-"]
         data = await self.hass.async_add_executor_job(_perform_cmd, cmd)
 
         if data is not None and len(data) > 0:

@@ -23,10 +23,11 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .common import (get_privacy, set_power_off_in_progress,
                      set_power_on_in_progress, set_privacy)
-from .const import (ALLWINNER, ALLWINNERV2, CONF_HACK_NAME, CONF_MQTT_PREFIX,
-                    CONF_PTZ, CONF_TOPIC_MOTION_DETECTION_IMAGE, DEFAULT_BRAND,
-                    DOMAIN, HTTP_TIMEOUT, LINK_HIGH_RES_STREAM,
-                    LINK_LOW_RES_STREAM, MSTAR, SERVICE_PTZ, SERVICE_SPEAK)
+from .const import (ALLWINNER, ALLWINNERV2, CONF_BOOST_SPEAKER, CONF_HACK_NAME,
+                    CONF_MQTT_PREFIX, CONF_PTZ,
+                    CONF_TOPIC_MOTION_DETECTION_IMAGE, DEFAULT_BRAND, DOMAIN,
+                    HTTP_TIMEOUT, LINK_HIGH_RES_STREAM, LINK_LOW_RES_STREAM,
+                    MSTAR, SERVICE_PTZ, SERVICE_SPEAK)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -116,6 +117,7 @@ class YiHackCamera(Camera):
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
+        self._hack_name = config.data[CONF_HACK_NAME]
         self._ptz = config.data[CONF_PTZ]
         self._state = None
 
@@ -123,6 +125,11 @@ class YiHackCamera(Camera):
         if self._port != 80:
             self._http_base_url += ":" + str(self._port)
         self._still_image_url = self._http_base_url + "/cgi-bin/snapshot.sh?res=high&watermark=yes"
+
+        try:
+            self._boost_speaker = config.data[CONF_BOOST_SPEAKER]
+        except KeyError:
+            self._boost_speaker = "auto"
 
     @property
     def supported_features(self) -> int:
@@ -293,7 +300,16 @@ class YiHackCamera(Camera):
             auth = HTTPBasicAuth(self._user, self._password)
 
         try:
-            response = requests.post("http://" + self._host + ":" + str(self._port) + "/cgi-bin/speak.sh?lang=" + language, data=sentence, timeout=HTTP_TIMEOUT, auth=auth)
+            url_speak = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speak.sh?lang=" + language
+            if self._boost_speaker == "auto":
+                if self._hack_name == MSTAR:
+                    url_speak = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speak.sh?lang=" + language + "&vol=4";
+                elif self._hack_name == ALLWINNERV2:
+                    url_speak = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speak.sh?lang=" + language + "&vol=3";
+            elif self._boost_speaker != "disabled":
+                url_speak = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speak.sh?lang=" + language + "&vol=" + str(self._boost_speaker[-1]);
+
+            response = requests.post(url_speak, data=sentence, timeout=HTTP_TIMEOUT, auth=auth)
             if response.status_code >= 300:
                 _LOGGER.error("Failed to send speak command to device %s", self._host)
         except requests.exceptions.RequestException as error:
