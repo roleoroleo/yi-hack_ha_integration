@@ -8,7 +8,7 @@ yi-hack Home Assistant is a custom integration for Yi cameras (or Sonoff camera)
 - yi-hack-MStar - https://github.com/roleoroleo/yi-hack-MStar
 - yi-hack-Allwinner - https://github.com/roleoroleo/yi-hack-Allwinner
 - yi-hack-Allwinner-v2 - https://github.com/roleoroleo/yi-hack-Allwinner-v2
-- yi-hack-v5 - https://github.com/alienatedsec/yi-hack-v5
+- yi-hack-v5 (partial support) - https://github.com/alienatedsec/yi-hack-v5
 - sonoff-hack - https://github.com/roleoroleo/sonoff-hack
 <br>
 And make sure you have the latest version.
@@ -30,6 +30,8 @@ The wizard will connect to your cam and will install the following entities:
 
 (*) available only if your cam supports it.
 
+If you configure motion detection in your camera you will be able to view the videos in the "Media" section (left panel of the main page).
+
 ## Installation
 **(1)** Copy the  `custom_components` folder your configuration directory.
 It should look similar to this:
@@ -46,9 +48,11 @@ It should look similar to this:
 |       |-- const.py
 |       |-- manifest.json
 |       |-- media_player.py
+|       |-- media_source.py
 |       |-- services.yaml
 |       |-- strings.json
 |       |-- switch.py
+|       |-- views.py
 ```
 **(2)** Restart Home Assistant
 
