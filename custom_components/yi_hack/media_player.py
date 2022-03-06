@@ -7,21 +7,46 @@ import subprocess
 import requests
 from requests.auth import HTTPBasicAuth
 
-from homeassistant.components.media_player import (DEVICE_CLASS_SPEAKER,
-                                                   MediaPlayerEntity)
-from homeassistant.components.media_player.const import (MEDIA_TYPE_MUSIC,
-                                                         SUPPORT_PLAY_MEDIA,
-                                                         SUPPORT_TURN_OFF,
-                                                         SUPPORT_TURN_ON)
-from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME, CONF_PASSWORD,
-                                 CONF_PORT, CONF_USERNAME, STATE_IDLE,
-                                 STATE_OFF, STATE_ON, STATE_PLAYING)
+from homeassistant.components.media_player import (
+    DEVICE_CLASS_SPEAKER,
+    MediaPlayerEntity
+)
+from homeassistant.components.media_player.const import (
+    MEDIA_TYPE_MUSIC,
+    SUPPORT_PLAY_MEDIA,
+    SUPPORT_TURN_OFF,
+    SUPPORT_TURN_ON
+)
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_MAC,
+    CONF_NAME,
+    CONF_PASSWORD,
+    CONF_PORT,
+    CONF_USERNAME,
+    STATE_IDLE,
+    STATE_OFF,
+    STATE_ON,
+    STATE_PLAYING
+)
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
-from .common import (get_privacy, set_power_off_in_progress,
-                     set_power_on_in_progress, set_privacy)
-from .const import (ALLWINNER, ALLWINNERV2, CONF_BOOST_SPEAKER, CONF_HACK_NAME,
-                    DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT, MSTAR)
+from .common import (
+    get_privacy,
+    set_power_off_in_progress,
+    set_power_on_in_progress,
+    set_privacy
+)
+from .const import (
+    ALLWINNER,
+    ALLWINNERV2,
+    CONF_BOOST_SPEAKER,
+    CONF_HACK_NAME,
+    DEFAULT_BRAND,
+    DOMAIN,
+    HTTP_TIMEOUT,
+    MSTAR
+)
 
 SUPPORT_YIHACK_MEDIA = (
     SUPPORT_PLAY_MEDIA

@@ -6,7 +6,13 @@ import logging
 import requests
 from requests.auth import HTTPBasicAuth
 
-from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNAME
+from homeassistant.const import (
+    CONF_HOST,
+    CONF_NAME,
+    CONF_PASSWORD,
+    CONF_PORT,
+    CONF_USERNAME,
+)
 from homeassistant.util import dt as dt_util
 
 from .const import (
@@ -19,9 +25,6 @@ from .const import (
 
 _LOGGER = logging.getLogger(__name__)
 
-#device_is_on = None
-#end_of_power_off = None
-#end_of_power_on = None
 
 def get_status(config):
     """Get system status from camera."""

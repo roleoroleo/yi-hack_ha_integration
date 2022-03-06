@@ -22,8 +22,6 @@ from .const import (ALLWINNER, ALLWINNERV2, CONF_BABY_CRYING_MSG,
                     CONF_TOPIC_STATUS, CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN,
                     MSTAR, SONOFF, V5)
 
-ICON = "mdi:update"
-
 _LOGGER = logging.getLogger(__name__)
 
 

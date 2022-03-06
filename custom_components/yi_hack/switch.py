@@ -41,8 +41,6 @@ class YiHackSwitch(SwitchEntity):
             (CONF_USERNAME, self._user),
             (CONF_PASSWORD, self._password),
         ])
-        #self._state = self.hass.async_add_executor_job(get_privacy, self.hass, conf)
-        #self.hass.async_add_executor_job(set_privacy, self.hass, self._state)
         self._state = get_privacy(self.hass, self._device_name, conf)
         set_privacy(self.hass, self._device_name, self._state)
 
@@ -54,7 +52,6 @@ class YiHackSwitch(SwitchEntity):
             (CONF_USERNAME, self._user),
             (CONF_PASSWORD, self._password),
         ])
-        #privacy = self.hass.async_add_executor_job(get_privacy, self.hass)
         if get_privacy(self.hass, self._device_name):
             _LOGGER.debug("Turn off privacy, camera %s", self._name)
             set_power_off_in_progress(self.hass, self._device_name)
@@ -70,7 +67,6 @@ class YiHackSwitch(SwitchEntity):
             (CONF_USERNAME, self._user),
             (CONF_PASSWORD, self._password),
         ])
-        #privacy = self.hass.async_add_executor_job(get_privacy, self.hass)
         if not get_privacy(self.hass, self._device_name):
             _LOGGER.debug("Turn on privacy, camera %s", self._name)
             set_power_on_in_progress(self.hass, self._device_name)
