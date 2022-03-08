@@ -31,7 +31,7 @@ from homeassistant.core import HomeAssistant, callback
 
 from .const import DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
 
-MIME_TYPE = "video/mp4"
+MIME_TYPE_MP4 = "video/mp4"
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -56,14 +56,14 @@ class YiHackMediaSource(MediaSource):
         entry_id, event_dir, event_file = async_parse_identifier(item)
         if entry_id is None:
             return None
-        if event_file is None:
-            return None
         if event_dir is None:
+            return None
+        if event_file is None:
             return None
 
         url = "/api/yi-hack/" + entry_id + "/" + event_dir + "/" + event_file
 
-        return PlayMedia(url, MIME_TYPE)
+        return PlayMedia(url, MIME_TYPE_MP4)
 
     async def async_browse_media(self, item: MediaSourceItem) -> BrowseMediaSource:
         """Return media."""
@@ -231,6 +231,11 @@ class YiHackMediaSource(MediaSource):
                 media.children = []
                 for record_file in records_file:
                     file_path = record_file["filename"]
+                    try:
+                        thumb_path = record_file["thumbfilename"]
+                    except KeyError:
+                        thumb_path = ""
+
                     title = record_file["time"]
                     media_class = MEDIA_CLASS_VIDEO
 
@@ -242,8 +247,9 @@ class YiHackMediaSource(MediaSource):
                         title=title,
                         can_play=True,
                         can_expand=False,
-#                        thumbnail=thumbnail,
                     )
+                    if (thumb_path != ""):
+                        child_file.thumbnail="/api/yi-hack/" + entry_id + "/" + event_dir + "/" + thumb_path
                     media.children.append(child_file)
 
         return media
