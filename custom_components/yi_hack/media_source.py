@@ -73,9 +73,13 @@ class YiHackMediaSource(MediaSource):
             device_registry = await self.hass.helpers.device_registry.async_get_registry()
             for device in device_registry.devices.values():
                 if device.identifiers is not None:
-                    domain = list(list(device.identifiers)[0])[0]
-                    if domain == DOMAIN:
-                        self._devices.append(device)
+                    try:
+                        domain = list(list(device.identifiers)[0])[0]
+                        if domain == DOMAIN:
+                            self._devices.append(device)
+                    except IndexError:
+                        _LOGGER.warning("Index error about identifier")
+
 
         return await self.hass.async_add_executor_job(self._browse_media, entry_id, event_dir)
 
