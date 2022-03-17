@@ -30,7 +30,7 @@ The wizard will connect to your cam and will install the following entities:
 
 (*) available only if your cam supports it.
 
-If you configure motion detection in your camera you will be able to view the videos in the "Media" section (left panel of the main page).
+If you configure motion detection in your camera and media source in your home assistant installation, you will be able to view the videos in the "Media" section (left panel of the main page).
 
 ## Installation
 **(1)** Copy the  `custom_components` folder your configuration directory.
@@ -87,6 +87,13 @@ ui: true
 ## Requirements
 This component requires MQTT integration to be installed.
 Please be sure you added MQTT to you Home Assistant configuration.
+
+If you want to browse mp4 files saved on your cam, add media source component to your home assistant installation.
+Add the linw below to your configuration file:
+```
+# Example configuration.yaml entry
+media_source:
+```
 
 ## Donation
 If you like this project, you can buy me a beer :) 
