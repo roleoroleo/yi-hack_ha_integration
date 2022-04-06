@@ -3,6 +3,7 @@
 import asyncio
 import logging
 import subprocess
+import threading
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -78,7 +79,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         self._hack_name = config.data[CONF_HACK_NAME]
         # Assume that the media player is not in Play mode
         self._state = None
-        self._playing = False
+        self._playing = threading.Lock()
         try:
             self._boost_speaker = config.data[CONF_BOOST_SPEAKER]
         except KeyError:
@@ -107,7 +108,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
     def state(self):
         """Return the state of the device."""
         if self._state:
-            if self._playing:
+            if self._playing.locked():
                 return STATE_PLAYING
             else:
                 return STATE_IDLE
@@ -174,7 +175,9 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             if self._user or self._password:
                 auth = HTTPBasicAuth(self._user, self._password)
 
-            self._playing = True
+            self._playing.acquire()
+
+            response = None
 
             try:
                 url_speaker = "http://" + self._host + ":" + str(self._port) + "/cgi-bin/speaker.sh"
@@ -195,7 +198,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             if response is None:
                 _LOGGER.error("Failed to send speak command to device %s: error unknown", self._host)
 
-            self._playing = False
+            self._playing.release()
 
         def _perform_cmd(p_cmd):
             return subprocess.run(p_cmd, check=False, shell=False, stdout=subprocess.PIPE).stdout
@@ -208,7 +211,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             )
             return
 
-        if self._playing:
+        if self._playing.locked():
             _LOGGER.error("Failed to send speaker command, device %s is busy", self._host)
             return
 
