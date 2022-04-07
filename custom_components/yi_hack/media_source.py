@@ -90,6 +90,8 @@ class YiHackMediaSource(MediaSource):
         user = ""
         password = ""
 
+        response = None
+
         if entry_id is None:
             media_class = MEDIA_CLASS_DIRECTORY
             media = BrowseMediaSource(

@@ -295,6 +295,8 @@ class YiHackCamera(Camera):
         await self.hass.async_add_executor_job(self._perform_ptz, movement, travel_time_str)
 
     def _perform_speak(self, language, sentence):
+        response = None
+
         auth = None
         if self._user or self._password:
             auth = HTTPBasicAuth(self._user, self._password)
