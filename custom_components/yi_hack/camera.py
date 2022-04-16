@@ -366,6 +366,7 @@ class YiHackCamera(Camera):
             "identifiers": {(DOMAIN, self._mac)},
             "manufacturer": DEFAULT_BRAND,
             "model": DOMAIN,
+            "configuration_url": self._http_base_url,
         }
 
 class YiHackMqttCamera(Camera):
