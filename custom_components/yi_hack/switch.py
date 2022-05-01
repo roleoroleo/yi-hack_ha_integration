@@ -31,7 +31,7 @@ class YiHackSwitch(SwitchEntity):
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
-        self._state = None
+        self._state = False
 
     def update(self):
         """Return the state of the switch."""
