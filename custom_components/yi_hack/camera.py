@@ -348,6 +348,13 @@ class YiHackCamera(Camera):
         return self._state
 
     @property
+    def state(self):
+        """Return "on" if entity is on."""
+        if self._state:
+            return "On"
+        return "Off"
+
+    @property
     def unique_id(self):
         """Return a unique ID."""
         return self._unique_id
@@ -429,6 +436,13 @@ class YiHackMqttCamera(Camera):
     def is_on(self):
         """Determine whether the camera is on."""
         return self._state
+
+    @property
+    def state(self):
+        """Return "on" if entity is on."""
+        if self._state:
+            return "On"
+        return "Off"
 
     @property
     def unique_id(self):
