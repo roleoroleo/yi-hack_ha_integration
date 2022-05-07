@@ -38,6 +38,7 @@ def get_status(config):
     if user or password:
         auth = HTTPBasicAuth(user, password)
 
+    response = None
     try:
         response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/status.json", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
@@ -65,6 +66,7 @@ def get_system_conf(config):
     if user or password:
         auth = HTTPBasicAuth(user, password)
 
+    response = None
     try:
         response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/get_configs.sh?conf=system", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
@@ -92,6 +94,7 @@ def get_mqtt_conf(config):
     if user or password:
         auth = HTTPBasicAuth(user, password)
 
+    response = None
     try:
         response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/get_configs.sh?conf=mqtt", timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
@@ -236,6 +239,7 @@ def set_privacy(hass, device_name, newstatus, config=None):
     if user or password:
         auth = HTTPBasicAuth(user, password)
 
+    response = None
     try:
         response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/privacy.sh?value=" + newstatus_string, timeout=HTTP_TIMEOUT, auth=auth)
         if response.status_code >= 300:
