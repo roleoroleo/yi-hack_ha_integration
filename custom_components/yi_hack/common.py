@@ -142,6 +142,9 @@ def get_privacy(hass, device_name, config=None):
         _LOGGER.error("Error getting status of device %s: error %s", host, e)
         error = True
 
+    if error:
+        return None
+
     if response is not None:
         try:
             privacy_dict: dict = response.json()
@@ -190,6 +193,9 @@ def set_privacy(hass, device_name, newstatus, config=None):
     except requests.exceptions.RequestException as e:
         _LOGGER.error("Failed to switch on device %s: error %s", host, e)
         error = True
+
+    if error:
+        return None
 
     if response is not None:
         try:
