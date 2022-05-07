@@ -110,64 +110,6 @@ def get_mqtt_conf(config):
 
     return response.json()
 
-def get_services(config):
-    """Get status of services."""
-    host = config[CONF_HOST]
-    port = config[CONF_PORT]
-    user = config[CONF_USERNAME]
-    password = config[CONF_PASSWORD]
-    error = False
-
-    auth = None
-    if user or password:
-        auth = HTTPBasicAuth(user, password)
-
-    try:
-        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/service.sh?name=all&action=status", timeout=HTTP_TIMEOUT, auth=auth)
-        if response.status_code >= 300:
-            _LOGGER.error("Failed to get status of services from device %s", host)
-            error = True
-    except requests.exceptions.RequestException as e:
-        _LOGGER.error("Error getting status of services from %s: error %s", host, e)
-        error = True
-
-    if error:
-        return False
-
-    status_dict: dict = response.json()
-    status: str = status_dict.get("status")
-
-    if status != "started":
-        return False
-
-    return True
-
-def set_services(hass, config, newstatus):
-    """Set status of services."""
-    host = config[CONF_HOST]
-    port = config[CONF_PORT]
-    user = config[CONF_USERNAME]
-    password = config[CONF_PASSWORD]
-    error = False
-
-    auth = None
-    if user or password:
-        auth = HTTPBasicAuth(user, password)
-
-    try:
-        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/service.sh?name=all&action=" + newstatus, timeout=HTTP_TIMEOUT, auth=auth)
-        if response.status_code >= 300:
-            _LOGGER.error("Failed to set status of services to device %s", host)
-            error = True
-    except requests.exceptions.RequestException as e:
-        _LOGGER.error("Error setting status of services to %s: error %s", host, e)
-        error = True
-
-    if error:
-        return False
-
-    return True
-
 def get_privacy(hass, device_name, config=None):
     """Get status of privacy from device."""
     # Privacy is true when the cam is off
