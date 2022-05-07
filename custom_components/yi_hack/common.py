@@ -159,8 +159,14 @@ def get_privacy(hass, device_name, config=None):
     if error:
         return None
 
+
     if privacy != "on":
+        # Update local var
+        hass.data[DOMAIN][device_name][PRIVACY] = False
         return False
+
+    # Update local var
+    hass.data[DOMAIN][device_name][PRIVACY] = True
 
     return True
 

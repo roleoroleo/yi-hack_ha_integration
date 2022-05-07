@@ -87,7 +87,13 @@ class YiHackMediaPlayer(MediaPlayerEntity):
 
     def update(self):
         """Return the state of the media player (privacy off = state on)."""
-        self._state = not get_privacy(self.hass, self._device_name)
+        conf = dict([
+            (CONF_HOST, self._host),
+            (CONF_PORT, self._port),
+            (CONF_USERNAME, self._user),
+            (CONF_PASSWORD, self._password),
+        ])
+        self._state = not get_privacy(self.hass, self._device_name, conf)
 
     @property
     def brand(self):
@@ -153,6 +159,8 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             _LOGGER.debug("Turn off camera %s", self._name)
             set_power_off_in_progress(self.hass, self._device_name)
             set_privacy(self.hass, self._device_name, True, conf)
+            self._state = False
+            self.schedule_update_ha_state(force_refresh=True)
 
     def turn_on(self):
         """Turn on camera (set privacy off)."""
@@ -166,6 +174,8 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             _LOGGER.debug("Turn on Camera %s", self._name)
             set_power_on_in_progress(self.hass, self._device_name)
             set_privacy(self.hass, self._device_name, False, conf)
+            self._state = True
+            self.schedule_update_ha_state(force_refresh=True)
 
     async def async_play_media(self, media_type, media_id, **kwargs):
         """Send the play_media command to the media player."""
