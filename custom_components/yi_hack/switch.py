@@ -42,7 +42,6 @@ class YiHackSwitch(SwitchEntity):
             (CONF_PASSWORD, self._password),
         ])
         self._state = get_privacy(self.hass, self._device_name, conf)
-        set_privacy(self.hass, self._device_name, self._state)
 
     def turn_off(self):
         """Turn off privacy (set camera on)."""
@@ -59,6 +58,7 @@ class YiHackSwitch(SwitchEntity):
             set_power_on_in_progress(self.hass, self._device_name)
             set_privacy(self.hass, self._device_name, False, conf)
             self._state = False
+            self.schedule_update_ha_state(force_refresh=True)
 
     def turn_on(self):
         """Turn on privacy (set camera off)."""
@@ -75,6 +75,7 @@ class YiHackSwitch(SwitchEntity):
             set_power_off_in_progress(self.hass, self._device_name)
             set_privacy(self.hass, self._device_name, True, conf)
             self._state = True
+            self.schedule_update_ha_state(force_refresh=True)
 
     @property
     def is_on(self):
