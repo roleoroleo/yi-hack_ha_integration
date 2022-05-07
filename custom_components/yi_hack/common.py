@@ -167,9 +167,11 @@ def set_services(hass, config, newstatus):
 
 def get_privacy(hass, device_name, config=None):
     """Get status of privacy from device."""
-    if power_on_in_progress(hass, device_name):
-        return True
+    # Privacy is true when the cam is off
     if power_off_in_progress(hass, device_name):
+        return True
+    # Privacy is false when the cam is on
+    if power_on_in_progress(hass, device_name):
         return False
 
     if config is None:

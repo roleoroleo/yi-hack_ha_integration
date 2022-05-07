@@ -54,8 +54,9 @@ class YiHackSwitch(SwitchEntity):
         ])
         if get_privacy(self.hass, self._device_name):
             _LOGGER.debug("Turn off privacy, camera %s", self._name)
-            set_power_off_in_progress(self.hass, self._device_name)
-            #self.hass.async_add_executor_job(set_privacy, self.hass, False, conf)
+            # Turn off the privacy switch:
+            # power on the cam and set privacy false
+            set_power_on_in_progress(self.hass, self._device_name)
             set_privacy(self.hass, self._device_name, False, conf)
             self._state = False
 
@@ -69,8 +70,9 @@ class YiHackSwitch(SwitchEntity):
         ])
         if not get_privacy(self.hass, self._device_name):
             _LOGGER.debug("Turn on privacy, camera %s", self._name)
-            set_power_on_in_progress(self.hass, self._device_name)
-            #self.hass.async_add_executor_job(set_privacy, self.hass, True, conf)
+            # Turn on the privacy switch:
+            # power off the cam and set privacy true
+            set_power_off_in_progress(self.hass, self._device_name)
             set_privacy(self.hass, self._device_name, True, conf)
             self._state = True
 
