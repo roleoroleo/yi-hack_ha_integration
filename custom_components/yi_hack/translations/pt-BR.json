@@ -1,0 +1,30 @@
+{
+  "title": "Câmera Yi com yi-hack",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configurações yi-hack",
+        "description": "Preencha as informações do yi-hack",
+        "data": {
+          "host": "Host",
+          "port": "Porta",
+          "username": "Nome de usuário",
+          "password": "Senha",
+          "extra_arguments": "Argumentos extras FFMPEG",
+          "boost_speaker": "Aumente o volume do alto-falante"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Falhou ao conectar",
+      "cannot_get_mac_or_serial": "Não foi possível obter o endereço mac ou o número de série",
+      "cannot_get_conf": "Não foi possível obter a configuração",
+      "cannot_get_mqtt_conf": "Não é possível obter a configuração do mqtt",
+      "cannot_send_ptz": "Não foi possível enviar o comando ptz",
+      "unknown": "Erro inesperado"
+    },
+    "abort": {
+      "already_configured": "O dispositivo já está configurado"
+    }
+  }
+}
