@@ -115,7 +115,7 @@ class YiMQTTBinarySensor(BinarySensorEntity):
                 self._state = True
             elif payload == self._payload_off:
                 self._state = False
-                # Reset motion_detection sensor when the cam switches off
+                # Reset motion_detection sensor when the cam disconnects
                 if self._unique_id == self._device_name + "_bsst":
                     self.hass.async_create_task(
                         mqtt.async_publish(
