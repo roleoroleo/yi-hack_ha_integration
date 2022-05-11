@@ -68,6 +68,9 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_STATUS]
             self._payload_on = config.data[CONF_BIRTH_MSG]
             self._payload_off = config.data[CONF_WILL_MSG]
+            self._motion_state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
+            self._motion_payload_on = config.data[CONF_MOTION_START_MSG]
+            self._motion_payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_CONNECTIVITY
         elif sensor_type == CONF_TOPIC_MOTION_DETECTION:
             self._name = self._device_name + "_motion_detection"
@@ -112,6 +115,18 @@ class YiMQTTBinarySensor(BinarySensorEntity):
                 self._state = True
             elif payload == self._payload_off:
                 self._state = False
+                # Reset motion_detection sensor when the cam switches off
+                if self._unique_id == self._device_name + "_bsst":
+                    self.hass.async_create_task(
+                        mqtt.async_publish(
+                            self.hass,
+                            self._motion_state_topic,
+                            self._motion_payload_off,
+                            qos = 1,
+                            retain = False,
+                        )
+                    )
+
             else:  # Payload is not for this entity
                 _LOGGER.info(
                     "No matching payload found for entity: %s with state topic: %s. Payload: '%s'",
