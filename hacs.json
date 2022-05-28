@@ -1,13 +1,4 @@
 {
     "name": "yi-hack Home Assistant integration",
-    "render_readme": true,
-    "domains": [
-        "camera",
-        "binary_sensor",
-        "media_player",
-        "switch"
-    ],
-    "iot_class": [
-        "Local Push"
-    ]
+    "render_readme": true
 }
