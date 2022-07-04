@@ -1,0 +1,30 @@
+{
+  "title": "Yi Cam z yi-hack",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Konfiguraca yi-hack",
+        "description": "Wypełnij informacje dla yi-hack",
+        "data": {
+          "host": "Adres",
+          "port": "Port",
+          "username": "Użytkownik",
+          "password": "Hasło",
+          "extra_arguments": "Dodatkowe parametry FFMPEG",
+          "boost_speaker": "Zwiększ głośność głośnika"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Błąd połączenia",
+      "cannot_get_mac_or_serial": "Nie można pobrać adresu mac lub numeru seryjnego",
+      "cannot_get_conf": "Nie można pobrać konfiguracji ",
+      "cannot_get_mqtt_conf": "Nie można pobrać konfiguracji mqtt",
+      "cannot_send_ptz": "Nie można wysłać poleceń PTZ",
+      "unknown": "Nieoczekiwany błąd"
+    },
+    "abort": {
+      "already_configured": "Urządzenie już skonfigurowane"
+    }
+  }
+}
