@@ -8,9 +8,13 @@ import threading
 import requests
 from requests.auth import HTTPBasicAuth
 
+from homeassistant.components import media_source
 from homeassistant.components.media_player import (
     DEVICE_CLASS_SPEAKER,
     MediaPlayerEntity
+)
+from homeassistant.components.media_player.browse_media import (
+    async_process_play_media_url
 )
 from homeassistant.components.media_player.const import (
     MEDIA_TYPE_MUSIC,
@@ -212,6 +216,11 @@ class YiHackMediaPlayer(MediaPlayerEntity):
 
         def _perform_cmd(p_cmd):
             return subprocess.run(p_cmd, check=False, shell=False, stdout=subprocess.PIPE).stdout
+
+        if media_source.is_media_source_id(media_id):
+            media_type = MEDIA_TYPE_MUSIC
+            play_item = await media_source.async_resolve_media(self.hass, media_id)
+            media_id = async_process_play_media_url(self.hass, play_item.url)
 
         if media_type != MEDIA_TYPE_MUSIC:
             _LOGGER.error(
