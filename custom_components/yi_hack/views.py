@@ -175,7 +175,7 @@ def _init_header(
     headers[hdrs.X_FORWARDED_PROTO] = forward_proto
     
     if user or password:
-        headers['Authorization'] = HTTPBasicAuth(user, password)
+        headers[hdrs.AUTHORIZATION] = HTTPBasicAuth(user, password)
 
     return headers
 
