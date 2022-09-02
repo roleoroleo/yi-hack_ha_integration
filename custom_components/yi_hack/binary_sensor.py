@@ -17,10 +17,10 @@ from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 from .const import (ALLWINNER, ALLWINNERV2, CONF_BABY_CRYING_MSG,
                     CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
                     CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX,
-                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_BABY_CRYING,
-                    CONF_TOPIC_MOTION_DETECTION, CONF_TOPIC_SOUND_DETECTION,
-                    CONF_TOPIC_STATUS, CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN,
-                    MSTAR, SONOFF, V5)
+                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_MOTION_DETECTION,
+                    CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
+                    CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, MSTAR, SONOFF,
+                    V5)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -29,21 +29,21 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     """Set up MQTT motion sensors."""
     if (config.data[CONF_HACK_NAME] == DEFAULT_BRAND) or (config.data[CONF_HACK_NAME] == MSTAR):
         entities = [
-            YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
-            YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),
-            YiMQTTBinarySensor(config, CONF_TOPIC_BABY_CRYING),
+            YiMQTTBinarySensor(config, "status"),
+            YiMQTTBinarySensor(config, "motion_detection"),
+            YiMQTTBinarySensor(config, "baby_crying"),
         ]
     elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2) or (config.data[CONF_HACK_NAME] == V5):
         entities = [
-            YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
-            YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),
-            YiMQTTBinarySensor(config, CONF_TOPIC_BABY_CRYING),
-            YiMQTTBinarySensor(config, CONF_TOPIC_SOUND_DETECTION),
+            YiMQTTBinarySensor(config, "status"),
+            YiMQTTBinarySensor(config, "motion_detection"),
+            YiMQTTBinarySensor(config, "baby_crying"),
+            YiMQTTBinarySensor(config, "sound_detection"),
         ]
     elif config.data[CONF_HACK_NAME] == SONOFF:
         entities = [
-            YiMQTTBinarySensor(config, CONF_TOPIC_STATUS),
-            YiMQTTBinarySensor(config, CONF_TOPIC_MOTION_DETECTION),
+            YiMQTTBinarySensor(config, "status"),
+            YiMQTTBinarySensor(config, "motion_detection"),
         ]
 
     async_add_entities(entities)
@@ -62,7 +62,7 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         self._payload_off = None
         self._off_delay = None
 
-        if sensor_type == CONF_TOPIC_STATUS:
+        if sensor_type == "status":
             self._name = self._device_name + "_status"
             self._unique_id = self._device_name + "_bsst"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_STATUS]
@@ -72,26 +72,26 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._motion_payload_on = config.data[CONF_MOTION_START_MSG]
             self._motion_payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_CONNECTIVITY
-        elif sensor_type == CONF_TOPIC_MOTION_DETECTION:
+        elif sensor_type == "motion_detection":
             self._name = self._device_name + "_motion_detection"
             self._unique_id = self._device_name + "_bsmd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_MOTION_START_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_MOTION
-        elif sensor_type == CONF_TOPIC_SOUND_DETECTION:
+        elif sensor_type == "sound_detection":
             self._name = self._device_name + "_sound_detection"
             self._unique_id = self._device_name + "_bssd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_SOUND_DETECTION]
             self._payload_on = config.data[CONF_SOUND_DETECTION_MSG]
             self._off_delay = 60
             self._device_class = DEVICE_CLASS_SOUND
-        elif sensor_type == CONF_TOPIC_BABY_CRYING:
+        elif sensor_type == "baby_crying":
             self._name = self._device_name + "_baby_crying"
             self._unique_id = self._device_name + "_bsbc"
-            self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_BABY_CRYING]
+            self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_BABY_CRYING_MSG]
-            self._off_delay = 60
+            self._payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_SOUND
         else:
             raise RuntimeError("Unknown sensor type")
