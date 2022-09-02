@@ -12,6 +12,8 @@ from aiohttp import hdrs, web
 from aiohttp.web_exceptions import HTTPBadGateway, HTTPUnauthorized
 from multidict import CIMultiDict
 
+from requests.auth import HTTPBasicAuth
+
 from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
@@ -98,7 +100,7 @@ class VideoProxyView(HomeAssistantView):
 
         url = "http://" + host + ":" + str(port) + "/" + full_path
         data = await request.read()
-        source_header = _init_header(request)
+        source_header = _init_header(request, user, password)
 
         async with self._websession.request(
             request.method,
@@ -128,7 +130,11 @@ class VideoProxyView(HomeAssistantView):
             return response
 
 
-def _init_header(request: web.Request) -> CIMultiDict | dict[str, str]:
+def _init_header(
+    request: web.Request,
+    user: str,
+    password: str,
+) -> CIMultiDict | dict[str, str]:
     """Create initial header."""
     headers = {}
 
@@ -167,6 +173,9 @@ def _init_header(request: web.Request) -> CIMultiDict | dict[str, str]:
     if not forward_proto:
         forward_proto = request.url.scheme
     headers[hdrs.X_FORWARDED_PROTO] = forward_proto
+    
+    if user or password:
+        headers[hdrs.AUTHORIZATION] = HTTPBasicAuth(user, password)
 
     return headers
 
