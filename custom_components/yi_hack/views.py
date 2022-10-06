@@ -8,11 +8,9 @@ import logging
 from typing import Any
 
 import aiohttp
-from aiohttp import hdrs, web
+from aiohttp import hdrs, web, BasicAuth
 from aiohttp.web_exceptions import HTTPBadGateway, HTTPUnauthorized
 from multidict import CIMultiDict
-
-from requests.auth import HTTPBasicAuth
 
 from homeassistant.const import (
     CONF_HOST,
@@ -100,7 +98,11 @@ class VideoProxyView(HomeAssistantView):
 
         url = "http://" + host + ":" + str(port) + "/" + full_path
         data = await request.read()
-        source_header = _init_header(request, user, password)
+        source_header = _init_header(request)
+
+        auth = None
+        if user or password:
+            auth = BasicAuth(user, password)
 
         async with self._websession.request(
             request.method,
@@ -109,6 +111,7 @@ class VideoProxyView(HomeAssistantView):
             params=request.query,
             allow_redirects=False,
             data=data,
+            auth=auth,
         ) as result:
             headers = _response_header(result)
 
@@ -130,11 +133,7 @@ class VideoProxyView(HomeAssistantView):
             return response
 
 
-def _init_header(
-    request: web.Request,
-    user: str,
-    password: str,
-) -> CIMultiDict | dict[str, str]:
+def _init_header(request: web.Request) -> CIMultiDict | dict[str, str]:
     """Create initial header."""
     headers = {}
 
@@ -173,9 +172,6 @@ def _init_header(
     if not forward_proto:
         forward_proto = request.url.scheme
     headers[hdrs.X_FORWARDED_PROTO] = forward_proto
-    
-    if user or password:
-        headers[hdrs.AUTHORIZATION] = HTTPBasicAuth(user, password)
 
     return headers
 
