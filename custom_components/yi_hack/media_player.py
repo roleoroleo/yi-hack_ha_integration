@@ -7,20 +7,19 @@ import threading
 
 import requests
 from requests.auth import HTTPBasicAuth
+from typing import Any
 
 from homeassistant.components import media_source
 from homeassistant.components.media_player import (
-    DEVICE_CLASS_SPEAKER,
-    MediaPlayerEntity
+    BrowseMedia,
+    MediaType,
+    MediaPlayerDeviceClass,
+    MediaPlayerEnqueue,
+    MediaPlayerEntity,
+    MediaPlayerEntityFeature
 )
 from homeassistant.components.media_player.browse_media import (
     async_process_play_media_url
-)
-from homeassistant.components.media_player.const import (
-    MEDIA_TYPE_MUSIC,
-    SUPPORT_PLAY_MEDIA,
-    SUPPORT_TURN_OFF,
-    SUPPORT_TURN_ON
 )
 from homeassistant.const import (
     CONF_HOST,
@@ -53,12 +52,6 @@ from .const import (
     MSTAR
 )
 
-SUPPORT_YIHACK_MEDIA = (
-    SUPPORT_PLAY_MEDIA
-    | SUPPORT_TURN_OFF
-    | SUPPORT_TURN_ON
-)
-
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -69,6 +62,14 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
 class YiHackMediaPlayer(MediaPlayerEntity):
     """Define an implementation of a Yi Camera media player."""
+
+    _attr_device_class = MediaPlayerDeviceClass.SPEAKER
+    _attr_supported_features = (
+        MediaPlayerEntityFeature.BROWSE_MEDIA
+        | MediaPlayerEntityFeature.PLAY_MEDIA
+        | MediaPlayerEntityFeature.TURN_OFF
+        | MediaPlayerEntityFeature.TURN_ON
+    )
 
     def __init__(self, config):
         """Initialize the device."""
@@ -141,15 +142,10 @@ class YiHackMediaPlayer(MediaPlayerEntity):
         """Boolean if volume is currently muted."""
         return False
 
-    @property
-    def supported_features(self):
-        """Flag media player features that are supported."""
-        return SUPPORT_YIHACK_MEDIA
-
-    @property
-    def device_class(self):
-        """Set the device class to SPEAKER."""
-        return DEVICE_CLASS_SPEAKER
+#    @property
+#    def device_class(self):
+#        """Set the device class to SPEAKER."""
+#        return MediaPlayerDeviceClass.SPEAKER
 
     def turn_off(self):
         """Turn off camera (set privacy on)."""
@@ -181,7 +177,13 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             self._state = True
             self.schedule_update_ha_state(force_refresh=True)
 
-    async def async_play_media(self, media_type, media_id, **kwargs):
+    async def async_play_media(
+        self,
+        media_type: str,
+        media_id: str,
+        enqueue: MediaPlayerEnqueue | None = None,
+        announce: bool | None = None, **kwargs: Any
+    ) -> None:
         """Send the play_media command to the media player."""
 
         def _perform_speaker(data):
@@ -218,15 +220,15 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             return subprocess.run(p_cmd, check=False, shell=False, stdout=subprocess.PIPE).stdout
 
         if media_source.is_media_source_id(media_id):
-            media_type = MEDIA_TYPE_MUSIC
+            media_type = MediaType.MUSIC
             play_item = await media_source.async_resolve_media(self.hass, media_id)
             media_id = async_process_play_media_url(self.hass, play_item.url)
 
-        if media_type != MEDIA_TYPE_MUSIC:
+        if media_type != MediaType.MUSIC:
             _LOGGER.error(
                 "Invalid media type %s. Only %s is supported",
                 media_type,
-                MEDIA_TYPE_MUSIC,
+                MediaType.MUSIC,
             )
             return
 
@@ -241,3 +243,15 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             await self.hass.async_add_executor_job(_perform_speaker, data)
         else:
             _LOGGER.error("Failed to send data to speaker %s, no data available", self._host)
+
+    async def async_browse_media(
+        self,
+        media_content_type: str | None = None,
+        media_content_id: str | None = None
+    ) -> BrowseMedia:
+        """Implement the websocket media browsing helper."""
+        return await media_source.async_browse_media(
+            self.hass,
+            media_content_id,
+            content_filter=lambda item: item.media_content_type.startswith("audio/"),
+        )

@@ -7,10 +7,8 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 from homeassistant.components.media_player.const import (
-    MEDIA_CLASS_APP,
-    MEDIA_CLASS_DIRECTORY,
-    MEDIA_CLASS_VIDEO,
-    MEDIA_TYPE_VIDEO,
+    MediaClass,
+    MediaType
 )
 from homeassistant.components.media_player.errors import BrowseError
 from homeassistant.components.media_source.error import MediaSourceError, Unresolvable
@@ -18,14 +16,14 @@ from homeassistant.components.media_source.models import (
     BrowseMediaSource,
     MediaSource,
     MediaSourceItem,
-    PlayMedia,
+    PlayMedia
 )
 from homeassistant.const import (
     CONF_HOST,
     CONF_NAME,
     CONF_PASSWORD,
     CONF_PORT,
-    CONF_USERNAME,
+    CONF_USERNAME
 )
 from homeassistant.core import HomeAssistant, callback
 
@@ -93,12 +91,12 @@ class YiHackMediaSource(MediaSource):
         response = None
 
         if entry_id is None:
-            media_class = MEDIA_CLASS_DIRECTORY
+            media_class = MediaClass.DIRECTORY
             media = BrowseMediaSource(
                 domain=DOMAIN,
                 identifier="root",
                 media_class=media_class,
-                media_content_type=MEDIA_TYPE_VIDEO,
+                media_content_type=MediaType.VIDEO,
                 title=DOMAIN,
                 can_play=False,
                 can_expand=True,
@@ -111,12 +109,12 @@ class YiHackMediaSource(MediaSource):
                     if config_entry.data[CONF_NAME] == device.name:
                         title = device.name_by_user if device.name_by_user is not None else device.name
 
-                media_class = MEDIA_CLASS_APP
+                media_class = MediaClass.APP
                 child_dev = BrowseMediaSource(
                     domain=DOMAIN,
                     identifier=config_entry.data[CONF_NAME],
                     media_class=media_class,
-                    media_content_type=MEDIA_TYPE_VIDEO,
+                    media_content_type=MediaType.VIDEO,
                     title=title,
                     can_play=False,
                     can_expand=True,
@@ -134,12 +132,12 @@ class YiHackMediaSource(MediaSource):
             if host == "":
                 return None
 
-            media_class = MEDIA_CLASS_DIRECTORY
+            media_class = MediaClass.DIRECTORY
             media = BrowseMediaSource(
                 domain=DOMAIN,
                 identifier=entry_id,
                 media_class=media_class,
-                media_content_type=MEDIA_TYPE_VIDEO,
+                media_content_type=MediaType.VIDEO,
                 title=entry_id,
                 can_play=False,
                 can_expand=True,
@@ -172,13 +170,13 @@ class YiHackMediaSource(MediaSource):
                 for record_dir in records_dir:
                     dir_path = record_dir["dirname"].replace("/", "-")
                     title = record_dir["datetime"].replace("Date: ", "").replace("Time: ", "")
-                    media_class = MEDIA_CLASS_DIRECTORY
+                    media_class = MediaClass.DIRECTORY
 
                     child_dir = BrowseMediaSource(
                         domain=DOMAIN,
                         identifier=entry_id + "/" + dir_path,
                         media_class=media_class,
-                        media_content_type=MEDIA_TYPE_VIDEO,
+                        media_content_type=MediaType.VIDEO,
                         title=title,
                         can_play=False,
                         can_expand=True,
@@ -198,13 +196,13 @@ class YiHackMediaSource(MediaSource):
                 return None
 
             title = event_dir
-            media_class = MEDIA_CLASS_VIDEO
+            media_class = MediaClass.VIDEO
 
             media = BrowseMediaSource(
                 domain=DOMAIN,
                 identifier=entry_id + "/" + event_dir,
                 media_class=media_class,
-                media_content_type=MEDIA_TYPE_VIDEO,
+                media_content_type=MediaType.VIDEO,
                 title=title,
                 can_play=False,
                 can_expand=True,
@@ -243,13 +241,13 @@ class YiHackMediaSource(MediaSource):
                         thumb_path = ""
 
                     title = record_file["time"]
-                    media_class = MEDIA_CLASS_VIDEO
+                    media_class = MediaClass.VIDEO
 
                     child_file = BrowseMediaSource(
                         domain=DOMAIN,
                         identifier=entry_id + "/" + event_dir + "/" + file_path,
                         media_class=media_class,
-                        media_content_type=MEDIA_TYPE_VIDEO,
+                        media_content_type=MediaType.VIDEO,
                         title=title,
                         can_play=True,
                         can_expand=False,
