@@ -68,7 +68,7 @@ class YiHackMediaSource(MediaSource):
         entry_id, event_dir, event_file = async_parse_identifier(item)
 
         if len(self._devices) == 0:
-            device_registry = await self.hass.helpers.device_registry.async_get_registry()
+            device_registry = self.hass.helpers.device_registry.async_get(self.hass)
             for device in device_registry.devices.values():
                 if device.identifiers is not None:
                     try:
