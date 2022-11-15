@@ -15,12 +15,12 @@ from homeassistant.helpers import event
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .const import (ALLWINNER, ALLWINNERV2, CONF_BABY_CRYING_MSG,
-                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
-                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX,
-                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_MOTION_DETECTION,
-                    CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
-                    CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, MSTAR, SONOFF,
-                    V5)
+                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_HUMAN_DETECTION_MSG,
+                    CONF_MOTION_START_MSG, CONF_MOTION_STOP_MSG,
+                    CONF_MQTT_PREFIX, CONF_SOUND_DETECTION_MSG,
+                    CONF_TOPIC_MOTION_DETECTION, CONF_TOPIC_SOUND_DETECTION,
+                    CONF_TOPIC_STATUS, CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN,
+                    MSTAR, SONOFF, V5)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -33,10 +33,18 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
             YiMQTTBinarySensor(config, "motion_detection"),
             YiMQTTBinarySensor(config, "baby_crying"),
         ]
-    elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == ALLWINNERV2) or (config.data[CONF_HACK_NAME] == V5):
+    elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == V5):
         entities = [
             YiMQTTBinarySensor(config, "status"),
             YiMQTTBinarySensor(config, "motion_detection"),
+            YiMQTTBinarySensor(config, "baby_crying"),
+            YiMQTTBinarySensor(config, "sound_detection"),
+        ]
+    elif (config.data[CONF_HACK_NAME] == ALLWINNERV2):
+        entities = [
+            YiMQTTBinarySensor(config, "status"),
+            YiMQTTBinarySensor(config, "motion_detection"),
+            YiMQTTBinarySensor(config, "human_detection"),
             YiMQTTBinarySensor(config, "baby_crying"),
             YiMQTTBinarySensor(config, "sound_detection"),
         ]
@@ -77,6 +85,13 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._unique_id = self._device_name + "_bsmd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_MOTION_START_MSG]
+            self._payload_off = config.data[CONF_MOTION_STOP_MSG]
+            self._device_class = DEVICE_CLASS_MOTION
+        elif sensor_type == "human_detection":
+            self._name = self._device_name + "_human_detection"
+            self._unique_id = self._device_name + "_bshd"
+            self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
+            self._payload_on = config.data[CONF_HUMAN_DETECTION_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_MOTION
         elif sensor_type == "sound_detection":

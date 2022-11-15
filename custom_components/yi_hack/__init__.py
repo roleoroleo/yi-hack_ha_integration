@@ -10,9 +10,10 @@ from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .common import get_mqtt_conf, get_system_conf
 from .const import (ALLWINNER, ALLWINNERV2, CONF_BABY_CRYING_MSG,
-                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_MOTION_START_MSG,
-                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX, CONF_RTSP_PORT,
-                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_MOTION_DETECTION,
+                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_HUMAN_DETECTION_MSG,
+                    CONF_MOTION_START_MSG, CONF_MOTION_STOP_MSG,
+                    CONF_MQTT_PREFIX, CONF_RTSP_PORT, CONF_SOUND_DETECTION_MSG,
+                    CONF_TOPIC_MOTION_DETECTION,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE,
                     CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
                     CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, END_OF_POWER_OFF,
@@ -57,10 +58,18 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
                 CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
             })
-        elif (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == ALLWINNERV2) or (entry.data[CONF_HACK_NAME] == V5):
+        elif (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == V5):
             updated_data.update(**{
                 CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
                 CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION],
+                CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
+                CONF_SOUND_DETECTION_MSG: mqtt[CONF_SOUND_DETECTION_MSG],
+            })
+        elif (entry.data[CONF_HACK_NAME] == ALLWINNERV2):
+            updated_data.update(**{
+                CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
+                CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION],
+                CONF_HUMAN_DETECTION_MSG: mqtt[CONF_HUMAN_DETECTION_MSG],
                 CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
                 CONF_SOUND_DETECTION_MSG: mqtt[CONF_SOUND_DETECTION_MSG],
             })
