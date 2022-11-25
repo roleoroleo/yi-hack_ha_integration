@@ -1,4 +1,5 @@
 """Support for output tts to the yi-hack cam."""
+from __future__ import annotations
 
 import asyncio
 import logging
