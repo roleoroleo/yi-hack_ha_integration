@@ -17,7 +17,8 @@ from .const import (ALLWINNER, ALLWINNERV2, CONF_BABY_CRYING_MSG,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE,
                     CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
                     CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, END_OF_POWER_OFF,
-                    END_OF_POWER_ON, MSTAR, PRIVACY, SONOFF, V5)
+                    END_OF_POWER_ON, LAST_GET_CAMERA_CONF, MSTAR, PRIVACY,
+                    SONOFF, V5)
 
 from .views import VideoProxyView
 
@@ -37,6 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data[DOMAIN][device_name][PRIVACY] = False
     hass.data[DOMAIN][device_name][END_OF_POWER_OFF] = None
     hass.data[DOMAIN][device_name][END_OF_POWER_ON] = None
+    hass.data[DOMAIN][device_name][LAST_GET_CAMERA_CONF] = None
 
     conf = await hass.async_add_executor_job(get_system_conf, entry.data)
     mqtt = await hass.async_add_executor_job(get_mqtt_conf, entry.data)

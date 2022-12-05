@@ -20,6 +20,7 @@ from .const import (
     END_OF_POWER_OFF,
     END_OF_POWER_ON,
     HTTP_TIMEOUT,
+    LAST_GET_CAMERA_CONF,
     PRIVACY,
 )
 
@@ -110,6 +111,117 @@ def get_mqtt_conf(config):
 
     return response.json()
 
+def get_camera_conf(hass, device_name, param, config=None):
+    """Get configuration of camera from device."""
+
+    if config is None:
+        return hass.data[DOMAIN][device_name][param]
+
+    device_conf = get_device_conf(hass, device_name)
+    if device_conf[LAST_GET_CAMERA_CONF] is not None and device_conf[LAST_GET_CAMERA_CONF] + timedelta(seconds=5) <= dt_util.utcnow():
+        return hass.data[DOMAIN][device_name][param]
+
+    host = config[CONF_HOST]
+    port = config[CONF_PORT]
+    user = config[CONF_USERNAME]
+    password = config[CONF_PASSWORD]
+    error = False
+
+    auth = None
+    if user or password:
+        auth = HTTPBasicAuth(user, password)
+
+    response = None
+    try:
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/get_configs.sh?conf=camera", timeout=HTTP_TIMEOUT, auth=auth)
+        if response.status_code >= 300:
+            _LOGGER.error("Failed to get camera configuration of device %s", host)
+            error = True
+    except requests.exceptions.RequestException as e:
+        _LOGGER.error("Error getting camera configuration of device %s: error %s", host, e)
+        error = True
+
+    if error:
+        return None
+
+    if response is not None:
+        try:
+            camera_dict: dict = response.json()
+            camera_param: str = camera_dict.get(param.upper())
+        except KeyError:
+            _LOGGER.error("Failed to get camera configuration of device %s: error unknown", host)
+            error = True
+    else:
+        _LOGGER.error("Failed to get camera configuration of device %s: error unknown", host)
+        error = True
+
+    if error:
+        return None
+
+    device_conf[LAST_GET_CAMERA_CONF] = dt_util.utcnow()
+
+    if camera_param == "no":
+        # Update local var
+        hass.data[DOMAIN][device_name][param] = False
+        return False
+
+    # Update local var
+    hass.data[DOMAIN][device_name][param] = True
+
+    return True
+
+def set_camera_conf(hass, device_name, param, newstatus, config=None):
+    """Set configuration of camera to device. Return true if web service completes successfully."""
+    if config is None:
+        hass.data[DOMAIN][device_name][param] = newstatus
+        return
+
+    host = config[CONF_HOST]
+    port = config[CONF_PORT]
+    user = config[CONF_USERNAME]
+    password = config[CONF_PASSWORD]
+    error = False
+    if newstatus:
+        newstatus_string = "yes"
+    else:
+        newstatus_string = "no"
+
+    auth = None
+    if user or password:
+        auth = HTTPBasicAuth(user, password)
+
+    response = None
+    try:
+        response = requests.get("http://" + host + ":" + str(port) + "/cgi-bin/camera_settings.sh?" + param + "=" + newstatus_string, timeout=HTTP_TIMEOUT, auth=auth)
+        if response.status_code >= 300:
+            _LOGGER.error("Failed to set camera configuration of device %s", host)
+            error = True
+    except requests.exceptions.RequestException as e:
+        _LOGGER.error("Failed to set camera configuration of device %s: error %s", host, e)
+        error = True
+
+    if error:
+        return None
+
+    if response is not None:
+        try:
+            if response.json()["error"] != "false":
+                _LOGGER.error("Failed to set camera configuration of device %s", host)
+                error = True
+        except KeyError:
+            _LOGGER.error("Failed to set camera configuration of device %s: error unknown", host)
+            error = True
+    else:
+        _LOGGER.error("Failed to set camera configuration of device %s: error unknown", host)
+        error = True
+
+    if error:
+        return False
+
+    hass.data[DOMAIN][device_name][param] = newstatus
+
+    return True
+
 def get_privacy(hass, device_name, config=None):
     """Get status of privacy from device."""
     # Privacy is true when the cam is off
@@ -153,7 +265,7 @@ def get_privacy(hass, device_name, config=None):
             _LOGGER.error("Failed to get status of device %s: error unknown", host)
             error = True
     else:
-        _LOGGER.error("Failed to get status on device %s: error unknown", host)
+        _LOGGER.error("Failed to get status of device %s: error unknown", host)
         error = True
 
     if error:
