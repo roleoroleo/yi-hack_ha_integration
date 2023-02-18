@@ -30,18 +30,11 @@ from homeassistant.const import (
     CONF_PORT,
     CONF_USERNAME,
     STATE_IDLE,
-    STATE_OFF,
     STATE_ON,
     STATE_PLAYING
 )
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
-from .common import (
-    get_privacy,
-    set_power_off_in_progress,
-    set_power_on_in_progress,
-    set_privacy
-)
 from .const import (
     ALLWINNER,
     ALLWINNERV2,
@@ -68,8 +61,6 @@ class YiHackMediaPlayer(MediaPlayerEntity):
     _attr_supported_features = (
         MediaPlayerEntityFeature.BROWSE_MEDIA
         | MediaPlayerEntityFeature.PLAY_MEDIA
-        | MediaPlayerEntityFeature.TURN_OFF
-        | MediaPlayerEntityFeature.TURN_ON
     )
 
     def __init__(self, config):
@@ -90,16 +81,6 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             self._boost_speaker = config.data[CONF_BOOST_SPEAKER]
         except KeyError:
             self._boost_speaker = "auto"
-
-    def update(self):
-        """Return the state of the media player (privacy off = state on)."""
-        conf = dict([
-            (CONF_HOST, self._host),
-            (CONF_PORT, self._port),
-            (CONF_USERNAME, self._user),
-            (CONF_PASSWORD, self._password),
-        ])
-        self._state = not get_privacy(self.hass, self._device_name, conf)
 
     @property
     def brand(self):
@@ -125,7 +106,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
             else:
                 return STATE_IDLE
 
-        return STATE_OFF
+        return STATE_ON
 
     @property
     def device_info(self):
@@ -142,41 +123,6 @@ class YiHackMediaPlayer(MediaPlayerEntity):
     def is_volume_muted(self):
         """Boolean if volume is currently muted."""
         return False
-
-#    @property
-#    def device_class(self):
-#        """Set the device class to SPEAKER."""
-#        return MediaPlayerDeviceClass.SPEAKER
-
-    def turn_off(self):
-        """Turn off camera (set privacy on)."""
-        conf = dict([
-            (CONF_HOST, self._host),
-            (CONF_PORT, self._port),
-            (CONF_USERNAME, self._user),
-            (CONF_PASSWORD, self._password),
-        ])
-        if not get_privacy(self.hass, self._device_name):
-            _LOGGER.debug("Turn off camera %s", self._name)
-            set_power_off_in_progress(self.hass, self._device_name)
-            set_privacy(self.hass, self._device_name, True, conf)
-            self._state = False
-            self.schedule_update_ha_state(force_refresh=True)
-
-    def turn_on(self):
-        """Turn on camera (set privacy off)."""
-        conf = dict([
-            (CONF_HOST, self._host),
-            (CONF_PORT, self._port),
-            (CONF_USERNAME, self._user),
-            (CONF_PASSWORD, self._password),
-        ])
-        if get_privacy(self.hass, self._device_name):
-            _LOGGER.debug("Turn on Camera %s", self._name)
-            set_power_on_in_progress(self.hass, self._device_name)
-            set_privacy(self.hass, self._device_name, False, conf)
-            self._state = True
-            self.schedule_update_ha_state(force_refresh=True)
 
     async def async_play_media(
         self,
