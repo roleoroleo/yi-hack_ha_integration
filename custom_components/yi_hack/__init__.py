@@ -4,21 +4,20 @@ import asyncio
 import logging
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_MAC, CONF_NAME
+from homeassistant.const import CONF_HOST, CONF_MAC, CONF_NAME
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .common import get_mqtt_conf, get_system_conf
-from .const import (ALLWINNER, ALLWINNERV2, CONF_BABY_CRYING_MSG,
-                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_HUMAN_DETECTION_MSG,
-                    CONF_MOTION_START_MSG, CONF_MOTION_STOP_MSG,
-                    CONF_MQTT_PREFIX, CONF_RTSP_PORT, CONF_SOUND_DETECTION_MSG,
-                    CONF_TOPIC_MOTION_DETECTION,
+from .common import get_mqtt_conf, get_status, get_system_conf
+from .const import (ALLWINNER, ALLWINNERV2, CONF_ANIMAL_DETECTION_MSG,
+                    CONF_BABY_CRYING_MSG, CONF_BIRTH_MSG, CONF_HACK_NAME,
+                    CONF_HUMAN_DETECTION_MSG, CONF_MOTION_START_MSG,
+                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX, CONF_RTSP_PORT,
+                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_MOTION_DETECTION,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE,
                     CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
-                    CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN, END_OF_POWER_OFF,
-                    END_OF_POWER_ON, LAST_GET_CAMERA_CONF, MSTAR, PRIVACY,
-                    SONOFF, V5)
+                    CONF_VEHICLE_DETECTION_MSG, CONF_WILL_MSG, DEFAULT_BRAND,
+                    DOMAIN, MSTAR, SONOFF, V5)
 
 from .views import VideoProxyView
 
@@ -35,10 +34,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][device_name] = {}
-    hass.data[DOMAIN][device_name][PRIVACY] = False
-    hass.data[DOMAIN][device_name][END_OF_POWER_OFF] = None
-    hass.data[DOMAIN][device_name][END_OF_POWER_ON] = None
-    hass.data[DOMAIN][device_name][LAST_GET_CAMERA_CONF] = None
+
+    stat = await hass.async_add_executor_job(get_status, entry.data)
+
+    if stat is not None:
+        try:
+            privacy = stat["privacy"]
+            _LOGGER.error("Unsupported hack version (" + entry.data[CONF_HOST] + "), please update your cam")
+            return False
+        except KeyError:
+            privacy = None
 
     conf = await hass.async_add_executor_job(get_system_conf, entry.data)
     mqtt = await hass.async_add_executor_job(get_mqtt_conf, entry.data)
@@ -64,7 +69,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
             updated_data.update(**{
                 CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
                 CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION],
-                CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
+                CONF_HUMAN_DETECTION_MSG: mqtt[CONF_HUMAN_DETECTION_MSG],
+                CONF_VEHICLE_DETECTION_MSG: mqtt[CONF_VEHICLE_DETECTION_MSG],
+                CONF_ANIMAL_DETECTION_MSG: mqtt[CONF_ANIMAL_DETECTION_MSG],
                 CONF_SOUND_DETECTION_MSG: mqtt[CONF_SOUND_DETECTION_MSG],
             })
         elif (entry.data[CONF_HACK_NAME] == ALLWINNERV2):
@@ -72,7 +79,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 CONF_RTSP_PORT: conf[CONF_RTSP_PORT],
                 CONF_TOPIC_SOUND_DETECTION: mqtt[CONF_TOPIC_SOUND_DETECTION],
                 CONF_HUMAN_DETECTION_MSG: mqtt[CONF_HUMAN_DETECTION_MSG],
-                CONF_BABY_CRYING_MSG: mqtt[CONF_BABY_CRYING_MSG],
+                CONF_VEHICLE_DETECTION_MSG: mqtt[CONF_VEHICLE_DETECTION_MSG],
+                CONF_ANIMAL_DETECTION_MSG: mqtt[CONF_ANIMAL_DETECTION_MSG],
                 CONF_SOUND_DETECTION_MSG: mqtt[CONF_SOUND_DETECTION_MSG],
             })
         elif entry.data[CONF_HACK_NAME] == SONOFF:

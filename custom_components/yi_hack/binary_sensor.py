@@ -14,13 +14,14 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import event
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
-from .const import (ALLWINNER, ALLWINNERV2, CONF_BABY_CRYING_MSG,
-                    CONF_BIRTH_MSG, CONF_HACK_NAME, CONF_HUMAN_DETECTION_MSG,
-                    CONF_MOTION_START_MSG, CONF_MOTION_STOP_MSG,
-                    CONF_MQTT_PREFIX, CONF_SOUND_DETECTION_MSG,
-                    CONF_TOPIC_MOTION_DETECTION, CONF_TOPIC_SOUND_DETECTION,
-                    CONF_TOPIC_STATUS, CONF_WILL_MSG, DEFAULT_BRAND, DOMAIN,
-                    MSTAR, SONOFF, V5)
+from .const import (ALLWINNER, ALLWINNERV2, CONF_ANIMAL_DETECTION_MSG,
+                    CONF_BABY_CRYING_MSG, CONF_BIRTH_MSG, CONF_HACK_NAME,
+                    CONF_HUMAN_DETECTION_MSG, CONF_MOTION_START_MSG,
+                    CONF_MOTION_STOP_MSG, CONF_MQTT_PREFIX,
+                    CONF_SOUND_DETECTION_MSG, CONF_TOPIC_MOTION_DETECTION,
+                    CONF_TOPIC_SOUND_DETECTION, CONF_TOPIC_STATUS,
+                    CONF_VEHICLE_DETECTION_MSG, CONF_WILL_MSG, DEFAULT_BRAND,
+                    DOMAIN, MSTAR, SONOFF, V5)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -37,7 +38,9 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
         entities = [
             YiMQTTBinarySensor(config, "status"),
             YiMQTTBinarySensor(config, "motion_detection"),
-            YiMQTTBinarySensor(config, "baby_crying"),
+            YiMQTTBinarySensor(config, "human_detection"),
+            YiMQTTBinarySensor(config, "vehicle_detection"),
+            YiMQTTBinarySensor(config, "animal_detection"),
             YiMQTTBinarySensor(config, "sound_detection"),
         ]
     elif (config.data[CONF_HACK_NAME] == ALLWINNERV2):
@@ -45,7 +48,8 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
             YiMQTTBinarySensor(config, "status"),
             YiMQTTBinarySensor(config, "motion_detection"),
             YiMQTTBinarySensor(config, "human_detection"),
-            YiMQTTBinarySensor(config, "baby_crying"),
+            YiMQTTBinarySensor(config, "vehicle_detection"),
+            YiMQTTBinarySensor(config, "animal_detection"),
             YiMQTTBinarySensor(config, "sound_detection"),
         ]
     elif config.data[CONF_HACK_NAME] == SONOFF:
@@ -64,6 +68,7 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         """Initialize the sensor."""
         self._state = False
         self._device_name = config.data[CONF_NAME]
+        self._name = self._device_name + "_" + sensor_type
         self._mac = config.data[CONF_MAC]
         self._mqtt_subscription = None
         self._delay_listener = None
@@ -71,7 +76,6 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         self._off_delay = None
 
         if sensor_type == "status":
-            self._name = self._device_name + "_status"
             self._unique_id = self._device_name + "_bsst"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_STATUS]
             self._payload_on = config.data[CONF_BIRTH_MSG]
@@ -81,28 +85,36 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._motion_payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_CONNECTIVITY
         elif sensor_type == "motion_detection":
-            self._name = self._device_name + "_motion_detection"
             self._unique_id = self._device_name + "_bsmd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_MOTION_START_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_MOTION
         elif sensor_type == "human_detection":
-            self._name = self._device_name + "_human_detection"
             self._unique_id = self._device_name + "_bshd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_HUMAN_DETECTION_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
             self._device_class = DEVICE_CLASS_MOTION
+        elif sensor_type == "vehicle_detection":
+            self._unique_id = self._device_name + "_bsvd"
+            self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
+            self._payload_on = config.data[CONF_VEHICLE_DETECTION_MSG]
+            self._payload_off = config.data[CONF_MOTION_STOP_MSG]
+            self._device_class = DEVICE_CLASS_MOTION
+        elif sensor_type == "animal_detection":
+            self._unique_id = self._device_name + "_bsad"
+            self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
+            self._payload_on = config.data[CONF_ANIMAL_DETECTION_MSG]
+            self._payload_off = config.data[CONF_MOTION_STOP_MSG]
+            self._device_class = DEVICE_CLASS_MOTION
         elif sensor_type == "sound_detection":
-            self._name = self._device_name + "_sound_detection"
             self._unique_id = self._device_name + "_bssd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_SOUND_DETECTION]
             self._payload_on = config.data[CONF_SOUND_DETECTION_MSG]
             self._off_delay = 60
             self._device_class = DEVICE_CLASS_SOUND
         elif sensor_type == "baby_crying":
-            self._name = self._device_name + "_baby_crying"
             self._unique_id = self._device_name + "_bsbc"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_BABY_CRYING_MSG]
@@ -124,7 +136,10 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         @callback
         def message_received(msg):
             """Handle new MQTT messages."""
-            payload = msg.payload
+            try:
+                payload = msg.payload.decode("utf-8", "ignore")
+            except:
+                payload = msg.payload
 
             if payload == self._payload_on:
                 self._state = True
