@@ -75,6 +75,13 @@ class YiHackFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 except KeyError:
                     hackname = DEFAULT_BRAND
 
+                try:
+                    privacy = response["privacy"]
+                    _LOGGER.error("Unsupported hack version, please update your cam")
+                    return self.async_abort(reason="wrong_hack_version")
+                except KeyError:
+                    privacy = None
+
                 if serial_number is not None and mac is not None:
                     user_input[CONF_SERIAL] = serial_number
                     user_input[CONF_MAC] = format_mac(mac)

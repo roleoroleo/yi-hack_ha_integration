@@ -18,13 +18,14 @@
     "error": {
       "cannot_connect": "No se pudo conectar",
       "cannot_get_mac_or_serial": "No se puede obtener direccion mac o n\u00famero de serie",
-      "cannot_get_conf": "No se pudo obtener la configuracion",
+      "cannot_get_conf": "No se puede obtener la configuracion",
       "cannot_get_mqtt_conf": "No se puede obtener la configuracion de mqtt",
       "cannot_send_ptz": "No se puede enviar el comando ptz",
       "unknown": "Error inesperado"
     },
     "abort": {
-      "already_configured": "El dispositivo ya est\u00e1 configurado"
+      "already_configured": "El dispositivo ya est\u00e1 configurado",
+      "wrong_hack_version": "Versi\u00f3n de yi-hack no compatible, actualice su dispositivo"
     }
   }
 }

@@ -24,7 +24,8 @@
       "unknown": "Erro inesperado"
     },
     "abort": {
-      "already_configured": "O dispositivo já está configurado"
+      "already_configured": "O dispositivo já está configurado",
+      "wrong_hack_version": "Versão de yi-hack não suportada, atualize seu dispositivo"
     }
   }
 }

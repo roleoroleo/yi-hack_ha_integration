@@ -19,12 +19,11 @@ The wizard will connect to your cam and will install the following entities:
 - ffmpeg cam with stream and snapshot capabilities
 - mqtt cam with the last frame saved during a motion detection event
 - mqtt binary sensor for status (connection)
-- mqtt binary sensor for motion detection
-- mqtt binary sensor for ai human detection (there are known issues when enabling ai human detection) (*)
+- mqtt binary sensor for motion detections: human, animal, vehicle, ... (*)
 - mqtt binary sensor for sound detection (*)
 - mqtt binary sensor for baby crying detection (*)
 - media player entity useful to play Home Assistant standard tts service (*)
-- switch to enable/disable privacy (this switch turns on or off the rtsp stream and the snapshot)
+- switches and selects to enable/disable some cam configuration
 - ptz service (*)
 - speak service (only available if you install the internal tts engine from here https://github.com/roleoroleo/yi-hack-utils)
 
@@ -49,6 +48,7 @@ It should look similar to this:
 |       |-- manifest.json
 |       |-- media_player.py
 |       |-- media_source.py
+|       |-- select.py
 |       |-- services.yaml
 |       |-- strings.json
 |       |-- switch.py

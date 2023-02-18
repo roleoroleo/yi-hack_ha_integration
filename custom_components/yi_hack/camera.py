@@ -21,8 +21,6 @@ from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
-from .common import (get_privacy, set_power_off_in_progress,
-                     set_power_on_in_progress, set_privacy)
 from .const import (ALLWINNER, ALLWINNERV2, CONF_BOOST_SPEAKER, CONF_HACK_NAME,
                     CONF_MQTT_PREFIX, CONF_PTZ,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE, DEFAULT_BRAND, DOMAIN,
@@ -127,6 +125,9 @@ class YiHackCamera(Camera):
         self._password = config.data[CONF_PASSWORD]
         self._hack_name = config.data[CONF_HACK_NAME]
         self._ptz = config.data[CONF_PTZ]
+        self._mqtt_subscription = None
+        self._mqtt_cmnd_topic = config.data[CONF_MQTT_PREFIX] + "/cmnd/camera/switch_on"
+        self._mqtt_stat_topic = config.data[CONF_MQTT_PREFIX] + "/stat/camera/switch_on"
         self._state = None
 
         self._http_base_url = "http://" + self._host
@@ -139,50 +140,59 @@ class YiHackCamera(Camera):
         except KeyError:
             self._boost_speaker = "auto"
 
+    async def async_added_to_hass(self):
+        """Subscribe to MQTT events."""
+
+        @callback
+        def message_received(msg):
+            """Handle new MQTT messages."""
+            try:
+                payload = msg.payload.decode("utf-8", "ignore")
+            except:
+                payload = msg.payload
+
+            if payload in ["yes", "on"]:
+                self._state = True
+            elif payload in ["no", "off"]:
+                self._state = False
+            else:  # Payload is not correct for this entity
+                _LOGGER.info(
+                    "No matching payload found for entity %s with topic: %s. Payload: '%s'",
+                    self._name,
+                    self._mqtt_stat_topic,
+                    payload,
+                )
+                return
+
+            self.async_write_ha_state()
+
+        self._mqtt_subscription = await mqtt.async_subscribe(
+            self.hass, self._mqtt_stat_topic, message_received, 1, None
+        )
+
+    async def async_will_remove_from_hass(self):
+        """Unsubscribe from MQTT events."""
+        if self._mqtt_subscription:
+            self._mqtt_subscription()
+
     @property
     def supported_features(self) -> int:
         """Return supported features."""
         return SUPPORT_STREAM | SUPPORT_ON_OFF
 
-    def update(self):
-        """Return the state of the camera (privacy off = state on)."""
-        conf = dict([
-            (CONF_HOST, self._host),
-            (CONF_PORT, self._port),
-            (CONF_USERNAME, self._user),
-            (CONF_PASSWORD, self._password),
-        ])
-        self._state = not get_privacy(self.hass, self._device_name, conf)
-
     def turn_off(self):
-        """Set privacy true (set camera off)."""
-        conf = dict([
-            (CONF_HOST, self._host),
-            (CONF_PORT, self._port),
-            (CONF_USERNAME, self._user),
-            (CONF_PASSWORD, self._password),
-        ])
-        if not get_privacy(self.hass, self._device_name):
-            _LOGGER.debug("Turn off camera %s", self._name)
-            set_power_off_in_progress(self.hass, self._device_name)
-            set_privacy(self.hass, self._device_name, True, conf)
-            self._state = False
-            self.schedule_update_ha_state(force_refresh=True)
+        """Turn off camera"""
+        self.hass.async_create_task(
+            mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "no", 1, 0)
+        )
+        self._state = False
 
     def turn_on(self):
-        """Set privacy false (set camera on)."""
-        conf = dict([
-            (CONF_HOST, self._host),
-            (CONF_PORT, self._port),
-            (CONF_USERNAME, self._user),
-            (CONF_PASSWORD, self._password),
-        ])
-        if get_privacy(self.hass, self._device_name):
-            _LOGGER.debug("Turn on Camera %s", self._name)
-            set_power_on_in_progress(self.hass, self._device_name)
-            set_privacy(self.hass, self._device_name, False, conf)
-            self._state = True
-            self.schedule_update_ha_state(force_refresh=True)
+        """Turn on camera"""
+        self.hass.async_create_task(
+            mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "yes", 1, 0)
+        )
+        self._state = True
 
     async def stream_source(self) -> str:
         """Return the stream source."""
@@ -381,9 +391,6 @@ class YiHackCamera(Camera):
     @property
     def is_on(self):
         """Determine whether the camera is on."""
-        # Hack: force a state update
-        self._state = not get_privacy(self.hass, self._device_name)
-        self.schedule_update_ha_state(force_refresh=False)
         return self._state
 
     @property
@@ -430,20 +437,13 @@ class YiHackMqttCamera(Camera):
         self._port = config.data[CONF_PORT]
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
-        self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION_IMAGE]
+        self._image_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION_IMAGE]
         self._last_image = None
         self._mqtt_subscription = None
-        self._state = None
-
-    def update(self):
-        """Return the state of the camera (privacy off = state on)."""
-        conf = dict([
-            (CONF_HOST, self._host),
-            (CONF_PORT, self._port),
-            (CONF_USERNAME, self._user),
-            (CONF_PASSWORD, self._password),
-        ])
-        self._state = not get_privacy(self.hass, self._device_name, conf)
+        self._mqtt_image_subscription = None
+        self._mqtt_cmnd_topic = config.data[CONF_MQTT_PREFIX] + "/cmnd/camera/switch_on"
+        self._mqtt_stat_topic = config.data[CONF_MQTT_PREFIX] + "/stat/camera/switch_on"
+        self._state = True
 
     async def async_added_to_hass(self):
         """Subscribe to MQTT events."""
@@ -451,18 +451,66 @@ class YiHackMqttCamera(Camera):
         @callback
         def message_received(msg):
             """Handle new MQTT messages."""
+            try:
+                payload = msg.payload.decode("utf-8", "ignore")
+            except:
+                payload = msg.payload
+
+            if payload in ["yes", "on"]:
+                self._state = True
+            elif payload in ["no", "off"]:
+                self._state = False
+            else:  # Payload is not correct for this entity
+                _LOGGER.info(
+                    "No matching payload found for entity %s with topic: %s. Payload: '%s'",
+                    self._name,
+                    self._mqtt_stat_topic,
+                    payload,
+                )
+                return
+
+            self.async_write_ha_state()
+
+        self._mqtt_subscription = await mqtt.async_subscribe(
+            self.hass, self._mqtt_stat_topic, message_received, 1, None
+        )
+
+        @callback
+        def image_message_received(msg):
+            """Handle new MQTT messages."""
             data = msg.payload
 
             self._last_image = data
 
-        self._mqtt_subscription = await mqtt.async_subscribe(
-            self.hass, self._state_topic, message_received, 1, None
+        self._mqtt_image_subscription = await mqtt.async_subscribe(
+            self.hass, self._image_topic, image_message_received, 1, None
         )
 
     async def async_will_remove_from_hass(self):
         """Unsubscribe from MQTT events."""
         if self._mqtt_subscription:
             self._mqtt_subscription()
+        if self._mqtt_image_subscription:
+            self._mqtt_image_subscription()
+
+    @property
+    def supported_features(self) -> int:
+        """Return supported features."""
+        return SUPPORT_STREAM | SUPPORT_ON_OFF
+
+    def turn_off(self):
+        """Turn off camera"""
+        self.hass.async_create_task(
+            mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "no", 1, 0)
+        )
+        self._state = False
+
+    def turn_on(self):
+        """Turn on camera"""
+        self.hass.async_create_task(
+            mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "yes", 1, 0)
+        )
+        self._state = True
 
     async def async_camera_image(
         self, width: int | None = None, height: int | None = None
@@ -484,9 +532,6 @@ class YiHackMqttCamera(Camera):
     @property
     def is_on(self):
         """Determine whether the camera is on."""
-        # Hack: force a state update
-        self._state = not get_privacy(self.hass, self._device_name)
-        self.schedule_update_ha_state(force_refresh=False)
         return self._state
 
     @property
