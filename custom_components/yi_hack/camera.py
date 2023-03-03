@@ -255,6 +255,12 @@ class YiHackCamera(Camera):
                 return None
 
             image = await self.hass.async_add_executor_job(fetch)
+            if image is None:
+                await asyncio.sleep(1)
+                image = await self.hass.async_add_executor_job(fetch)
+            if image is None:
+                await asyncio.sleep(1)
+                image = await self.hass.async_add_executor_job(fetch)
 
         if image is None:
             stream_source = await self.stream_source()
