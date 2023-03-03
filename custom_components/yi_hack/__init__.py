@@ -67,7 +67,14 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
                 CONF_RTSP_PORT: system_conf[CONF_RTSP_PORT],
                 CONF_BABY_CRYING_MSG: mqtt_conf[CONF_BABY_CRYING_MSG],
             })
-        elif (entry.data[CONF_HACK_NAME] == ALLWINNER) or (entry.data[CONF_HACK_NAME] == V5):
+        elif (entry.data[CONF_HACK_NAME] == V5):
+            updated_data.update(**{
+                CONF_RTSP_PORT: system_conf[CONF_RTSP_PORT],
+                CONF_TOPIC_SOUND_DETECTION: mqtt_conf[CONF_TOPIC_SOUND_DETECTION],
+                CONF_BABY_CRYING_MSG: mqtt_conf[CONF_BABY_CRYING_MSG],
+                CONF_SOUND_DETECTION_MSG: mqtt_conf[CONF_SOUND_DETECTION_MSG],
+            })
+        elif (entry.data[CONF_HACK_NAME] == ALLWINNER):
             updated_data.update(**{
                 CONF_RTSP_PORT: system_conf[CONF_RTSP_PORT],
                 CONF_TOPIC_SOUND_DETECTION: mqtt_conf[CONF_TOPIC_SOUND_DETECTION],
