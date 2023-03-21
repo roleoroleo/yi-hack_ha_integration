@@ -136,9 +136,9 @@ class YiHackSwitch(SwitchEntity):
             except:
                 payload = msg.payload
 
-            if payload in ["yes", "on"]:
+            if payload.lower() in ["yes", "on"]:
                 self._state = True
-            elif payload in ["no", "off"]:
+            elif payload.lower() in ["no", "off"]:
                 self._state = False
             else:  # Payload is not correct for this entity
                 _LOGGER.info(
