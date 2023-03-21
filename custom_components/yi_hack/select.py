@@ -76,12 +76,7 @@ class YiHackSelect(SelectEntity):
             except:
                 payload = msg.payload
 
-            if payload == "on":
-                self._state = "yes"
-            elif payload == "off":
-                self._state = "no"
-            else:
-                self._state = payload
+            self._state = payload.lower()
             self.async_write_ha_state()
 
         self._mqtt_subscription = await mqtt.async_subscribe(
