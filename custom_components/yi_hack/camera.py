@@ -128,7 +128,7 @@ class YiHackCamera(Camera):
         self._mqtt_subscription = None
         self._mqtt_cmnd_topic = config.data[CONF_MQTT_PREFIX] + "/cmnd/camera/switch_on"
         self._mqtt_stat_topic = config.data[CONF_MQTT_PREFIX] + "/stat/camera/switch_on"
-        self._state = None
+        self._state = True
 
         self._http_base_url = "http://" + self._host
         if self._port != 80:
