@@ -161,6 +161,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
         )
 
     if unload_ok:
-        hass.data[DOMAIN].pop(entry.entry_id)
+        device_name=entry.data[CONF_NAME]
+        hass.data[DOMAIN].pop(device_name)
 
     return unload_ok
