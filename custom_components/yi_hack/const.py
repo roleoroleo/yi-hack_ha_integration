@@ -17,7 +17,7 @@ V5_R = "yi_hack_v5"
 SONOFF_R = "yi_hack_s"
 
 DEFAULT_HOST = ""
-DEFAULT_PORT = 8080
+DEFAULT_PORT = 80
 DEFAULT_USERNAME = ""
 DEFAULT_PASSWORD = ""
 DEFAULT_EXTRA_ARGUMENTS = "-rtsp_transport tcp"
