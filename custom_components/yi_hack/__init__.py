@@ -24,7 +24,7 @@ from .views import VideoProxyView
 
 PLATFORMS = ["camera", "binary_sensor", "media_player", "select", "switch"]
 PLATFORMS_SO = ["camera", "binary_sensor", "select", "switch"]
-PLATFORMS_V5 = ["camera", "binary_sensor", "switch"]
+PLATFORMS_V5 = ["camera", "binary_sensor", "select", "switch"]
 
 _LOGGER = logging.getLogger(__name__)
 

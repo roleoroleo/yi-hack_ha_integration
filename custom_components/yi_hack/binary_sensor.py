@@ -34,7 +34,14 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
             YiMQTTBinarySensor(config, "motion_detection"),
             YiMQTTBinarySensor(config, "baby_crying"),
         ]
-    elif (config.data[CONF_HACK_NAME] == ALLWINNER) or (config.data[CONF_HACK_NAME] == V5):
+    elif (config.data[CONF_HACK_NAME] == V5):
+        entities = [
+            YiMQTTBinarySensor(config, "status"),
+            YiMQTTBinarySensor(config, "motion_detection"),
+            YiMQTTBinarySensor(config, "sound_detection"),
+            YiMQTTBinarySensor(config, "baby_crying"),
+        ]
+    elif (config.data[CONF_HACK_NAME] == ALLWINNER):
         entities = [
             YiMQTTBinarySensor(config, "status"),
             YiMQTTBinarySensor(config, "motion_detection"),

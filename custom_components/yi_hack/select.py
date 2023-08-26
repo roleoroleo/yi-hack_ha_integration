@@ -10,7 +10,7 @@ from homeassistant.helpers.entity import EntityCategory
 from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
 
 from .const import (CONF_HACK_NAME, CONF_MQTT_PREFIX, DEFAULT_BRAND, DOMAIN,
-                    SONOFF)
+                    SONOFF, V5)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up platform."""
@@ -19,6 +19,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         entities = [
             YiHackSelect(hass, config_entry, "sensitivity", [ "low", "medium", "high" ]),
             YiHackSelect(hass, config_entry, "ir", [ "auto", "on", "off" ]),
+        ]
+    elif config_entry.data[CONF_HACK_NAME] == V5:
+        entities = [
+            YiHackSelect(hass, config_entry, "sensitivity", [ "low", "medium", "high" ]),
+            YiHackSelect(hass, config_entry, "sound_sensitivity", [ "30", "35", "40", "45", "50", "60", "70", "80", "90" ]),
         ]
     else:
         entities = [
@@ -33,13 +38,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class YiHackSelect(SelectEntity):
     """Select entity."""
 
-#    _attr_entity_category = EntityCategory.CONFIG
-
-#    def __init__(self, coordinator: Coordinator, coil: Coil) -> None:
     def __init__(self, hass, config, select_type, select_options):
         """Initialize entity."""
-#        assert coil.mappings
-#        super().__init__(coordinator, coil, ENTITY_ID_FORMAT)
         self._device_name = config.data[CONF_NAME]
         self._mac = config.data[CONF_MAC]
         self._name = self._device_name + "_select_" + select_type

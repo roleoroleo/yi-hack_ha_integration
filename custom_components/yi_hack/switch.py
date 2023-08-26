@@ -26,7 +26,18 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
             YiHackSwitch(hass, config_entry, "ir"),
             YiHackSwitch(hass, config_entry, "rotate"),
         ]
-    elif (config_entry.data[CONF_HACK_NAME] == ALLWINNER) or (config_entry.data[CONF_HACK_NAME] == V5):
+    elif (config_entry.data[CONF_HACK_NAME] == V5):
+        entities = [
+            YiHackSwitch(hass, config_entry, "switch_on"),
+#            YiHackSwitch(hass, config_entry, "detect_motion"),
+            YiHackSwitch(hass, config_entry, "save_video_on_motion"),
+            YiHackSwitch(hass, config_entry, "sound_detection"),
+            YiHackSwitch(hass, config_entry, "baby_crying_detect"),
+            YiHackSwitch(hass, config_entry, "led"),
+            YiHackSwitch(hass, config_entry, "ir"),
+            YiHackSwitch(hass, config_entry, "rotate"),
+        ]
+    elif (config_entry.data[CONF_HACK_NAME] == ALLWINNER):
         entities = [
             YiHackSwitch(hass, config_entry, "switch_on"),
             YiHackSwitch(hass, config_entry, "motion_detection"),
