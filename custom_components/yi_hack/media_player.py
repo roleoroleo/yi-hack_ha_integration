@@ -66,7 +66,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
     def __init__(self, config):
         """Initialize the device."""
         self._device_name = config.data[CONF_NAME]
-        self._name = self._device_name + "_media_player"
+        self._name = self._device_name + " " + "Media Player"
         self._unique_id = self._device_name + "_mpca"
         self._mac = config.data[CONF_MAC]
         self._host = config.data[CONF_HOST]

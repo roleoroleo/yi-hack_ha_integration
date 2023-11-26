@@ -19,58 +19,58 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Yi Camera switches from a config entry."""
     if (config_entry.data[CONF_HACK_NAME] == DEFAULT_BRAND) or (config_entry.data[CONF_HACK_NAME] == MSTAR):
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on"),
-            YiHackSwitch(hass, config_entry, "save_video_on_motion"),
-            YiHackSwitch(hass, config_entry, "baby_crying_detect"),
-            YiHackSwitch(hass, config_entry, "led"),
-            YiHackSwitch(hass, config_entry, "ir"),
-            YiHackSwitch(hass, config_entry, "rotate"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch On"),
+            YiHackSwitch(hass, config_entry, "save_video_on_motion", "Save Video on Motion"),
+            YiHackSwitch(hass, config_entry, "baby_crying_detect", "Baby Crying Detect"),
+            YiHackSwitch(hass, config_entry, "led", "LED"),
+            YiHackSwitch(hass, config_entry, "ir", "IR"),
+            YiHackSwitch(hass, config_entry, "rotate", "Rotate"),
         ]
     elif (config_entry.data[CONF_HACK_NAME] == V5):
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on"),
-#            YiHackSwitch(hass, config_entry, "detect_motion"),
-            YiHackSwitch(hass, config_entry, "save_video_on_motion"),
-            YiHackSwitch(hass, config_entry, "sound_detection"),
-            YiHackSwitch(hass, config_entry, "baby_crying_detect"),
-            YiHackSwitch(hass, config_entry, "led"),
-            YiHackSwitch(hass, config_entry, "ir"),
-            YiHackSwitch(hass, config_entry, "rotate"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch"),
+#            YiHackSwitch(hass, config_entry, "detect_motion", "Detect Motion"),
+            YiHackSwitch(hass, config_entry, "save_video_on_motion", "Save Video on Motion"),
+            YiHackSwitch(hass, config_entry, "sound_detection", "Sound Detection"),
+            YiHackSwitch(hass, config_entry, "baby_crying_detect", "Baby Crying Detect"),
+            YiHackSwitch(hass, config_entry, "led", "LED"),
+            YiHackSwitch(hass, config_entry, "ir", "IR"),
+            YiHackSwitch(hass, config_entry, "rotate", "Rotate"),
         ]
     elif (config_entry.data[CONF_HACK_NAME] == ALLWINNER):
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on"),
-            YiHackSwitch(hass, config_entry, "motion_detection"),
-            YiHackSwitch(hass, config_entry, "save_video_on_motion"),
-            YiHackSwitch(hass, config_entry, "ai_human_detection"),
-            YiHackSwitch(hass, config_entry, "ai_vehicle_detection"),
-            YiHackSwitch(hass, config_entry, "ai_animal_detection"),
-            YiHackSwitch(hass, config_entry, "sound_detection"),
-            YiHackSwitch(hass, config_entry, "led"),
-            YiHackSwitch(hass, config_entry, "ir"),
-            YiHackSwitch(hass, config_entry, "rotate"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch On"),
+            YiHackSwitch(hass, config_entry, "motion_detection", "Motion Detection"),
+            YiHackSwitch(hass, config_entry, "save_video_on_motion", "Save Video on Motion"),
+            YiHackSwitch(hass, config_entry, "ai_human_detection", "AI Human Detection"),
+            YiHackSwitch(hass, config_entry, "ai_vehicle_detection", "AI Vehicle Detection"),
+            YiHackSwitch(hass, config_entry, "ai_animal_detection", "AI Animal Detection"),
+            YiHackSwitch(hass, config_entry, "sound_detection", "Sound Detection"),
+            YiHackSwitch(hass, config_entry, "led", "LED"),
+            YiHackSwitch(hass, config_entry, "ir", "IR"),
+            YiHackSwitch(hass, config_entry, "rotate", "Rotate"),
         ]
     elif (config_entry.data[CONF_HACK_NAME] == ALLWINNERV2):
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on"),
-            YiHackSwitch(hass, config_entry, "motion_detection"),
-            YiHackSwitch(hass, config_entry, "save_video_on_motion"),
-            YiHackSwitch(hass, config_entry, "ai_human_detection"),
-            YiHackSwitch(hass, config_entry, "ai_vehicle_detection"),
-            YiHackSwitch(hass, config_entry, "ai_animal_detection"),
-            YiHackSwitch(hass, config_entry, "face_detection"),
-            YiHackSwitch(hass, config_entry, "motion_tracking"),
-            YiHackSwitch(hass, config_entry, "sound_detection"),
-            YiHackSwitch(hass, config_entry, "led"),
-            YiHackSwitch(hass, config_entry, "ir"),
-            YiHackSwitch(hass, config_entry, "rotate"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch"),
+            YiHackSwitch(hass, config_entry, "motion_detection", "Motion Detection"),
+            YiHackSwitch(hass, config_entry, "save_video_on_motion", "Save Video on Motion"),
+            YiHackSwitch(hass, config_entry, "ai_human_detection", "AI Human Detection"),
+            YiHackSwitch(hass, config_entry, "ai_vehicle_detection", "AI Vehicle Detection"),
+            YiHackSwitch(hass, config_entry, "ai_animal_detection", "AI Animal Detection"),
+            YiHackSwitch(hass, config_entry, "face_detection", "Face Detection"),
+            YiHackSwitch(hass, config_entry, "motion_tracking", "Motion Tracking"),
+            YiHackSwitch(hass, config_entry, "sound_detection", "Sound Detection"),
+            YiHackSwitch(hass, config_entry, "led", "LED"),
+            YiHackSwitch(hass, config_entry, "ir", "IR"),
+            YiHackSwitch(hass, config_entry, "rotate", "Rotate"),
         ]
     elif config_entry.data[CONF_HACK_NAME] == SONOFF:
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on"),
-            YiHackSwitch(hass, config_entry, "motion_detection"),
-            YiHackSwitch(hass, config_entry, "local_record"),
-            YiHackSwitch(hass, config_entry, "rotate"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch on"),
+            YiHackSwitch(hass, config_entry, "motion_detection", "Motion Detection"),
+            YiHackSwitch(hass, config_entry, "local_record", "Local Record"),
+            YiHackSwitch(hass, config_entry, "rotate", "Rotate"),
         ]
 
     async_add_entities(entities)
@@ -78,7 +78,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class YiHackSwitch(SwitchEntity):
     """Representation of a Yi Camera Switch."""
 
-    def __init__(self, hass, config, switch_type):
+    def __init__(self, hass, config, switch_type, name):
         """Initialize the device."""
         self._device_name = config.data[CONF_NAME]
         self._mac = config.data[CONF_MAC]
@@ -87,7 +87,7 @@ class YiHackSwitch(SwitchEntity):
         self._user = config.data[CONF_USERNAME]
         self._password = config.data[CONF_PASSWORD]
         self._switch_type = switch_type
-        self._name = self._device_name + "_switch_" + switch_type
+        self._name = self._device_name + " " + name
         self._mqtt_subscription = None
         self._mqtt_cmnd_topic = config.data[CONF_MQTT_PREFIX] + "/cmnd/camera/" + switch_type
         self._mqtt_stat_topic = config.data[CONF_MQTT_PREFIX] + "/stat/camera/" + switch_type

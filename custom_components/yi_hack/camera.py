@@ -116,7 +116,7 @@ class YiHackCamera(Camera):
         self._extra_arguments = config.data[CONF_EXTRA_ARGUMENTS]
         self._manager = hass.data[DATA_FFMPEG]
         self._device_name = config.data[CONF_NAME]
-        self._name = self._device_name + "_cam"
+        self._name = self._device_name + " " + "Cam"
         self._unique_id = self._device_name + "_caca"
         self._mac = config.data[CONF_MAC]
         self._host = config.data[CONF_HOST]
@@ -436,7 +436,7 @@ class YiHackMqttCamera(Camera):
         super().__init__()
 
         self._device_name = config.data[CONF_NAME]
-        self._name = self._device_name  + "_motion_detection_cam"
+        self._name = self._device_name + " " + "Motion Detection Cam"
         self._unique_id = self._device_name + "_camd"
         self._mac = config.data[CONF_MAC]
         self._host = config.data[CONF_HOST]

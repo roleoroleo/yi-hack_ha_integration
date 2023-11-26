@@ -30,39 +30,39 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     """Set up MQTT motion sensors."""
     if (config.data[CONF_HACK_NAME] == DEFAULT_BRAND) or (config.data[CONF_HACK_NAME] == MSTAR):
         entities = [
-            YiMQTTBinarySensor(config, "status"),
-            YiMQTTBinarySensor(config, "motion_detection"),
-            YiMQTTBinarySensor(config, "baby_crying"),
+            YiMQTTBinarySensor(config, "status", "Status"),
+            YiMQTTBinarySensor(config, "motion_detection", "Motion Detection"),
+            YiMQTTBinarySensor(config, "baby_crying", "Baby Crying"),
         ]
     elif (config.data[CONF_HACK_NAME] == V5):
         entities = [
-            YiMQTTBinarySensor(config, "status"),
-            YiMQTTBinarySensor(config, "motion_detection"),
-            YiMQTTBinarySensor(config, "sound_detection"),
-            YiMQTTBinarySensor(config, "baby_crying"),
+            YiMQTTBinarySensor(config, "status", "Status"),
+            YiMQTTBinarySensor(config, "motion_detection", "Motion Detection"),
+            YiMQTTBinarySensor(config, "sound_detection", "Sound Detection"),
+            YiMQTTBinarySensor(config, "baby_crying", "Baby Crying"),
         ]
     elif (config.data[CONF_HACK_NAME] == ALLWINNER):
         entities = [
-            YiMQTTBinarySensor(config, "status"),
-            YiMQTTBinarySensor(config, "motion_detection"),
-            YiMQTTBinarySensor(config, "human_detection"),
-            YiMQTTBinarySensor(config, "vehicle_detection"),
-            YiMQTTBinarySensor(config, "animal_detection"),
-            YiMQTTBinarySensor(config, "sound_detection"),
+            YiMQTTBinarySensor(config, "status", "Status"),
+            YiMQTTBinarySensor(config, "motion_detection", "Motion Detection"),
+            YiMQTTBinarySensor(config, "human_detection", "Human Detection"),
+            YiMQTTBinarySensor(config, "vehicle_detection", "Vehicle Detection"),
+            YiMQTTBinarySensor(config, "animal_detection", "Animal Detection"),
+            YiMQTTBinarySensor(config, "sound_detection", "Sound Detection"),
         ]
     elif (config.data[CONF_HACK_NAME] == ALLWINNERV2):
         entities = [
-            YiMQTTBinarySensor(config, "status"),
-            YiMQTTBinarySensor(config, "motion_detection"),
-            YiMQTTBinarySensor(config, "human_detection"),
-            YiMQTTBinarySensor(config, "vehicle_detection"),
-            YiMQTTBinarySensor(config, "animal_detection"),
-            YiMQTTBinarySensor(config, "sound_detection"),
+            YiMQTTBinarySensor(config, "status", "Status"),
+            YiMQTTBinarySensor(config, "motion_detection", "Motion Detection"),
+            YiMQTTBinarySensor(config, "human_detection", "Human Detection"),
+            YiMQTTBinarySensor(config, "vehicle_detection", "Vehicle Detection"),
+            YiMQTTBinarySensor(config, "animal_detection", "Animal Detection"),
+            YiMQTTBinarySensor(config, "sound_detection", "Sound Detection"),
         ]
     elif config.data[CONF_HACK_NAME] == SONOFF:
         entities = [
-            YiMQTTBinarySensor(config, "status"),
-            YiMQTTBinarySensor(config, "motion_detection"),
+            YiMQTTBinarySensor(config, "status", "Status"),
+            YiMQTTBinarySensor(config, "motion_detection", "Motion Detection"),
         ]
 
     async_add_entities(entities)
@@ -71,11 +71,11 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
 class YiMQTTBinarySensor(BinarySensorEntity):
     """Representation of a motion detection sensor that is updated via MQTT."""
 
-    def __init__(self, config: ConfigEntry, sensor_type):
+    def __init__(self, config: ConfigEntry, sensor_type, name):
         """Initialize the sensor."""
         self._state = False
         self._device_name = config.data[CONF_NAME]
-        self._name = self._device_name + "_" + sensor_type
+        self._name = self._device_name + " " + name
         self._mac = config.data[CONF_MAC]
         self._mqtt_subscription = None
         self._delay_listener = None
