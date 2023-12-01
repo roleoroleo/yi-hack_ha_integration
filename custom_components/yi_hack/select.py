@@ -17,19 +17,19 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     if config_entry.data[CONF_HACK_NAME] == SONOFF:
         entities = [
-            YiHackSelect(hass, config_entry, "sensitivity", [ "low", "medium", "high" ]),
-            YiHackSelect(hass, config_entry, "ir", [ "auto", "on", "off" ]),
+            YiHackSelect(hass, config_entry, "sensitivity", "Sensitivity", [ "low", "medium", "high" ]),
+            YiHackSelect(hass, config_entry, "ir", "IR", [ "auto", "on", "off" ]),
         ]
     elif config_entry.data[CONF_HACK_NAME] == V5:
         entities = [
-            YiHackSelect(hass, config_entry, "sensitivity", [ "low", "medium", "high" ]),
-            YiHackSelect(hass, config_entry, "sound_sensitivity", [ "30", "35", "40", "45", "50", "60", "70", "80", "90" ]),
+            YiHackSelect(hass, config_entry, "sensitivity", "Sensitivity", [ "low", "medium", "high" ]),
+            YiHackSelect(hass, config_entry, "sound_sensitivity", "Sound Sensitivity", [ "30", "35", "40", "45", "50", "60", "70", "80", "90" ]),
         ]
     else:
         entities = [
-            YiHackSelect(hass, config_entry, "sensitivity", [ "low", "medium", "high" ]),
-            YiHackSelect(hass, config_entry, "sound_sensitivity", [ "30", "35", "40", "45", "50", "60", "70", "80", "90" ]),
-            YiHackSelect(hass, config_entry, "cruise", [ "no", "presets", "360" ]),
+            YiHackSelect(hass, config_entry, "sensitivity", "Sensitivity", [ "low", "medium", "high" ]),
+            YiHackSelect(hass, config_entry, "sound_sensitivity", "Sound Sensitivity", [ "30", "35", "40", "45", "50", "60", "70", "80", "90" ]),
+            YiHackSelect(hass, config_entry, "cruise", "Cruise", [ "no", "presets", "360" ]),
         ]
 
     async_add_entities(entities)
@@ -38,11 +38,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class YiHackSelect(SelectEntity):
     """Select entity."""
 
-    def __init__(self, hass, config, select_type, select_options):
+    def __init__(self, hass, config, select_type, name, select_options):
         """Initialize entity."""
         self._device_name = config.data[CONF_NAME]
         self._mac = config.data[CONF_MAC]
-        self._name = self._device_name + "_select_" + select_type
+        self._name = self._device_name + " " + name
         self._mqtt_cmnd_topic = config.data[CONF_MQTT_PREFIX] + "/cmnd/camera/" + select_type
         self._mqtt_stat_topic = config.data[CONF_MQTT_PREFIX] + "/stat/camera/" + select_type
         self._select_type = select_type
