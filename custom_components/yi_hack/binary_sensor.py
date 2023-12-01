@@ -3,10 +3,9 @@
 import logging
 
 from homeassistant.components import mqtt
-from homeassistant.components.binary_sensor import (DEVICE_CLASS_CONNECTIVITY,
-                                                    DEVICE_CLASS_MOTION,
-                                                    DEVICE_CLASS_SOUND,
+from homeassistant.components.binary_sensor import (BinarySensorDeviceClass,
                                                     BinarySensorEntity)
+
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME, CONF_PASSWORD,
                                  CONF_PORT, CONF_USERNAME)
@@ -82,6 +81,8 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         self._payload_off = None
         self._off_delay = None
 
+        self._attr_should_poll = False
+
         if sensor_type == "status":
             self._unique_id = self._device_name + "_bsst"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_STATUS]
@@ -90,43 +91,50 @@ class YiMQTTBinarySensor(BinarySensorEntity):
             self._motion_state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._motion_payload_on = config.data[CONF_MOTION_START_MSG]
             self._motion_payload_off = config.data[CONF_MOTION_STOP_MSG]
-            self._device_class = DEVICE_CLASS_CONNECTIVITY
+            self._attr_unique_id = self._unique_id
+            self._attr_device_class = BinarySensorDeviceClass.CONNECTIVITY
         elif sensor_type == "motion_detection":
             self._unique_id = self._device_name + "_bsmd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_MOTION_START_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
-            self._device_class = DEVICE_CLASS_MOTION
+            self._attr_unique_id = self._unique_id
+            self._attr_device_class = BinarySensorDeviceClass.MOTION
         elif sensor_type == "human_detection":
             self._unique_id = self._device_name + "_bshd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_HUMAN_DETECTION_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
-            self._device_class = DEVICE_CLASS_MOTION
+            self._attr_unique_id = self._unique_id
+            self._attr_device_class = BinarySensorDeviceClass.MOTION
         elif sensor_type == "vehicle_detection":
             self._unique_id = self._device_name + "_bsvd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_VEHICLE_DETECTION_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
-            self._device_class = DEVICE_CLASS_MOTION
+            self._attr_unique_id = self._unique_id
+            self._attr_device_class = BinarySensorDeviceClass.MOTION
         elif sensor_type == "animal_detection":
             self._unique_id = self._device_name + "_bsad"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_ANIMAL_DETECTION_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
-            self._device_class = DEVICE_CLASS_MOTION
+            self._attr_unique_id = self._unique_id
+            self._attr_device_class = BinarySensorDeviceClass.MOTION
         elif sensor_type == "sound_detection":
             self._unique_id = self._device_name + "_bssd"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_SOUND_DETECTION]
             self._payload_on = config.data[CONF_SOUND_DETECTION_MSG]
             self._off_delay = 60
-            self._device_class = DEVICE_CLASS_SOUND
+            self._attr_unique_id = self._unique_id
+            self._attr_device_class = BinarySensorDeviceClass.SOUND
         elif sensor_type == "baby_crying":
             self._unique_id = self._device_name + "_bsbc"
             self._state_topic = config.data[CONF_MQTT_PREFIX] + "/" + config.data[CONF_TOPIC_MOTION_DETECTION]
             self._payload_on = config.data[CONF_BABY_CRYING_MSG]
             self._payload_off = config.data[CONF_MOTION_STOP_MSG]
-            self._device_class = DEVICE_CLASS_SOUND
+            self._attr_unique_id = self._unique_id
+            self._attr_device_class = BinarySensorDeviceClass.SOUND
         else:
             raise RuntimeError("Unknown sensor type")
 
@@ -202,21 +210,6 @@ class YiMQTTBinarySensor(BinarySensorEntity):
     def is_on(self):
         """Return the state of the sensor."""
         return self._state
-
-    @property
-    def should_poll(self):
-        """No polling needed."""
-        return False
-
-    @property
-    def unique_id(self):
-        """Return a unique ID."""
-        return self._unique_id
-
-    @property
-    def device_class(self):
-        """Return the icon to use in the frontend."""
-        return self._device_class
 
     @property
     def device_info(self):

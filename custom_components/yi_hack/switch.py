@@ -29,7 +29,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     elif (config_entry.data[CONF_HACK_NAME] == V5):
         entities = [
             YiHackSwitch(hass, config_entry, "switch_on", "Switch On"),
-#            YiHackSwitch(hass, config_entry, "detect_motion", "Detect Motion"),
+#            YiHackSwitch(hass, config_entry, "motion_detection", "Motion Detection"),
             YiHackSwitch(hass, config_entry, "save_video_on_motion", "Save Video on Motion"),
             YiHackSwitch(hass, config_entry, "sound_detection", "Sound Detection"),
             YiHackSwitch(hass, config_entry, "baby_crying_detect", "Baby Crying Detect"),
@@ -94,46 +94,46 @@ class YiHackSwitch(SwitchEntity):
         self._state = False
 
         if switch_type == "switch_on":
-            self._unique_id = self._device_name + "_swso"
+            self._attr_unique_id = self._device_name + "_swso"
             self._attr_icon = "mdi:video"
         elif switch_type == "save_video_on_motion":
-            self._unique_id = self._device_name + "_swsv"
+            self._attr_unique_id = self._device_name + "_swsv"
             self._attr_icon = "mdi:content-save"
         elif switch_type == "local_record":
-            self._unique_id = self._device_name + "_swlr"
+            self._attr_unique_id = self._device_name + "_swlr"
             self._attr_icon = "mdi:content-save"
         elif switch_type == "motion_detection":
-            self._unique_id = self._device_name + "_swmd"
+            self._attr_unique_id = self._device_name + "_swmd"
             self._attr_icon = "mdi:motion-sensor"
         elif switch_type == "ai_human_detection":
-            self._unique_id = self._device_name + "_swhd"
+            self._attr_unique_id = self._device_name + "_swhd"
             self._attr_icon = "mdi:human-greeting-variant"
         elif switch_type == "ai_vehicle_detection":
-            self._unique_id = self._device_name + "_swvd"
+            self._attr_unique_id = self._device_name + "_swvd"
             self._attr_icon = "mdi:car"
         elif switch_type == "ai_animal_detection":
-            self._unique_id = self._device_name + "_swad"
+            self._attr_unique_id = self._device_name + "_swad"
             self._attr_icon = "mdi:dog-side"
         elif switch_type == "face_detection":
-            self._unique_id = self._device_name + "_swfd"
+            self._attr_unique_id = self._device_name + "_swfd"
             self._attr_icon = "mdi:face-recognition"
         elif switch_type == "motion_tracking":
-            self._unique_id = self._device_name + "_swmt"
+            self._attr_unique_id = self._device_name + "_swmt"
             self._attr_icon = "mdi:motion"
         elif switch_type == "sound_detection":
-            self._unique_id = self._device_name + "_swsd"
+            self._attr_unique_id = self._device_name + "_swsd"
             self._attr_icon = "mdi:music-note"
         elif switch_type == "baby_crying_detect":
-            self._unique_id = self._device_name + "_swbc"
+            self._attr_unique_id = self._device_name + "_swbc"
             self._attr_icon = "mdi:account-voice"
         elif switch_type == "led":
-            self._unique_id = self._device_name + "_swle"
+            self._attr_unique_id = self._device_name + "_swle"
             self._attr_icon = "mdi:led-on"
         elif switch_type == "ir":
-            self._unique_id = self._device_name + "_swir"
+            self._attr_unique_id = self._device_name + "_swir"
             self._attr_icon = "mdi:led-outline"
         elif switch_type == "rotate":
-            self._unique_id = self._device_name + "_swro"
+            self._attr_unique_id = self._device_name + "_swro"
             self._attr_icon = "mdi:rotate-right"
 
     async def async_added_to_hass(self):
@@ -199,11 +199,6 @@ class YiHackSwitch(SwitchEntity):
     def brand(self):
         """Camera brand."""
         return DEFAULT_BRAND
-
-    @property
-    def unique_id(self) -> str:
-        """Return the unique ID of the device."""
-        return self._unique_id
 
     @property
     def device_info(self):
