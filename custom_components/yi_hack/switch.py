@@ -28,7 +28,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         ]
     elif (config_entry.data[CONF_HACK_NAME] == V5):
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on", "Switch"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch On"),
 #            YiHackSwitch(hass, config_entry, "detect_motion", "Detect Motion"),
             YiHackSwitch(hass, config_entry, "save_video_on_motion", "Save Video on Motion"),
             YiHackSwitch(hass, config_entry, "sound_detection", "Sound Detection"),
@@ -52,7 +52,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         ]
     elif (config_entry.data[CONF_HACK_NAME] == ALLWINNERV2):
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on", "Switch"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch On"),
             YiHackSwitch(hass, config_entry, "motion_detection", "Motion Detection"),
             YiHackSwitch(hass, config_entry, "save_video_on_motion", "Save Video on Motion"),
             YiHackSwitch(hass, config_entry, "ai_human_detection", "AI Human Detection"),
@@ -67,7 +67,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         ]
     elif config_entry.data[CONF_HACK_NAME] == SONOFF:
         entities = [
-            YiHackSwitch(hass, config_entry, "switch_on", "Switch on"),
+            YiHackSwitch(hass, config_entry, "switch_on", "Switch On"),
             YiHackSwitch(hass, config_entry, "motion_detection", "Motion Detection"),
             YiHackSwitch(hass, config_entry, "local_record", "Local Record"),
             YiHackSwitch(hass, config_entry, "rotate", "Rotate"),
