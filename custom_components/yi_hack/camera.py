@@ -10,8 +10,7 @@ import voluptuous as vol
 from haffmpeg.camera import CameraMjpeg
 from haffmpeg.tools import IMAGE_JPEG, ImageFrame
 from homeassistant.components import mqtt
-from homeassistant.components.camera import (SUPPORT_ON_OFF, SUPPORT_STREAM,
-                                             Camera)
+from homeassistant.components.camera import (Camera, CameraEntityFeature)
 from homeassistant.components.ffmpeg import CONF_EXTRA_ARGUMENTS, DATA_FFMPEG
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME, CONF_PASSWORD,
@@ -178,7 +177,7 @@ class YiHackCamera(Camera):
     @property
     def supported_features(self) -> int:
         """Return supported features."""
-        return SUPPORT_STREAM | SUPPORT_ON_OFF
+        return CameraEntityFeature.STREAM | CameraEntityFeature.ON_OFF
 
     def turn_off(self):
         """Turn off camera"""
@@ -502,7 +501,7 @@ class YiHackMqttCamera(Camera):
     @property
     def supported_features(self) -> int:
         """Return supported features."""
-        return SUPPORT_STREAM | SUPPORT_ON_OFF
+        return CameraEntityFeature.STREAM | CameraEntityFeature.ON_OFF
 
     def turn_off(self):
         """Turn off camera"""
