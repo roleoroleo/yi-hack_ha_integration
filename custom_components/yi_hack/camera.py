@@ -175,7 +175,7 @@ class YiHackCamera(Camera):
             self._mqtt_subscription()
 
     @property
-    def supported_features(self) -> int:
+    def supported_features(self) -> CameraEntityFeature:
         """Return supported features."""
         return CameraEntityFeature.STREAM | CameraEntityFeature.ON_OFF
 
@@ -499,7 +499,7 @@ class YiHackMqttCamera(Camera):
             self._mqtt_image_subscription()
 
     @property
-    def supported_features(self) -> int:
+    def supported_features(self) -> CameraEntityFeature:
         """Return supported features."""
         return CameraEntityFeature.STREAM | CameraEntityFeature.ON_OFF
 
