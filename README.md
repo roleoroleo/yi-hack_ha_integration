@@ -31,6 +31,15 @@ The wizard will connect to your cam and will install the following entities:
 
 If you configure motion detection in your camera and media source in your home assistant installation, you will be able to view the videos in the "Media" section (left panel of the main page).
 
+## Dependencies
+1. Home Assistant
+   - [MQTT Integration](https://www.home-assistant.io/integrations/mqtt) installed
+   - [Mosquitto broker](https://github.com/home-assistant/addons/tree/master/mosquitto) add-on installed and connected to MQTT
+2. Camera
+   - MQTT enabled
+   - Configured with MQTT Broker credentials
+   - Default Topics configuration
+
 ## Installation
 **(1)** Copy the  `custom_components` folder your configuration directory.
 It should look similar to this:
