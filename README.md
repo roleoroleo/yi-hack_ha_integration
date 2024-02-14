@@ -104,10 +104,15 @@ Add the linw below to your configuration file:
 media_source:
 ```
 
-## Donation
-If you like this project, you can buy me a beer :) 
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JBYXDMR24FW7U&currency_code=EUR&source=url)
-
 ---
+
 ### DISCLAIMER
 **I AM NOT RESPONSIBLE FOR ANY USE OR DAMAGE THIS SOFTWARE MAY CAUSE. THIS IS INTENDED FOR EDUCATIONAL PURPOSES ONLY. USE AT YOUR OWN RISK.**
+
+## Donation
+If you like this project, you can buy me a beer :) 
+
+Click [here](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=JBYXDMR24FW7U&currency_code=EUR&source=url) or use the below QR code to donate via PayPal
+<p align="center">
+  <img src="https://github.com/roleoroleo/yi-hack_ha_integration/assets/39277388/196e34bf-8a72-4ed9-92ce-59010cd81b37"/>
+</p>
