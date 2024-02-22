@@ -8,7 +8,7 @@ yi-hack Home Assistant is a custom integration for Yi cameras (or Sonoff camera)
 - yi-hack-MStar - https://github.com/roleoroleo/yi-hack-MStar
 - yi-hack-Allwinner - https://github.com/roleoroleo/yi-hack-Allwinner
 - yi-hack-Allwinner-v2 - https://github.com/roleoroleo/yi-hack-Allwinner-v2
-- yi-hack-v5 (partial support) - https://github.com/alienatedsec/yi-hack-v5
+- yi-hack-v5 (partial support) - https://github.com/alienatedsec/yi-hack-v5 (seems like full support with 0.4.1j release)
 - sonoff-hack - https://github.com/roleoroleo/sonoff-hack
 <br>
 And make sure you have the latest version.
@@ -91,6 +91,27 @@ And add a simple configuration like this:
 type: 'custom:webrtc-camera'
 entity: camera.yi_hack_m_XXXXXX_cam
 ui: true
+```
+If you have the camer setup in the motionEye Addon you can display the stream with the following:
+```
+type: picture-entity
+entity: camera.camera1
+```
+_The Adress to add the Cam to motionEye is visible on the "Home" webinterface page. In my case it was: rtsp://192.168.178.243/ch0_0.h264_
+
+## Add PTZ-Buttons to Dashboard _(only if supported by the camera)_
+Example for left movement
+```
+type: button
+tap_action:
+  action: call-service
+  service: yi_hack.ptz
+  target: {}
+  data:
+    movement: left
+    entity_id: camera.yi_hack_v5_abb....
+icon: mdi:arrow-left-bold-circle-outline
+name: yicam_ptz_left
 ```
 
 ## Requirements
