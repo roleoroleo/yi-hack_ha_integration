@@ -1,0 +1,7 @@
+{
+  "services": {
+    "ptz": "mdi:camera-control",
+    "move_to_preset": "mdi:image-outline",
+    "speak": "mdi:speaker-message"
+  }
+}
