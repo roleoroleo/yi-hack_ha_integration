@@ -160,7 +160,7 @@ class YiHackSwitch(SwitchEntity):
                 )
                 return
 
-            self.async_write_ha_state()
+            self.schedule_update_ha_state()
 
         self._mqtt_subscription = await mqtt.async_subscribe(
             self.hass, self._mqtt_stat_topic, message_received, 1
@@ -173,14 +173,14 @@ class YiHackSwitch(SwitchEntity):
 
     def turn_off(self):
         """Turn off switch"""
-        self.hass.async_create_task(
+        self.hass.create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "off", 1, 0)
         )
         self._state = False
 
     def turn_on(self):
         """Turn on switch"""
-        self.hass.async_create_task(
+        self.hass.create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "on", 1, 0)
         )
         self._state = True
