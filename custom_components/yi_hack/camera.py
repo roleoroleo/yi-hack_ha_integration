@@ -179,14 +179,14 @@ class YiHackCamera(Camera):
         """Return supported features."""
         return CameraEntityFeature.STREAM | CameraEntityFeature.ON_OFF
 
-    def turn_off(self):
+    async def async_turn_off(self):
         """Turn off camera"""
         self.hass.async_create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "no", 1, 0)
         )
         self._state = False
 
-    def turn_on(self):
+    async def async_turn_on(self):
         """Turn on camera"""
         self.hass.async_create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "yes", 1, 0)
@@ -503,14 +503,14 @@ class YiHackMqttCamera(Camera):
         """Return supported features."""
         return CameraEntityFeature.STREAM | CameraEntityFeature.ON_OFF
 
-    def turn_off(self):
+    async def async_turn_off(self):
         """Turn off camera"""
         self.hass.async_create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "no", 1, 0)
         )
         self._state = False
 
-    def turn_on(self):
+    async def async_turn_on(self):
         """Turn on camera"""
         self.hass.async_create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "yes", 1, 0)
