@@ -26,6 +26,7 @@ from homeassistant.const import (
     CONF_USERNAME
 )
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import device_registry as dr
 
 from .const import DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
 
@@ -68,7 +69,7 @@ class YiHackMediaSource(MediaSource):
         entry_id, event_dir, event_file = async_parse_identifier(item)
 
         if len(self._devices) == 0:
-            device_registry = self.hass.helpers.device_registry.async_get(self.hass)
+            device_registry = dr.async_get(self.hass)
             for device in device_registry.devices.values():
                 if device.identifiers is not None:
                     try:
