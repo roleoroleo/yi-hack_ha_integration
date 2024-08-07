@@ -23,7 +23,7 @@ from .const import (ALLWINNER, ALLWINNERV2, CONF_ANIMAL_DETECTION_MSG,
 from .views import VideoProxyView
 
 PLATFORMS = ["camera", "binary_sensor", "media_player", "select", "switch"]
-PLATFORMS_SO = ["camera", "binary_sensor", "select", "switch"]
+PLATFORMS_SONOFF = ["camera", "binary_sensor", "select", "switch"]
 PLATFORMS_V5 = ["camera", "binary_sensor", "select", "switch"]
 
 _LOGGER = logging.getLogger(__name__)
@@ -100,20 +100,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         hass.config_entries.async_update_entry(entry, data=updated_data)
 
         if (entry.data[CONF_HACK_NAME] == V5):
-            for component in PLATFORMS_V5:
-                hass.async_create_task(
-                    hass.config_entries.async_forward_entry_setup(entry, component)
-                )
+            await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS_V5)
         elif (entry.data[CONF_HACK_NAME] == SONOFF):
-            for component in PLATFORMS_SO:
-                hass.async_create_task(
-                    hass.config_entries.async_forward_entry_setup(entry, component)
-                )
+            await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS_SONOFF)
         else:
-            for component in PLATFORMS:
-                hass.async_create_task(
-                    hass.config_entries.async_forward_entry_setup(entry, component)
-                )
+            await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
         session = async_get_clientsession(hass)
         hass.http.register_view(VideoProxyView(hass, session))
@@ -133,32 +124,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry):
     """Unload a config entry."""
     if (entry.data[CONF_HACK_NAME] == V5):
-        unload_ok = all(
-            await asyncio.gather(
-                *[
-                    hass.config_entries.async_forward_entry_unload(entry, component)
-                    for component in PLATFORMS_V5
-                ]
-            )
-        )
+        unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS_V5)
     elif (entry.data[CONF_HACK_NAME] == SONOFF):
-        unload_ok = all(
-            await asyncio.gather(
-                *[
-                    hass.config_entries.async_forward_entry_unload(entry, component)
-                    for component in PLATFORMS_SONOFF
-                ]
-            )
-        )
+        unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS_SONOFF)
     else:
-        unload_ok = all(
-            await asyncio.gather(
-                *[
-                    hass.config_entries.async_forward_entry_unload(entry, component)
-                    for component in PLATFORMS
-                ]
-            )
-        )
+        unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
     if unload_ok:
         device_name=entry.data[CONF_NAME]
