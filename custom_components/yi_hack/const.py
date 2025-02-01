@@ -23,7 +23,9 @@ DEFAULT_PASSWORD = ""
 DEFAULT_EXTRA_ARGUMENTS = "-rtsp_transport tcp"
 
 SERVICE_PTZ = "ptz"
+SERVICE_MOVE_TO_PRESET = "move_to_preset"
 SERVICE_SPEAK = "speak"
+SERVICE_REBOOT = "reboot"
 
 HTTP_TIMEOUT = 10
 

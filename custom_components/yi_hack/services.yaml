@@ -94,3 +94,17 @@ speak:
       example: "Hello world!"
       selector:
         text:
+
+reboot:
+  name: Reboot the cam
+  description: Reboot the camera
+  fields:
+    entity_id:
+      name: Entity id
+      description: Name of entity to reboot.
+      required: true
+      example: "camera.living_room_camera"
+      selector:
+        entity:
+          integration: yi_hack
+          domain: camera

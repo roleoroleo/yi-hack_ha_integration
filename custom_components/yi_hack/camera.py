@@ -24,7 +24,8 @@ from .const import (ALLWINNER, ALLWINNERV2, CONF_BOOST_SPEAKER, CONF_HACK_NAME,
                     CONF_MQTT_PREFIX, CONF_PTZ,
                     CONF_TOPIC_MOTION_DETECTION_IMAGE, DEFAULT_BRAND, DOMAIN,
                     HTTP_TIMEOUT, LINK_HIGH_RES_STREAM, LINK_LOW_RES_STREAM,
-                    MSTAR, SERVICE_PTZ, SERVICE_SPEAK)
+                    MSTAR, SERVICE_MOVE_TO_PRESET, SERVICE_PTZ,
+                    SERVICE_REBOOT, SERVICE_SPEAK)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -71,7 +72,7 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
     )
 
     platform.async_register_entity_service(
-        "move_to_preset",
+        SERVICE_MOVE_TO_PRESET,
         {
             vol.Required("preset_id"): vol.All(int, vol.Range(min=0, max=14)),
         },
@@ -96,6 +97,12 @@ async def async_setup_entry(hass: HomeAssistant, config: ConfigEntry, async_add_
             },
             "async_perform_speak",
         )
+
+    platform.async_register_entity_service(
+        SERVICE_REBOOT,
+        {},
+        "async_perform_reboot",
+    )
 
     async_add_entities(
         [
@@ -382,6 +389,24 @@ class YiHackCamera(Camera):
         _LOGGER.debug("SPEAK action on %s", self._name)
 
         await self.hass.async_add_executor_job(self._perform_speak, language, sentence)
+
+    def _perform_reboot(self):
+        auth = None
+        if self._user or self._password:
+            auth = HTTPBasicAuth(self._user, self._password)
+
+        try:
+            response = requests.get(f"http://{self._host}:{self._port}/cgi-bin/reboot.sh", timeout=HTTP_TIMEOUT, auth=auth)
+            if response.status_code >= 300:
+                _LOGGER.error(f"Failed to send reboot command to device {self._host}")
+        except requests.exceptions.RequestException as error:
+            _LOGGER.error(f"Failed to send reboot command to device {self._host}: error {error}")
+
+    async def async_perform_reboot(self):
+        """Reboot the camera."""
+        _LOGGER.debug(f"Reboot the camera")
+
+        await self.hass.async_add_executor_job(self._perform_reboot)
 
     @property
     def brand(self):
