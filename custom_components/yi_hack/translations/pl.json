@@ -25,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Urządzenie już skonfigurowane",
-      "wrong_hack_version": "Nieobsługiwana wersja hakerska, zaktualizuj swoje urządzenie"
+      "wrong_hack_version": "Nieobsługiwana wersja hakerska, zaktualizuj swoje urządzenie",
+      "not_yi-hack_device": "To nie jest aparat yi-hack"
     }
   }
 }

@@ -25,7 +25,8 @@
     },
     "abort": {
       "already_configured": "El dispositivo ya est\u00e1 configurado",
-      "wrong_hack_version": "Versi\u00f3n de yi-hack no compatible, actualice su dispositivo"
+      "wrong_hack_version": "Versi\u00f3n de yi-hack no compatible, actualice su dispositivo",
+      "not_yi-hack_device": "Esta no es una c\u00e1mara yi-hack"
     }
   }
 }

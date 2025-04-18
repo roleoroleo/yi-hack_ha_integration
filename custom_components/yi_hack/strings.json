@@ -25,7 +25,8 @@
     },
     "abort": {
       "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
-      "wrong_hack_version": "Unsupported hack version, please update your device"
+      "wrong_hack_version": "Unsupported hack version, please update your device",
+      "not_yi-hack_device": "This is not a Yi hack camera"
     }
   }
 }

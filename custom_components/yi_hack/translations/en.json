@@ -25,7 +25,8 @@
     },
     "abort": {
       "already_configured": "Device is already configured",
-      "wrong_hack_version": "Unsupported hack version, please update your device"
+      "wrong_hack_version": "Unsupported hack version, please update your device",
+      "not_yi-hack_device": "This is not a yi-hack camera"
     }
   }
 }
