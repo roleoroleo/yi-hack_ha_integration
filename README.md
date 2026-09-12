@@ -43,6 +43,22 @@ If you configure motion detection in your camera and media source in your home a
    - MQTT enabled
    - Configured with MQTT Broker credentials
    - Default Topics configuration
+   - A unique topic prefix and client id, if you have more than one camera (see [Multiple cameras](#multiple-cameras))
+
+## Multiple cameras
+Every camera ships with the same MQTT defaults (`MQTT_PREFIX` = `yicam`, `MQTT_CLIENT_ID` = `yi-cam`).
+If you have more than one camera, these two settings **must be unique per camera**:
+- `MQTT_PREFIX` - unique, and flat: a prefix containing `/` adds a nested topic level and does not work
+- `MQTT_CLIENT_ID` - unique
+
+Leave the topic names themselves at their defaults (`TOPIC_BIRTH_WILL`, `TOPIC_MOTION`,
+`TOPIC_MOTION_IMAGE`, `TOPIC_MOTION_FILES`, `TOPIC_SOUND_DETECTION`).
+"Default Topics configuration" above refers to those names, not to the prefix: the
+integration reads the prefix from the camera when the entry is set up.
+
+If the defaults are left in place on a second camera, two things go wrong:
+1. MQTT brokers enforce client id uniqueness by disconnecting the existing session, so the cameras repeatedly disconnect each other.
+2. Both cameras publish to the same topics, so motion events and snapshots from one camera appear on the other (see #62 and #91).
 
 ## Installation
 **(1)** Copy the  `custom_components` folder your configuration directory.
