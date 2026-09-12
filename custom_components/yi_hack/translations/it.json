@@ -1,10 +1,10 @@
 {
-  "title": "Yi Cam con yi-hack",
+  "title": "Telecamera Yi con yi-hack",
   "config": {
     "step": {
       "user": {
-        "title": "yi-hack configuration",
-        "description": "Inserisci le tue informazioni",
+        "title": "Configurazione di yi-hack",
+        "description": "Inserisci le informazioni di yi-hack",
         "data": {
           "host": "Nome host/Indirizzo IP",
           "port": "Porta",
@@ -13,20 +13,63 @@
           "extra_arguments": "Parametri supplementari di FFMPEG",
           "boost_speaker": "Amplifica il volume dello speaker"
         }
+      },
+      "zeroconf_confirm": {
+        "title": "Configura {name}",
+        "description": "Inserisci le credenziali utilizzate da questa telecamera yi-hack",
+        "data": {
+          "username": "Nome utente",
+          "password": "Password",
+          "extra_arguments": "Parametri supplementari di FFMPEG",
+          "boost_speaker": "Amplifica il volume dello speaker"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Riconnetti la telecamera",
+        "description": "Aggiorna le credenziali utilizzate da questa telecamera yi-hack",
+        "data": {
+          "username": "Nome utente",
+          "password": "Password"
+        }
       }
     },
     "error": {
       "cannot_connect": "Impossibile connettersi",
-      "cannot_get_mac_or_serial": "Impossibile ottenere l'indirizzo mac o il numero di serie",
+      "invalid_auth": "Autenticazione non valida",
+      "cannot_get_mac_or_serial": "Impossibile ottenere l’indirizzo MAC o il numero di serie",
       "cannot_get_conf": "Impossibile ottenere la configurazione",
-      "cannot_get_mqtt_conf": "Impossibile ottenere la configurazione mqtt",
-      "cannot_send_ptz": "Impossibile inviare il comando ptz",
+      "cannot_get_mqtt_conf": "Impossibile ottenere la configurazione MQTT",
+      "cannot_send_ptz": "Impossibile inviare il comando PTZ",
       "unknown": "Errore imprevisto"
     },
     "abort": {
-      "already_configured": "Il dispositivo \u00e8 gi\u00e0 configurato",
-      "wrong_hack_version": "Versione di yi-hack non supportata, aggiorna il tuo dispositivo",
-      "not_yi-hack_device": "Questa non \u00e8 una camera yi-hack"
+      "already_configured": "Il dispositivo è già configurato",
+      "wrong_hack_version": "Versione di yi-hack non supportata, aggiorna il dispositivo",
+      "not_yi-hack_device": "Questa non è una telecamera yi-hack",
+      "reauth_successful": "La nuova autenticazione è riuscita"
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Riavvia"
+      }
+    },
+    "sensor": {
+      "storage_free": {
+        "name": "Spazio di archiviazione libero"
+      },
+      "uptime": {
+        "name": "Tempo di attività"
+      },
+      "wifi_quality": {
+        "name": "Qualità del Wi-Fi"
+      }
+    },
+    "update": {
+      "firmware": {
+        "name": "Firmware"
+      }
     }
   }
 }

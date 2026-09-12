@@ -1,32 +1,75 @@
 {
-  "title": "Yi Cam con yi-hack",
+  "title": "Cámara Yi con yi-hack",
   "config": {
     "step": {
       "user": {
-        "title": "Configuracion yi-hack",
-        "description": "Complete la informaci\u00f3n de yi-hack",
+        "title": "Configuración de yi-hack",
+        "description": "Complete la información de yi-hack",
         "data": {
           "host": "Host",
-          "port": "Port",
+          "port": "Puerto",
           "username": "Usuario",
-          "password": "Contrase\u00f1a",
+          "password": "Contraseña",
           "extra_arguments": "Argumentos adicionales de FFMPEG",
           "boost_speaker": "Aumentar el volumen del altavoz"
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Configurar {name}",
+        "description": "Introduzca las credenciales utilizadas por esta cámara yi-hack",
+        "data": {
+          "username": "Usuario",
+          "password": "Contraseña",
+          "extra_arguments": "Argumentos adicionales de FFMPEG",
+          "boost_speaker": "Aumentar el volumen del altavoz"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Volver a conectar la cámara",
+        "description": "Actualice las credenciales utilizadas por esta cámara yi-hack",
+        "data": {
+          "username": "Usuario",
+          "password": "Contraseña"
         }
       }
     },
     "error": {
       "cannot_connect": "No se pudo conectar",
-      "cannot_get_mac_or_serial": "No se puede obtener direccion mac o n\u00famero de serie",
-      "cannot_get_conf": "No se puede obtener la configuracion",
-      "cannot_get_mqtt_conf": "No se puede obtener la configuracion de mqtt",
-      "cannot_send_ptz": "No se puede enviar el comando ptz",
+      "invalid_auth": "Autenticación no válida",
+      "cannot_get_mac_or_serial": "No se puede obtener la dirección MAC o el número de serie",
+      "cannot_get_conf": "No se puede obtener la configuración",
+      "cannot_get_mqtt_conf": "No se puede obtener la configuración MQTT",
+      "cannot_send_ptz": "No se puede enviar el comando PTZ",
       "unknown": "Error inesperado"
     },
     "abort": {
-      "already_configured": "El dispositivo ya est\u00e1 configurado",
-      "wrong_hack_version": "Versi\u00f3n de yi-hack no compatible, actualice su dispositivo",
-      "not_yi-hack_device": "Esta no es una c\u00e1mara yi-hack"
+      "already_configured": "El dispositivo ya está configurado",
+      "wrong_hack_version": "Versión de yi-hack no compatible, actualice su dispositivo",
+      "not_yi-hack_device": "Esta no es una cámara yi-hack",
+      "reauth_successful": "La reautenticación se realizó correctamente"
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Reiniciar"
+      }
+    },
+    "sensor": {
+      "storage_free": {
+        "name": "Almacenamiento libre"
+      },
+      "uptime": {
+        "name": "Tiempo de actividad"
+      },
+      "wifi_quality": {
+        "name": "Calidad del Wi-Fi"
+      }
+    },
+    "update": {
+      "firmware": {
+        "name": "Firmware"
+      }
     }
   }
 }

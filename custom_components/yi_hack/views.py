@@ -1,28 +1,27 @@
 """yi-hack HTTP views."""
+
 from __future__ import annotations
 
-import asyncio
+import logging
 from http import HTTPStatus
 from ipaddress import ip_address
-import logging
 from typing import Any
 
 import aiohttp
-from aiohttp import hdrs, web, BasicAuth
-from aiohttp.web_exceptions import HTTPBadGateway, HTTPUnauthorized
-from multidict import CIMultiDict
-
-from homeassistant.const import (
-    CONF_HOST,
-    CONF_NAME,
-    CONF_PASSWORD,
-    CONF_PORT,
-    CONF_USERNAME,
-)
+from aiohttp import hdrs, web
+from aiohttp.helpers import encode_basic_auth
+from aiohttp.web_exceptions import HTTPBadGateway
 from homeassistant.components.http import HomeAssistantView
 from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import (
+    CONF_NAME,
+    CONF_PASSWORD,
+    CONF_USERNAME,
+)
 from homeassistant.core import HomeAssistant
+from multidict import CIMultiDict
 
+from .common import build_camera_url
 from .const import (
     CONF_HACK_NAME,
     DOMAIN,
@@ -40,28 +39,46 @@ class VideoProxyView(HomeAssistantView):
     name = "api:yi-hack:video"
 
     def __init__(self, hass: HomeAssistant, websession: aiohttp.ClientSession) -> None:
-        """Initialize NestEventViewBase."""
+        """Initialize the video proxy view."""
         self.hass = hass
         self._websession = websession
 
-    def _create_path(self, **kwargs: Any) -> str:
-        """Create path."""
+    def _entry_for_identifier(self, identifier: str) -> ConfigEntry | None:
+        """Resolve a current entry ID or a legacy camera-name identifier."""
+        entry = self.hass.config_entries.async_get_entry(identifier)
+        if entry is not None and entry.domain == DOMAIN:
+            return entry
 
-        hack_name = ""
-        for config_entry in self.hass.config_entries.async_entries(DOMAIN):
-            try:
-                if config_entry.data[CONF_NAME] == kwargs['entry_id']:
-                    hack_name = config_entry.data[CONF_HACK_NAME]
-            except KeyError:
-                _LOGGER.debug("No name for this entry")
+        for candidate in self.hass.config_entries.async_entries(DOMAIN):
+            if candidate.data.get(CONF_NAME) == identifier:
+                return candidate
+        return None
 
-        file_path = kwargs['file_path']
+    @staticmethod
+    def _create_path(config_entry: ConfigEntry, **kwargs: Any) -> str | None:
+        """Create and validate a camera recording path."""
+        dir_path = str(kwargs["dir_path"])
+        file_path = str(kwargs["file_path"])
+        if (
+            not dir_path
+            or not file_path
+            or "/" in dir_path
+            or "/" in file_path
+            or "\\" in dir_path
+            or "\\" in file_path
+            or dir_path in (".", "..")
+            or file_path in (".", "..")
+        ):
+            return None
+
+        hack_name = config_entry.data.get(CONF_HACK_NAME)
         if hack_name == SONOFF:
-            dir_path = kwargs['dir_path'].replace("-", "/")
-            return "alarm_record/" + dir_path + "/" + file_path
-        else:
-            dir_path = kwargs['dir_path']
-            return "record/" + dir_path + "/" + file_path
+            dir_path = dir_path.replace("-", "/")
+            if any(part in ("", ".", "..") for part in dir_path.split("/")):
+                return None
+            return f"alarm_record/{dir_path}/{file_path}"
+
+        return f"record/{dir_path}/{file_path}"
 
     async def get(
         self,
@@ -84,31 +101,22 @@ class VideoProxyView(HomeAssistantView):
     ) -> web.Response | web.StreamResponse:
         """Handle route for request."""
 
-        host = ""
-        for config_entry in self.hass.config_entries.async_entries(DOMAIN):
-            try:
-                if config_entry.data[CONF_NAME] == kwargs['entry_id']:
-                    host = config_entry.data[CONF_HOST]
-                    port = config_entry.data[CONF_PORT]
-                    user = config_entry.data[CONF_USERNAME]
-                    password = config_entry.data[CONF_PASSWORD]
-            except KeyError:
-                _LOGGER.debug("No name for this entry")
-
-        if host == "":
+        config_entry = self._entry_for_identifier(str(kwargs["entry_id"]))
+        if config_entry is None:
             return web.Response(status=HTTPStatus.BAD_REQUEST)
 
-        full_path = self._create_path(**kwargs)
+        full_path = self._create_path(config_entry, **kwargs)
         if not full_path:
             return web.Response(status=HTTPStatus.NOT_FOUND)
 
-        url = "http://" + host + ":" + str(port) + "/" + full_path
+        user = config_entry.data.get(CONF_USERNAME, "")
+        password = config_entry.data.get(CONF_PASSWORD, "")
+        url = build_camera_url(config_entry.data, full_path)
         data = await request.read()
         source_header = _init_header(request)
 
-        auth = None
         if user or password:
-            auth = BasicAuth(user, password)
+            source_header[hdrs.AUTHORIZATION] = encode_basic_auth(user, password)
 
         async with self._websession.request(
             request.method,
@@ -117,7 +125,6 @@ class VideoProxyView(HomeAssistantView):
             params=request.query,
             allow_redirects=False,
             data=data,
-            auth=auth,
         ) as result:
             headers = _response_header(result)
 

@@ -1,10 +1,10 @@
 {
-  "title": "Yi Cam z yi-hack",
+  "title": "Kamera Yi z yi-hack",
   "config": {
     "step": {
       "user": {
-        "title": "Konfiguraca yi-hack",
-        "description": "Wypełnij informacje dla yi-hack",
+        "title": "Konfiguracja yi-hack",
+        "description": "Wprowadź informacje o yi-hack",
         "data": {
           "host": "Adres",
           "port": "Port",
@@ -13,20 +13,63 @@
           "extra_arguments": "Dodatkowe parametry FFMPEG",
           "boost_speaker": "Zwiększ głośność głośnika"
         }
+      },
+      "zeroconf_confirm": {
+        "title": "Skonfiguruj {name}",
+        "description": "Wprowadź dane logowania używane przez tę kamerę yi-hack",
+        "data": {
+          "username": "Użytkownik",
+          "password": "Hasło",
+          "extra_arguments": "Dodatkowe parametry FFMPEG",
+          "boost_speaker": "Zwiększ głośność głośnika"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Połącz kamerę ponownie",
+        "description": "Zaktualizuj dane logowania używane przez tę kamerę yi-hack",
+        "data": {
+          "username": "Użytkownik",
+          "password": "Hasło"
+        }
       }
     },
     "error": {
       "cannot_connect": "Błąd połączenia",
-      "cannot_get_mac_or_serial": "Nie można pobrać adresu mac lub numeru seryjnego",
-      "cannot_get_conf": "Nie można pobrać konfiguracji ",
-      "cannot_get_mqtt_conf": "Nie można pobrać konfiguracji mqtt",
-      "cannot_send_ptz": "Nie można wysłać poleceń PTZ",
+      "invalid_auth": "Nieprawidłowe uwierzytelnianie",
+      "cannot_get_mac_or_serial": "Nie można pobrać adresu MAC lub numeru seryjnego",
+      "cannot_get_conf": "Nie można pobrać konfiguracji",
+      "cannot_get_mqtt_conf": "Nie można pobrać konfiguracji MQTT",
+      "cannot_send_ptz": "Nie można wysłać polecenia PTZ",
       "unknown": "Nieoczekiwany błąd"
     },
     "abort": {
-      "already_configured": "Urządzenie już skonfigurowane",
-      "wrong_hack_version": "Nieobsługiwana wersja hakerska, zaktualizuj swoje urządzenie",
-      "not_yi-hack_device": "To nie jest aparat yi-hack"
+      "already_configured": "Urządzenie jest już skonfigurowane",
+      "wrong_hack_version": "Nieobsługiwana wersja yi-hack, zaktualizuj urządzenie",
+      "not_yi-hack_device": "To nie jest kamera yi-hack",
+      "reauth_successful": "Ponowne uwierzytelnienie powiodło się"
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Uruchom ponownie"
+      }
+    },
+    "sensor": {
+      "storage_free": {
+        "name": "Wolne miejsce"
+      },
+      "uptime": {
+        "name": "Czas pracy"
+      },
+      "wifi_quality": {
+        "name": "Jakość Wi-Fi"
+      }
+    },
+    "update": {
+      "firmware": {
+        "name": "Oprogramowanie układowe"
+      }
     }
   }
 }

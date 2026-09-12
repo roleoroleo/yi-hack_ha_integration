@@ -1,0 +1,75 @@
+{
+  "title": "Caméra Yi avec yi-hack",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Configuration de yi-hack",
+        "description": "Renseignez les informations de la caméra yi-hack",
+        "data": {
+          "host": "Hôte",
+          "port": "Port",
+          "username": "Nom d’utilisateur",
+          "password": "Mot de passe",
+          "extra_arguments": "Arguments FFMPEG supplémentaires",
+          "boost_speaker": "Amplification du haut-parleur"
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Configurer {name}",
+        "description": "Renseignez les identifiants utilisés par cette caméra yi-hack",
+        "data": {
+          "username": "Nom d’utilisateur",
+          "password": "Mot de passe",
+          "extra_arguments": "Arguments FFMPEG supplémentaires",
+          "boost_speaker": "Amplification du haut-parleur"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnecter la caméra",
+        "description": "Mettez à jour les identifiants utilisés par cette caméra yi-hack",
+        "data": {
+          "username": "Nom d’utilisateur",
+          "password": "Mot de passe"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Échec de la connexion",
+      "invalid_auth": "Identifiants incorrects",
+      "cannot_get_mac_or_serial": "Impossible d’obtenir l’adresse MAC ou le numéro de série",
+      "cannot_get_conf": "Impossible d’obtenir la configuration",
+      "cannot_get_mqtt_conf": "Impossible d’obtenir la configuration MQTT",
+      "cannot_send_ptz": "Impossible d’envoyer la commande PTZ",
+      "unknown": "Erreur inattendue"
+    },
+    "abort": {
+      "already_configured": "Cet appareil est déjà configuré",
+      "wrong_hack_version": "Cette version de yi-hack n’est pas prise en charge. Mettez la caméra à jour",
+      "not_yi-hack_device": "Cet appareil n’est pas une caméra yi-hack",
+      "reauth_successful": "La réauthentification a réussi"
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Redémarrer"
+      }
+    },
+    "sensor": {
+      "storage_free": {
+        "name": "Stockage libre"
+      },
+      "uptime": {
+        "name": "Durée de fonctionnement"
+      },
+      "wifi_quality": {
+        "name": "Qualité du Wi-Fi"
+      }
+    },
+    "update": {
+      "firmware": {
+        "name": "Micrologiciel"
+      }
+    }
+  }
+}

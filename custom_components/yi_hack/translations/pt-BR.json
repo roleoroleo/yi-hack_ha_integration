@@ -3,30 +3,73 @@
   "config": {
     "step": {
       "user": {
-        "title": "Configurações yi-hack",
+        "title": "Configuração do yi-hack",
         "description": "Preencha as informações do yi-hack",
         "data": {
           "host": "Host",
           "port": "Porta",
           "username": "Nome de usuário",
           "password": "Senha",
-          "extra_arguments": "Argumentos extras FFMPEG",
-          "boost_speaker": "Aumente o volume do alto-falante"
+          "extra_arguments": "Argumentos extras do FFMPEG",
+          "boost_speaker": "Aumentar o volume do alto-falante"
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Configurar {name}",
+        "description": "Informe as credenciais usadas por esta câmera yi-hack",
+        "data": {
+          "username": "Nome de usuário",
+          "password": "Senha",
+          "extra_arguments": "Argumentos extras do FFMPEG",
+          "boost_speaker": "Aumentar o volume do alto-falante"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconectar a câmera",
+        "description": "Atualize as credenciais usadas por esta câmera yi-hack",
+        "data": {
+          "username": "Nome de usuário",
+          "password": "Senha"
         }
       }
     },
     "error": {
-      "cannot_connect": "Falhou ao conectar",
-      "cannot_get_mac_or_serial": "Não foi possível obter o endereço mac ou o número de série",
+      "cannot_connect": "Falha ao conectar",
+      "invalid_auth": "Autenticação inválida",
+      "cannot_get_mac_or_serial": "Não foi possível obter o endereço MAC ou o número de série",
       "cannot_get_conf": "Não foi possível obter a configuração",
-      "cannot_get_mqtt_conf": "Não é possível obter a configuração do mqtt",
-      "cannot_send_ptz": "Não foi possível enviar o comando ptz",
+      "cannot_get_mqtt_conf": "Não foi possível obter a configuração MQTT",
+      "cannot_send_ptz": "Não foi possível enviar o comando PTZ",
       "unknown": "Erro inesperado"
     },
     "abort": {
       "already_configured": "O dispositivo já está configurado",
-      "wrong_hack_version": "Versão de yi-hack não suportada, atualize seu dispositivo",
-      "not_yi-hack_device": "Esta não é uma câmera yi-hack"
+      "wrong_hack_version": "Versão do yi-hack não compatível, atualize o dispositivo",
+      "not_yi-hack_device": "Esta não é uma câmera yi-hack",
+      "reauth_successful": "A reautenticação foi bem-sucedida"
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Reiniciar"
+      }
+    },
+    "sensor": {
+      "storage_free": {
+        "name": "Armazenamento livre"
+      },
+      "uptime": {
+        "name": "Tempo de atividade"
+      },
+      "wifi_quality": {
+        "name": "Qualidade do Wi-Fi"
+      }
+    },
+    "update": {
+      "firmware": {
+        "name": "Firmware"
+      }
     }
   }
 }

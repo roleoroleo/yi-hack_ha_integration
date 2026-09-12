@@ -24,6 +24,10 @@ The wizard will connect to your cam and will install the following entities:
 - mqtt binary sensor for baby crying detection (*)
 - media player entity useful to play Home Assistant standard tts service (*)
 - switches and selects to enable/disable some cam configuration
+- restart button
+- device information with model, serial number and firmware version
+- firmware update availability
+- diagnostic sensors for Wi-Fi quality, free storage and uptime, using one shared status request
 - ptz service (*)
 - speak service (only available if you install the internal tts engine from here https://github.com/roleoroleo/yi-hack-utils)
 
@@ -50,17 +54,20 @@ It should look similar to this:
 |       |-- translations/
 |       |-- __init__.py
 |       |-- binary_sensor.py
+|       |-- button.py
 |       |-- camera.py
-|       |-- config.py
 |       |-- config_flow.py
 |       |-- const.py
+|       |-- coordinator.py
 |       |-- manifest.json
 |       |-- media_player.py
 |       |-- media_source.py
 |       |-- select.py
+|       |-- sensor.py
 |       |-- services.yaml
 |       |-- strings.json
 |       |-- switch.py
+|       |-- update.py
 |       |-- views.py
 ```
 **(2)** Restart Home Assistant

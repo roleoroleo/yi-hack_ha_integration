@@ -8,10 +8,9 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME,
                                  CONF_PASSWORD, CONF_PORT, CONF_USERNAME)
 from homeassistant.core import HomeAssistant, callback
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
-
+from .common import get_device_info
 from .const import (ALLWINNER, ALLWINNERV2, CONF_HACK_NAME, DEFAULT_BRAND,
-                    CONF_MQTT_PREFIX, DOMAIN, MSTAR, SONOFF, V5)
+                    CONF_MQTT_PREFIX, MSTAR, SONOFF, V5)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -79,6 +78,7 @@ class YiHackSwitch(SwitchEntity):
 
     def __init__(self, hass, config, switch_type, name):
         """Initialize the device."""
+        self._config_entry = config
         self._device_name = config.data[CONF_NAME]
         self._mac = config.data[CONF_MAC]
         self._host = config.data[CONF_HOST]
@@ -202,10 +202,4 @@ class YiHackSwitch(SwitchEntity):
     @property
     def device_info(self):
         """Return device specific attributes."""
-        return {
-            "name": self._device_name,
-            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._mac)},
-            "manufacturer": DEFAULT_BRAND,
-            "model": DOMAIN,
-        }
+        return get_device_info(self._config_entry)

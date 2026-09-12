@@ -18,11 +18,10 @@ from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME, CONF_PASSWORD,
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import entity_platform
 from homeassistant.helpers.aiohttp_client import async_aiohttp_proxy_stream
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
-
+from .common import get_device_info
 from .const import (ALLWINNER, ALLWINNERV2, CONF_BOOST_SPEAKER, CONF_HACK_NAME,
                     CONF_MQTT_PREFIX, CONF_PTZ,
-                    CONF_TOPIC_MOTION_DETECTION_IMAGE, DEFAULT_BRAND, DOMAIN,
+                    CONF_TOPIC_MOTION_DETECTION_IMAGE, DEFAULT_BRAND,
                     HTTP_TIMEOUT, LINK_HIGH_RES_STREAM, LINK_LOW_RES_STREAM,
                     MSTAR, SERVICE_MOVE_TO_PRESET, SERVICE_PTZ,
                     SERVICE_REBOOT, SERVICE_SPEAK)
@@ -119,6 +118,7 @@ class YiHackCamera(Camera):
         """Initialize."""
         super().__init__()
 
+        self._config_entry = config
         self._extra_arguments = config.data[CONF_EXTRA_ARGUMENTS]
         self._manager = hass.data[DATA_FFMPEG]
         self._device_name = config.data[CONF_NAME]
@@ -443,14 +443,7 @@ class YiHackCamera(Camera):
     @property
     def device_info(self):
         """Return device specific attributes."""
-        return {
-            "name": self._device_name,
-            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._mac)},
-            "manufacturer": DEFAULT_BRAND,
-            "model": DOMAIN,
-            "configuration_url": self._http_base_url,
-        }
+        return get_device_info(self._config_entry)
 
 class YiHackMqttCamera(Camera):
     """Representation of a MQTT camera."""
@@ -459,6 +452,7 @@ class YiHackMqttCamera(Camera):
         """Initialize the MQTT Camera."""
         super().__init__()
 
+        self._config_entry = config
         self._device_name = config.data[CONF_NAME]
         self._name = self._device_name + " " + "Motion Detection Cam"
         self._unique_id = self._device_name + "_camd"
@@ -584,10 +578,4 @@ class YiHackMqttCamera(Camera):
     @property
     def device_info(self):
         """Return device specific attributes."""
-        return {
-            "name": self._device_name,
-            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._mac)},
-            "manufacturer": DEFAULT_BRAND,
-            "model": DOMAIN,
-        }
+        return get_device_info(self._config_entry)

@@ -7,9 +7,8 @@ from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import callback
 
 from homeassistant.helpers.entity import EntityCategory
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
-
-from .const import (CONF_HACK_NAME, CONF_MQTT_PREFIX, DEFAULT_BRAND, DOMAIN,
+from .common import get_device_info
+from .const import (CONF_HACK_NAME, CONF_MQTT_PREFIX, DEFAULT_BRAND,
                     SONOFF, V5)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -40,6 +39,7 @@ class YiHackSelect(SelectEntity):
 
     def __init__(self, hass, config, select_type, name, select_options):
         """Initialize entity."""
+        self._config_entry = config
         self._device_name = config.data[CONF_NAME]
         self._mac = config.data[CONF_MAC]
         self._name = self._device_name + " " + name
@@ -118,10 +118,4 @@ class YiHackSelect(SelectEntity):
     @property
     def device_info(self):
         """Return device specific attributes."""
-        return {
-            "name": self._device_name,
-            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._mac)},
-            "manufacturer": DEFAULT_BRAND,
-            "model": DOMAIN,
-        }
+        return get_device_info(self._config_entry)

@@ -31,15 +31,13 @@ from homeassistant.const import (
     STATE_ON,
     STATE_PLAYING
 )
-from homeassistant.helpers.device_registry import CONNECTION_NETWORK_MAC
-
+from .common import get_device_info
 from .const import (
     ALLWINNER,
     ALLWINNERV2,
     CONF_BOOST_SPEAKER,
     CONF_HACK_NAME,
     DEFAULT_BRAND,
-    DOMAIN,
     HTTP_TIMEOUT,
     MSTAR
 )
@@ -63,6 +61,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
 
     def __init__(self, config):
         """Initialize the device."""
+        self._config_entry = config
         self._device_name = config.data[CONF_NAME]
         self._name = self._device_name + " " + "Media Player"
         self._unique_id = self._device_name + "_mpca"
@@ -109,13 +108,7 @@ class YiHackMediaPlayer(MediaPlayerEntity):
     @property
     def device_info(self):
         """Return device specific attributes."""
-        return {
-            "name": self._device_name,
-            "connections": {(CONNECTION_NETWORK_MAC, self._mac)},
-            "identifiers": {(DOMAIN, self._mac)},
-            "manufacturer": DEFAULT_BRAND,
-            "model": DOMAIN,
-        }
+        return get_device_info(self._config_entry)
 
     @property
     def is_volume_muted(self):

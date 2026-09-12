@@ -13,10 +13,29 @@
           "extra_arguments": "FFMPEG extra arguments",
           "boost_speaker": "Boost the speaker volume"
         }
+      },
+      "zeroconf_confirm": {
+        "title": "Set up {name}",
+        "description": "Enter the credentials used by this yi-hack camera",
+        "data": {
+          "username": "Username",
+          "password": "Password",
+          "extra_arguments": "FFMPEG extra arguments",
+          "boost_speaker": "Boost the speaker volume"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnect the camera",
+        "description": "Update the credentials used by this yi-hack camera",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
       }
     },
     "error": {
       "cannot_connect": "Failed to connect",
+      "invalid_auth": "Invalid authentication",
       "cannot_get_mac_or_serial": "Cannot get mac address or serial number",
       "cannot_get_conf": "Cannot get configuration",
       "cannot_get_mqtt_conf": "Cannot get mqtt configuration",
@@ -26,7 +45,31 @@
     "abort": {
       "already_configured": "Device is already configured",
       "wrong_hack_version": "Unsupported hack version, please update your device",
-      "not_yi-hack_device": "This is not a yi-hack camera"
+      "not_yi-hack_device": "This is not a yi-hack camera",
+      "reauth_successful": "Re-authentication was successful"
+    }
+  },
+  "entity": {
+    "button": {
+      "restart": {
+        "name": "Restart"
+      }
+    },
+    "sensor": {
+      "storage_free": {
+        "name": "Storage free"
+      },
+      "uptime": {
+        "name": "Uptime"
+      },
+      "wifi_quality": {
+        "name": "Wi-Fi quality"
+      }
+    },
+    "update": {
+      "firmware": {
+        "name": "Firmware"
+      }
     }
   }
 }
