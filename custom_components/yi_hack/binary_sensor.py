@@ -10,6 +10,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME, CONF_PASSWORD,
                                  CONF_PORT, CONF_USERNAME)
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import event
 from .common import get_device_info
 from .const import (ALLWINNER, ALLWINNERV2, CONF_ANIMAL_DETECTION_MSG,
@@ -77,6 +78,7 @@ class YiMQTTBinarySensor(BinarySensorEntity):
         self._name = self._device_name + " " + name
         self._mac = config.data[CONF_MAC]
         self._mqtt_subscription = None
+        self._mqtt_enabled = True
         self._delay_listener = None
         self._payload_off = None
         self._off_delay = None
@@ -192,9 +194,16 @@ class YiMQTTBinarySensor(BinarySensorEntity):
 
             self.async_write_ha_state()
 
-        self._mqtt_subscription = await mqtt.async_subscribe(
-            self.hass, self._state_topic, message_received, 1
-        )
+        try:
+            self._mqtt_subscription = await mqtt.async_subscribe(
+                self.hass, self._state_topic, message_received, 1
+            )
+        except (HomeAssistantError, KeyError):
+            self._mqtt_enabled = False
+            _LOGGER.warning(
+                "MQTT is not configured; updates disabled for %s",
+                self._name,
+            )
 
     async def async_will_remove_from_hass(self):
         """Unsubscribe from MQTT events."""

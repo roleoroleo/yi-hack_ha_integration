@@ -8,6 +8,7 @@ from homeassistant.components.switch import SwitchEntity
 from homeassistant.const import (CONF_HOST, CONF_MAC, CONF_NAME,
                                  CONF_PASSWORD, CONF_PORT, CONF_USERNAME)
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 from .common import get_device_info
 from .const import (ALLWINNER, ALLWINNERV2, CONF_HACK_NAME, DEFAULT_BRAND,
                     CONF_MQTT_PREFIX, MSTAR, SONOFF, V5)
@@ -88,6 +89,7 @@ class YiHackSwitch(SwitchEntity):
         self._switch_type = switch_type
         self._name = self._device_name + " " + name
         self._mqtt_subscription = None
+        self._mqtt_enabled = True
         self._mqtt_cmnd_topic = config.data[CONF_MQTT_PREFIX] + "/cmnd/camera/" + switch_type
         self._mqtt_stat_topic = config.data[CONF_MQTT_PREFIX] + "/stat/camera/" + switch_type
         self._state = False
@@ -161,9 +163,16 @@ class YiHackSwitch(SwitchEntity):
 
             self.async_write_ha_state()
 
-        self._mqtt_subscription = await mqtt.async_subscribe(
-            self.hass, self._mqtt_stat_topic, message_received, 1
-        )
+        try:
+            self._mqtt_subscription = await mqtt.async_subscribe(
+                self.hass, self._mqtt_stat_topic, message_received, 1
+            )
+        except (HomeAssistantError, KeyError):
+            self._mqtt_enabled = False
+            _LOGGER.warning(
+                "MQTT is not configured; status updates disabled for %s",
+                self._name,
+            )
 
     async def async_will_remove_from_hass(self):
         """Unsubscribe from MQTT events."""
@@ -172,6 +181,9 @@ class YiHackSwitch(SwitchEntity):
 
     async def async_turn_off(self):
         """Turn off switch"""
+        if not self._mqtt_enabled:
+            _LOGGER.warning("MQTT is not configured; command disabled for %s", self._name)
+            return
         self.hass.async_create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "off", 1, 0)
         )
@@ -179,6 +191,9 @@ class YiHackSwitch(SwitchEntity):
 
     async def async_turn_on(self):
         """Turn on switch"""
+        if not self._mqtt_enabled:
+            _LOGGER.warning("MQTT is not configured; command disabled for %s", self._name)
+            return
         self.hass.async_create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, "on", 1, 0)
         )

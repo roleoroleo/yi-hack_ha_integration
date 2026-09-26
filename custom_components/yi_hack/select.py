@@ -1,15 +1,20 @@
 """Support for yi-hack select."""
 from __future__ import annotations
 
+import logging
+
 from homeassistant.components import mqtt
 from homeassistant.components.select import SelectEntity
 from homeassistant.const import CONF_MAC, CONF_NAME
 from homeassistant.core import callback
+from homeassistant.exceptions import HomeAssistantError
 
 from homeassistant.helpers.entity import EntityCategory
 from .common import get_device_info
 from .const import (CONF_HACK_NAME, CONF_MQTT_PREFIX, DEFAULT_BRAND,
                     SONOFF, V5)
+
+_LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up platform."""
@@ -51,6 +56,8 @@ class YiHackSelect(SelectEntity):
         self._attr_entity_category = EntityCategory.CONFIG
         self._attr_current_option = "no"
         self._state = None
+        self._mqtt_subscription = None
+        self._mqtt_enabled = True
 
         if select_type == "sensitivity":
             self._attr_icon = "mdi:motion-sensor"
@@ -79,9 +86,16 @@ class YiHackSelect(SelectEntity):
             self._state = payload.lower()
             self.async_write_ha_state()
 
-        self._mqtt_subscription = await mqtt.async_subscribe(
-            self.hass, self._mqtt_stat_topic, message_received, 1
-        )
+        try:
+            self._mqtt_subscription = await mqtt.async_subscribe(
+                self.hass, self._mqtt_stat_topic, message_received, 1
+            )
+        except (HomeAssistantError, KeyError):
+            self._mqtt_enabled = False
+            _LOGGER.warning(
+                "MQTT is not configured; updates disabled for %s",
+                self._name,
+            )
 
     async def async_will_remove_from_hass(self):
         """Unsubscribe from MQTT events."""
@@ -95,6 +109,9 @@ class YiHackSelect(SelectEntity):
 
     async def async_select_option(self, option: str) -> None:
         """Select option."""
+        if not self._mqtt_enabled:
+            _LOGGER.warning("MQTT is not configured; command disabled for %s", self._name)
+            return
         self.hass.async_create_task(
             mqtt.async_publish(self.hass, self._mqtt_cmnd_topic, option, 1, 0)
         )
