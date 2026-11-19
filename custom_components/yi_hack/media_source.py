@@ -24,7 +24,7 @@ from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .common import build_camera_url
-from .const import DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT
+from .const import DEFAULT_BRAND, DOMAIN, HTTP_TIMEOUT, HTTP_TOTAL_TIMEOUT
 
 MIME_TYPE_MP4 = "video/mp4"
 _LOGGER = logging.getLogger(__name__)
@@ -140,7 +140,12 @@ class YiHackMediaSource(MediaSource):
             async with session.post(
                 build_camera_url(data, endpoint, query),
                 headers=headers,
-                timeout=aiohttp.ClientTimeout(total=HTTP_TIMEOUT),
+                timeout=aiohttp.ClientTimeout(
+                    total=HTTP_TOTAL_TIMEOUT,
+                    connect=HTTP_TIMEOUT,
+                    sock_connect=HTTP_TIMEOUT,
+                    sock_read=HTTP_TIMEOUT,
+                ),
             ) as response:
                 if response.status in (401, 403):
                     raise MediaSourceError(
